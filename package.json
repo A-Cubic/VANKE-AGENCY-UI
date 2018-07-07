@@ -1,0 +1,47 @@
+{
+  "name": "el_platform",
+  "description": "A Vue.js project",
+  "version": "1.0.0",
+  "author": "",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "element-ui": "^2.4.2",
+    "jquery": "^2.2.4",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.3",
+    "sweetalert": "^1.1.3",
+    "vue": "^2.1.0",
+    "vue-loader": "^10.3.0",
+    "vue-resource": "^1.2.0",
+    "vue-router": "^2.2.1",
+    "vuex": "^2.2.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.0.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.0.0",
+    "cross-env": "^3.0.0",
+    "css-loader": "^0.25.0",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^6.10.3",
+    "eslint-plugin-standard": "^2.1.1",
+    "exports-loader": "^0.6.3",
+    "file-loader": "^0.9.0",
+    "html-webpack-plugin": "^2.28.0",
+    "mockjs": "^1.0.1-beta3",
+    "style-loader": "^0.13.1",
+    "vue-loader": "^10.0.0",
+    "vue-template-compiler": "^2.1.0",
+    "webpack": "^2.2.0",
+    "webpack-dev-server": "^2.2.0"
+  }
+}

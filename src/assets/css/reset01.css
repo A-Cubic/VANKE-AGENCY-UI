@@ -1,0 +1,191 @@
+* {
+  box-sizing: border-box;
+  font-size: 14px;
+  // font-family: 宋体,serif;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  // cursor: default;
+  user-select: none;
+}
+
+.el-dialog--tiny{
+    min-width:480px;
+}
+.el-dialog--small{
+  min-width:760px;
+}
+/*表格控制换行*/
+.el-table .cell{
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+    -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+    -webkit-line-clamp: 2; /** 显示的行数 **/
+    overflow: hidden;  /** 隐藏超出的内容 **/
+}
+blockquote,
+body,
+button,
+dd,
+dl,
+dt,
+fieldset,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+hr,
+input,
+legend,
+li,
+ol,
+p,
+pre,
+span a,
+td,
+textarea,
+th,
+ul {
+  margin: 0;
+  padding: 0;
+}
+body,
+html {
+  height: 100%;
+  width:100%;
+  min-width:1024px;
+  // border:1px solid #000;
+  // min-width: 64px;
+  min-height: 668px;
+}
+body,
+button,
+input,
+select,
+textarea {
+  font: 14px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 400;
+  font-size: 100%;
+}
+address,
+cite,
+dfn,
+em,
+var {
+  font-style: normal;
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: courier new, courier, monospace;
+}
+small {
+  font-size: 9pt;
+}
+ol,
+ul {
+  list-style: none;
+}
+a {
+  color: #333;
+}
+a,
+a:hover {
+  text-decoration: none;
+}
+sup {
+  vertical-align: text-top;
+}
+sub {
+  vertical-align: text-bottom;
+}
+legend {
+  color: #000;
+}
+fieldset,
+img {
+  border: 0;
+}
+button,
+input,
+select,
+textarea {
+  font-size: 100%;
+}
+article,
+aside,
+audio,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+mark,
+menu,
+nav,
+section,
+summary,
+time,
+video {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.clearfix:after {
+  clear: both;
+  display: block;
+  visibility: hidden;
+  height: 0;
+  content: ".";
+}
+.none{
+  display: none;
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.tc {
+  text-align: center;
+}
+.t_r {
+  text-align: right;
+}
+.t_l {
+  text-align: left;
+}
+::-webkit-scrollbar-track-piece {
+  -webkit-border-radius: 0;
+  background-color: #fff;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  height: 50px;
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+  border: 2px solid #fff;
+  -webkit-border-radius: 4px;
+  background-color: #999;
+}
+::-webkit-scrollbar-thumb:hover {
+  height: 50px;
+  -webkit-border-radius: 4px;
+  background-color: #9f9f9f;
+}
