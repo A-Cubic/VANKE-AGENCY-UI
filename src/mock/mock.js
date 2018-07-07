@@ -97,10 +97,10 @@ var BasicInfo = function (reqTemplate){
 };
 
 var SessionUserInfoSchool = {
-    "user_name": "绵绵",
+    "user_name": "admin",
     "company_name": "BTA",
-    "company_id": 888888,
-    "user_code": "una_bella",
+    "company_id": 123456,
+    "user_code": "admin",
     "account_type": 1
 };
 var SessionUserInfoEdu = {

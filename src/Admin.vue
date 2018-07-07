@@ -15,9 +15,17 @@
                     class="el-menu-vertical-demo"
                     @open="handleOpen"
                     @close="handleClose">
-                   <el-submenu index="1">
+
+                    <el-menu-item index="home">首页</el-menu-item>
+                    <el-menu-item index="houseResource">房源</el-menu-item>
+                    <el-menu-item index="passengerOrigin">客源</el-menu-item>
+                    <el-menu-item index="clinchDeal">成交</el-menu-item>
+                    <el-menu-item index="achievements">业绩</el-menu-item>
+                    <el-menu-item index="personal">个人</el-menu-item>
+                    <el-menu-item index="audit">审核</el-menu-item>
+                   <!-- <el-submenu index="1">
                         <template slot="title">
-                            <!-- <i class="el-icon-message"></i> -->
+                            <i class="el-icon-message"></i>
                         房源</template>
                             <el-submenu index="1-1">
                                 <template slot="title">买卖</template>
@@ -30,20 +38,30 @@
                     </el-submenu>
                     <el-submenu index="2">
                         <template slot="title">
-                            <!-- <i class="el-icon-setting"></i> -->
+                            <i class="el-icon-setting"></i>
                         服务</template>
                         <el-menu-item index="diagnoseType">管理</el-menu-item>
                     </el-submenu>
                     <el-submenu index="3">
                         <template slot="title">
-                            <!-- <i class="el-icon-setting"></i> -->
+                            <i class="el-icon-setting"></i>
                         系统设置</template>
                         <el-menu-item index="log">日志管理</el-menu-item>
-                    </el-submenu>
+                    </el-submenu> -->
                 </el-menu>
             </nav>
-             <i class="el-icon-bell bell"></i>
-             <i class="el-icon-setting person"></i>
+            <span class="f22">
+                <i class="el-icon-tickets "></i>
+            </span>
+            <span class="f22">
+                <el-badge :value="12" class="item ">
+                    <i class="el-icon-bell "></i>
+                </el-badge>
+             </span>
+             <span class="f22">
+                 <i class="el-icon-setting "></i>
+             </span>
+             
         </header>
         <section class="this_section">
             <!-- <nav class="this_nav">
@@ -88,7 +106,11 @@ export default {
             border:none;
         }
         .f22{
+            margin-right: 20px;
             font-size:22px;
+            i{
+                font-size:22px;
+            }
         }
         display:flex;
         flex-direction:column;
@@ -131,9 +153,9 @@ export default {
             // border:1px solid red;
             .this_nav{
                 min-width: 200px;
-                background: rgb(238, 246, 243);
-                height: 100%;
-                max-height: 100%;
+                // background: rgb(238, 246, 243);
+                // height: 100%;
+                // max-height: 100%;
                 overflow: auto;
             }
             .view{

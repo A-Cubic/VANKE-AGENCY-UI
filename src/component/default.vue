@@ -24,7 +24,7 @@
 							</el-form-item>
 							<el-form-item class="login-form-item">
 								<span>
-									输入任意用户名和密码即可
+									输入admin和任意密码/123456即可
 								</span>
 							</el-form-item>
 						</el-form>
@@ -87,7 +87,7 @@
                                 that.$message.success({showClose: true, message: result.msg || '登陆成功', duration: 2000});
                                 console.log(result)
                                 if(result.data.account_type == 1){
-                                    that.$router.push({path: '/admin/radiationPlugin'});
+                                    that.$router.push({path: '/admin/home'});
                                     // this.$emit('success')
                                 }
                             }else {
@@ -147,8 +147,8 @@
 					box-shadow: 0 0 5px #cac6c6;
 					border-radius: 4px;
 					position: absolute;
-					top: 80px;
-					right: 120px;
+					top: 180px;
+					right: 270px;
 					background-color: #ffffff;
 					.title{
 						width: 100%;
