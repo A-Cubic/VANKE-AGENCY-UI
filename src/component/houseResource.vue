@@ -193,7 +193,7 @@ export default {
 
         examineById(row){
             console.log(row.id);
-            // this.$router.push({path: '/admin/houseDetails/'+row.id})
+            this.$router.push({path: '/admin/houseDetails/'+row.id})
         }
     }
 };

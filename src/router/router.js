@@ -20,6 +20,12 @@ const HouseResource = resolve => {
         resolve(require('../component/houseResource.vue'))
     })
 }
+// 房源详情
+const HouseDetails = resolve => {
+    require.ensure(['../component/houseDetails.vue'], () => {
+        resolve(require('../component/houseDetails.vue'))
+    })
+}
 // 客源
 const PassengerOrigin = resolve => {
     require.ensure(['../component/passengerOrigin.vue'], () => {
@@ -73,6 +79,7 @@ const routes= [
     {   path: '/Admin',
         component: Admin,
         children:[
+            {   path: '/Admin/houseDetails/:id',       component: HouseDetails,        name: '房源详情',  props: true},// 房源详情
 
 
             {   path: 'home',                   component: Home,                name: '首页'},
