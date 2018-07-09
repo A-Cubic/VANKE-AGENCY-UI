@@ -85,7 +85,7 @@ const routes= [
             {   path: 'home',                   component: Home,                name: '首页'},
             {   path: 'houseResource',          component: HouseResource,       name: '房源'},
             {   path: 'passengerOrigin',        component: PassengerOrigin,     name: '客源'},
-            {   path: 'clinchDeal',             component: ClinchDeal,          name: '成交'},
+            {   path: 'clinchDeal',             component: ClinchDeal,          name: '成交' ,meta: {roles: ['admin']}},
             {   path: 'achievements',           component: Achievements,        name: '业绩'},
             {   path: 'personal',               component: Personal,            name: '个人'},
             {   path: 'audit',                  component: Audit,               name: '审核'},

@@ -37,6 +37,7 @@
 </template>
 <script>
     import LoginApi from '../api/api_user';
+    import { setRole, setToken } from '../util/global'
 	export default {
 		data() {
 			return {
@@ -83,6 +84,13 @@
                                 that.$message.error({showClose: true, message: result.msg || '查无此用户, 请检查是否输入错误', duration: 2000});
                             }else if(result.code == 0&&result.data){
                                 localStorage.setItem('now_user', JSON.stringify(that.loginForm));
+
+
+                                setRole('user')
+								setToken('abcd1234')
+
+
+
                                 console.log(result.data)
                                 that.$message.success({showClose: true, message: result.msg || '登陆成功', duration: 2000});
                                 console.log(result)

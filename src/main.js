@@ -6,6 +6,7 @@ import ElementUI 		from 'element-ui'
 import './resource/resiyrce.js';
 import './component/custom/custom.js';
 import './directive/directive.js';
+import './util/permission'
 // import 'element-ui/lib/theme-default/index.css'
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/css/reset01.css';
