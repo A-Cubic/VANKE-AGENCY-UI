@@ -32,6 +32,13 @@ const PassengerOrigin = resolve => {
         resolve(require('../component/passengerOrigin.vue'))
     })
 }
+// 客源详情
+const passengerDetails = resolve => {
+    require.ensure(['../component/passengerDetails.vue'], () => {
+        resolve(require('../component/passengerDetails.vue'))
+    })
+}
+
 // 成交
 const ClinchDeal = resolve => {
     require.ensure(['../component/clinchDeal.vue'], () => {
@@ -79,7 +86,8 @@ const routes= [
     {   path: '/Admin',
         component: Admin,
         children:[
-            {   path: '/Admin/houseDetails/:id',       component: HouseDetails,        name: '房源详情',  props: true},// 房源详情
+            {   path: 'houseDetails/:id',       component: HouseDetails,        name: '房源详情',  props: true},// 房源详情
+            {   path: 'passengerDetails/:id',          component: passengerDetails,    name: '客源详情',  props: true},// 客源详情
 
 
             {   path: 'home',                   component: Home,                name: '首页'},
