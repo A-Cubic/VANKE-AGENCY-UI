@@ -16,13 +16,13 @@
                     @open="handleOpen"
                     @close="handleClose">
 
-                    <el-menu-item index="home">首页</el-menu-item>
-                    <el-menu-item index="houseResource">房源</el-menu-item>
-                    <el-menu-item index="passengerOrigin">客源</el-menu-item>
-                    <el-menu-item index="clinchDeal">成交</el-menu-item>
-                    <el-menu-item index="achievements">业绩</el-menu-item>
-                    <el-menu-item index="personal">个人</el-menu-item>
-                    <el-menu-item index="audit">审核</el-menu-item>
+                    <el-menu-item index="/admin/home">首页</el-menu-item>
+                    <el-menu-item index="/admin/houseResource">房源</el-menu-item>
+                    <el-menu-item index="/admin/passengerOrigin">客源</el-menu-item>
+                    <el-menu-item index="/admin/clinchDeal">成交</el-menu-item>
+                    <el-menu-item index="/admin/achievements">业绩</el-menu-item>
+                    <el-menu-item index="/admin/personal">个人</el-menu-item>
+                    <el-menu-item index="/admin/audit">审核</el-menu-item>
                    <!-- <el-submenu index="1">
                         <template slot="title">
                             <i class="el-icon-message"></i>
