@@ -21,7 +21,7 @@
                                     <i class="el-icon-plus uploader-icon"></i>
                                 </el-upload>
                                 <el-carousel class="carousel-wrap" :interval="5000" type="card" height="130px">
-                                    <el-carousel-item v-for="item in carouselList" >
+                                    <el-carousel-item v-for="(item, index) in carouselList" :key="index">
                                         <img :src="item.imgUrl" alt="">
                                     </el-carousel-item>
                                 </el-carousel>
