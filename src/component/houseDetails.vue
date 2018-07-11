@@ -63,7 +63,7 @@
 
 
                 <el-col :span="8">
-                    <div class="grid-content">
+                    <div class="">
                         <el-tabs type="border-card">
                             <el-tab-pane label="维护">维护</el-tab-pane>
                             <el-tab-pane label="修改">修改</el-tab-pane>
@@ -127,7 +127,8 @@
             padding: 25px 50px;
             .el-row {
                 .grid-content {
-                    border: 1px solid #d7d7d7;
+                    box-shadow: 0px 0px 10px #e3e3e3;
+                    // border: 1px solid #d7d7d7;
                     margin-bottom: 20px;
                     &:last-child {
                         margin-bottom: 0;

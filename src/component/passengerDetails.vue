@@ -109,7 +109,8 @@
             padding: 25px 50px;
             .el-row {
                 .grid-content {
-                    border: 1px solid #d7d7d7;
+                    box-shadow: 0px 0px 10px #e3e3e3;
+                    // border: 1px solid #d7d7d7;
                     margin-bottom: 20px;
                     min-height: 100px;
                     &:last-child {

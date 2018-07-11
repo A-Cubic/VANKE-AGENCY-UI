@@ -6,13 +6,13 @@
             <div class="house_search">
                 <div class="house_search_header">
                     <el-input size="medium" v-model="searchMes" placeholder="请输入内容"></el-input>
-                    <el-button size="medium"  type="danger" plain icon="el-icon-search">搜索</el-button>
+                    <el-button size="medium"  type="primary" icon="el-icon-search">搜索</el-button>
                     <el-button type="text" icon="el-icon-plus" class="add_button">新增</el-button>
                 </div>
                 <div class="house_search_block">
                     <el-form :model="formData" ref="formData" class="form-wrap">
                         <el-form-item label="商圈:">
-							<el-button :type="item.choosed == false ? '' : 'danger'"
+							<el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.businessList"
                                        @click="searchHouseType(index, formData.houseTypeList)">
@@ -22,7 +22,7 @@
                         
 
                         <el-form-item label="价格:">
-                            <el-button :type="item.choosed == false ? '' : 'danger'"
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.totalPriceList"
                                        @click="searchTotalPrice(index, formData.totalPriceList)">
@@ -31,7 +31,7 @@
                         </el-form-item>
 
                         <el-form-item label="面积:">
-                            <el-button :type="item.choosed == false ? '' : 'danger'"
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.areaList"
                                        @click="searchTotalPrice(index, formData.totalPriceList)">
@@ -39,7 +39,7 @@
                             </el-button>
                         </el-form-item>
                         <el-form-item label="房型:">
-                            <el-button :type="item.choosed == false ? '' : 'danger'"
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.houseTypeList"
                                        @click="searchHouseType(index, formData.houseTypeList)">
@@ -47,7 +47,7 @@
                             </el-button>
                         </el-form-item>
                         <el-form-item label="朝向:">
-                            <el-button :type="item.choosed == false ? '' : 'danger'"
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.towardList"
                                        @click="searchHouseType(index, formData.houseTypeList)">
@@ -55,7 +55,7 @@
                             </el-button>
                         </el-form-item>
                         <el-form-item label="楼层:">
-                            <el-button :type="item.choosed == false ? '' : 'danger'"
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.floorList"
                                        @click="searchHouseType(index, formData.houseTypeList)">
@@ -72,8 +72,8 @@
 
             <div class="house_table">
 
-                <el-table :data="tableData" size="medium" style="width: 100%" @row-click="examineById">
-                    <el-table-column label="标题图" width="180">
+                <el-table :data="tableData"  size="medium" style="width: 100%" @row-click="examineById">
+                    <el-table-column fixed label="标题图" width="180">
                         <template scope="scope">
                             <img class="imageUrl" :src="scope.row.imageUrl" alt="">
                         </template>
@@ -494,7 +494,7 @@ export default {
                 .imageUrl{
                     height: 100px;
                     width: 150px;
-                    border: 1px solid #d7d7d7
+                    // border: 1px solid #d7d7d7
                 }
             }
         }

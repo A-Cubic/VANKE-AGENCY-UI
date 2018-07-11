@@ -6,7 +6,9 @@
   // cursor: default;
   user-select: none;
 }
-
+.el-badge__content{
+  background: #409eff;
+}
 .el-dialog--tiny{
     min-width:480px;
 }

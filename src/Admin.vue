@@ -2,13 +2,13 @@
     <section class="app">
         <!--<Default :success="loginHidden"></Default>-->
         <header :class="header?'this_header':'this_header none'">
-            <img src="./assets/img/wankeLogo.png" alt="logo">
+            <img src="./assets/img/wankeLogo的副本.png" alt="logo">
             <!-- <h1>万科有家</h1> -->
             <nav class="this_nav">
                 <el-menu
-                background-color="#fff"
-                text-color="#ff0909"
-                active-text-color="#e60213"
+                background-color="#c51010"
+                text-color="#fff"
+                active-text-color="#fff"
                     :router="true"
                     default-active="2"
                     mode="horizontal"
@@ -105,9 +105,13 @@ export default {
         .el-menu--horizontal{
             border:none;
         }
+        .el-badge__content{
+                background:'#409eff';
+            }
         .f22{
             margin-right: 20px;
             font-size:22px;
+            color:#fff;
             i{
                 font-size:22px;
             }
@@ -117,11 +121,15 @@ export default {
         height: 100%;
 
         .this_header{
+            position:fixed;
+            top: 0;
+            z-index: 999;
+            width:100%;
             height: 70px;
             display:flex;
             align-items:center;
             border-bottom:3px solid rgb(238, 246, 243);
-            background:#fff;
+            background:#c51010;
             padding-left: 1.5em;
             img{
                 width:100px;
@@ -147,6 +155,7 @@ export default {
         }
         .none{display:none}
         .this_section{
+            margin-top:70px;
             height: 100%;
             width:100%;
             display:flex;
@@ -166,7 +175,7 @@ export default {
                 flex-grow:2;
 
 
-                overflow:scroll;
+                // overflow:scroll;
             }
         }
     }

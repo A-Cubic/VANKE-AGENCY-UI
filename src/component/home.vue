@@ -7,13 +7,24 @@
                         <div class="header-img">
                             <img src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg" alt="">
                         </div>
+                        <div class="user-mes">
+                            <div class="user_name">
+                                你叫狗剩
+                            </div>
+                        </div>
                     </div>
                 </el-col>
                 <el-col :span="8">
-                    <div class="grid-content-col8">当前业绩</div>
+                    <div class="grid-content-col8">
+                        <div class="title">当前业绩</div>
+                        <div class="number">786</div>
+                    </div>
                 </el-col>
                 <el-col :span="8">
-                    <div class="grid-content-col8">潜在业绩</div>
+                    <div class="grid-content-col8">
+                        <div class="title">潜在业绩</div>
+                        <div class="number">1234</div>
+                    </div>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -24,35 +35,27 @@
                                 <span>排行榜</span>
                             </div>
                             <div class="table-button">
-                                <el-button type="danger" plain>月</el-button>
-                                <el-button type="danger" plain>周</el-button>
+                                <el-button type="primary"
+                                           :plain="dataStatus == 0 ? false : true"
+                                           @click="search(0)">周</el-button>
+                                <el-button type="primary"
+                                           :plain="dataStatus == 1 ? false : true"
+                                           @click="search(1)">月</el-button>
                             </div>
                             <div class="table-wrap">
-                                <el-table
-                                        :data="tableData"
-                                        style="width: 100%">
-                                    <el-table-column
-                                            prop="date"
-                                            label="日期"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="name"
-                                            label="姓名"
-                                            width="180">
-                                    </el-table-column>
-                                    <el-table-column
-                                            prop="address"
-                                            label="地址">
-                                    </el-table-column>
+                                <el-table :data="dataList" style="width: 100%">
+                                    <el-table-column prop="date" label="日期" width="180"></el-table-column>
+                                    <el-table-column prop="name" label="姓名" width="180"></el-table-column>
+                                    <el-table-column prop="address" label="地址"></el-table-column>
                                 </el-table>
                             </div>
                             <div class="table-pagination">
                                 <el-pagination
-                                        :page-sizes="[100, 200, 300, 400]"
-                                        :page-size="100"
-                                        layout="total, prev, pager, next, jumper"
-                                        :total="400">
+                                        layout="prev, pager, next, jumper, total"
+                                        :page-size="page_size"
+                                        :current-page.sync="page_no"
+                                        :total ="total_row"
+                                        @current-change="handleCurrentChangeSearch">
                                 </el-pagination>
                             </div>
                         </el-card>
@@ -71,7 +74,6 @@
                             <div v-for="(item, index) in newsList" :key="index" class="text item">
                                 {{ item.news }}
                             </div>
-
                         </el-card>
                     </div>
                 </el-col>
@@ -80,46 +82,36 @@
     </section>
 </template>
 <script>
+    import _axios from '../axios/axios.js'
 export default {
     data() {
         return {
-            tableData: [{
-                date: '2016-05-02',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-                date: '2016-05-04',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1517 弄'
-            }, {
-                date: '2016-05-01',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1519 弄'
-            }, {
-                date: '2016-05-03',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1516 弄'
-            }, {
-                date: '2016-05-03',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1516 弄'
-            }, {
-                date: '2016-05-03',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1516 弄'
-            }, {
-                date: '2016-05-03',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1516 弄'
-            }, {
-                date: '2016-05-03',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1516 弄'
-            }, {
-                date: '2016-05-03',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1516 弄'
-            }],
+            dataStatus: 0,
+            dataList:[
+                {
+                    date: '2016-05-02',
+                    name: '王小虎',
+                    address: '大连市甘井子区'
+                },
+                {
+                    date: '2016-05-04',
+                    name: '王小龙',
+                    address: '大连市金州区'
+                },
+                {
+                    date: '2016-05-01',
+                    name: '王小豹',
+                    address: '大连市西岗区'
+                },
+                {
+                    date: '2016-05-03',
+                    name: '王小狼',
+                    address: '大连市中山区'
+                },
+            ],
+            total_row: 0,
+            page_no: 1,
+            page_size: 10,
 
             goodHouseList:[
                 {
@@ -152,7 +144,35 @@ export default {
         };
     },
     methods: {
-				
+        handleCurrentChangeSearch(val){
+            this.page_no = val;
+            this.doSearch();
+        },
+        doSearch(){
+            var that = this;
+            var postData = {
+                status: this.dataStatus,
+            };
+            // _axios.JH_mes('', postData)
+            //     .then(res => {
+            //         if(typeof(res) != "object") res = JSON.parse(res);
+            //         if(res.success){
+            //             console.log(res.data);
+            //             that.dataList = [];
+            //         }else{
+            //             console.log(res);
+            //         }
+            //     })
+            //     .catch(error => {
+            //         console.log(error);
+            //     });
+        },
+        search(status){
+            this.page_no = 1;
+            this.dataStatus = status;
+            this.doSearch();
+
+        }
     }
 };
 </script>
@@ -160,7 +180,7 @@ export default {
 @import "../assets/css/element.less";
 
 .home {
-	/*border:1px solid red;*/
+    /*border:1px solid red;*/
     .home-template{
         width: 100%;
         padding: 25px 50px;
@@ -172,16 +192,38 @@ export default {
             /*border: 1px solid #d7d7d7;*/
             border-right: none;
             .grid-content-col8{
-                height: 120px;
+                height: 140px;
                 box-shadow: 0px 0px 10px #e3e3e3;
-               .header-img{
-                   width: 100px;
-                   height: 100px;
-                   img{
-                       width: 100%;
-                       height: 100%;
-                       border-radius: 100px;
-                   }
+                overflow: hidden;
+                .header-img{
+                    float: left;
+                    width: 120px;
+                    height: 120px;
+                    margin: 10px 10px 0 10px;
+                    img{
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 100px;
+                    }
+                }
+                .user-mes{
+                    float: left;
+                    height: 120px;
+                    margin: 10px 0 0;
+                    .user_name{
+                        height: 30px;
+                        line-height: 30px;
+                        font-size: 15px;
+                    }
+                }
+                .title{
+                    font-size: 15px;
+                    padding: 30px 0 10px 50px ;
+                }
+                .number{
+                    font-size: 30px;
+                    padding: 0 50px;
+                    color: #c51010;;
                 }
 
             }
@@ -195,7 +237,7 @@ export default {
                 .table-wrap{
                     margin: 20px 10px;
                     /*box-shadow: 0px 0px 10px #e3e3e3;*/
-                    border: 1px solid #d7d7d7;
+                    border: 1px solid #f2f2f2;
                 }
                 .table-pagination{
                     text-align: right;

@@ -10,7 +10,7 @@
                 <div class="passenger_search_block">
                     <el-form :model="formData" ref="formData" class="form-wrap">
                         <el-form-item label="星级:">
-                            <el-button :type="item.choosed == false ? '' : 'danger'"
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.passengeLevelList"
                                        @click="searchPassengeLevel(index, formData.passengeLevelList)">
@@ -20,7 +20,7 @@
                         </el-form-item>
 
                         <el-form-item label="进度:">
-                            <el-button :type="item.choosed == false ? '' : 'danger'"
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.scheduleList"
                                        @click="searchSchedule(index, formData.scheduleList)">
@@ -39,7 +39,7 @@
             <div class="passenger_table">
 
                 <el-table :data="tableData" size="medium" style="width: 100%" @row-click="examineById">
-                    <el-table-column label="姓名" width="180">
+                    <el-table-column fixed label="姓名" width="180">
                         <template scope="scope">
                             <div>
                                 {{scope.row.name}}
@@ -207,7 +207,8 @@
             padding: 25px 50px;
             .passenger_search{
                 padding: 20px;
-                border: 1px solid #d7d7d7;
+                box-shadow: 0px 0px 10px #e3e3e3;
+                // border: 1px solid #d7d7d7;
                 .passenger_search_header{
                     position: relative;
 
@@ -242,14 +243,11 @@
             .passenger_table{
                 margin-top: 20px;
                 padding: 20px;
-                border: 1px solid #d7d7d7;
+                box-shadow: 0px 0px 10px #e3e3e3;
+                // border: 1px solid #d7d7d7;
                 .el-table{
                     /*border: 1px solid #d7d7d7;*/
-                    .imageUrl{
-                        height: 100px;
-                        width: 150px;
-                        border: 1px solid #d7d7d7
-                    }
+                    
                 }
             }
         }
