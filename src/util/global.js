@@ -2,7 +2,7 @@
 const TOKEN = 'Admin-Token';
 const ROLE = 'User-Role';
 
-export const BASE_API = 'http://console.home.vanke.com/vanke'
+export const BASE_API = '/vanke'
 
 export function getToken() {
     return window.localStorage.getItem(TOKEN)
