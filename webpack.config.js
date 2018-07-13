@@ -27,7 +27,7 @@ module.exports = {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 exclude: path.resolve(__dirname,"./node_modules"),
-                include: path.resolve(__dirname, "./src")
+                include: [path.resolve(__dirname, "./src"), path.resolve(__dirname, ".")]
         }, {
                 test: /\.(png|jpg|gif|svg)$/,
                 loader: 'file-loader',
@@ -58,10 +58,10 @@ module.exports = {
             jQuery: "jquery",
             "window.jQuery": "jquery"
         }),
-        // new HtmlWebpackPlugin({
-        //     title: '鲜丰水果大数据平台',
-        //     template: 'index.html' // 模板路径
-        // }),
+        new HtmlWebpackPlugin({
+            title: '鲜丰水果大数据平台',
+            template: 'index.html' // 模板路径
+        }),
     ],
     resolve: {
         alias: {
