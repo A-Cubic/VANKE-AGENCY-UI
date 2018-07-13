@@ -20,7 +20,7 @@
 								</el-input>
 							</el-form-item>
 							<el-form-item class="login-form-item">
-								<el-button type="primary" class="common" @click.native.prevent="handleLogin" :loading="logining">登录</el-button>
+								<el-button type="primary" class="common" @click.native.prevent="handleLoginReal" :loading="logining">登录</el-button>
 							</el-form-item>
 							<el-form-item class="login-form-item">
 								<span>
@@ -59,70 +59,104 @@
 			}
 		},
         created (){
-            var str =  localStorage.getItem('now_user');
-            if (str) {
-                var login_local = JSON.parse(localStorage.getItem('now_user'));
-                this.loginForm = login_local;
-            }
+            // var str =  localStorage.getItem('now_user');
+            // if (str) {
+            //     var login_local = JSON.parse(localStorage.getItem('now_user'));
+            //     this.loginForm = login_local;
+            // }
         },
         filters: {},
         watch: {},
         computed: {},
         methods: {
-            handleLogin(){
+            // handleLogin(){
+            //     console.log()
+            //     let that = this;
+            //     this.$refs.loginForm.validate((valid) => {
+            //         console.log(valid)
+            //         if (valid) {
+            //             this.logining = true;
+            //             var postData = {"user_code": that.loginForm.code, "user_pass": that.loginForm.checkPass};
+            //             LoginApi.login(postData).then(function (result) {
+            //                 if(typeof(result) != "object"){result = JSON.parse(result)}
+            //                 that.logining = false;
+            //                 if(result.code == 701){
+            //                     that.$message.error({showClose: true, message: result.msg || '查无此用户, 请检查是否输入错误', duration: 2000});
+            //                 }else if(result.code == 0&&result.data){
+            //                     localStorage.setItem('now_user', JSON.stringify(that.loginForm));
+            //
+            //
+            //                     setRole('user')
+				// 				setToken('abcd1234')
+            //
+            //
+            //
+            //                     console.log(result.data)
+            //                     that.$message.success({showClose: true, message: result.msg || '登陆成功', duration: 2000});
+            //                     console.log(result)
+            //                     if(result.data.account_type == 1){
+            //                         that.$router.push({path: '/admin/home'});
+            //                         // this.$emit('success')
+            //                     }
+            //                 }else {
+            //                     that.$message.error({showClose: true, message: result.msg || '登录失败', duration: 2000});
+            //                 }
+            //             }).catch(error => {
+            //                 //超时之后在这里捕抓错误信息.
+            //                 if (error.response) {
+            //                     console.log('error.response');
+            //                     console.log(error.response);
+            //                     that.$message.error({showClose: true, message: result.msg || '登录失败', duration: 2000});
+            //                 } else if (error.request) {
+            //                     console.log('error.request');
+            //                     if(error.request.readyState == 4 && error.request.status == 0){
+            //                         //我在这里重新请求
+            //                         console.log("重新请求")
+            //                     }
+            //                 } else {
+            //                     console.log('Error', error.message);
+            //                     that.$message.error({showClose: true, message: result.msg || '登录失败', duration: 2000});
+            //                 }
+            //                 console.log(error.config);
+            //             })
+            //         }
+            //     });
+            // },
+            handleLoginReal(){
                 console.log()
                 let that = this;
                 this.$refs.loginForm.validate((valid) => {
                     console.log(valid)
                     if (valid) {
                         this.logining = true;
-                        var postData = {"user_code": that.loginForm.code, "user_pass": that.loginForm.checkPass};
+                        var postData = {"username": that.loginForm.code, "password": that.loginForm.checkPass};
                         LoginApi.login(postData).then(function (result) {
+                            console.log(result)
                             if(typeof(result) != "object"){result = JSON.parse(result)}
                             that.logining = false;
                             if(result.code == 701){
                                 that.$message.error({showClose: true, message: result.msg || '查无此用户, 请检查是否输入错误', duration: 2000});
-                            }else if(result.code == 0&&result.data){
-                                localStorage.setItem('now_user', JSON.stringify(that.loginForm));
-
-
-                                setRole('user')
-								setToken('abcd1234')
-
-
-
-                                console.log(result.data)
-                                that.$message.success({showClose: true, message: result.msg || '登陆成功', duration: 2000});
-                                console.log(result)
-                                if(result.data.account_type == 1){
-                                    that.$router.push({path: '/admin/home'});
-                                    // this.$emit('success')
-                                }
+                            }else if(result.code == 200&&result.data){
+                                setRole(result.data.authorities);
+                                setToken(result.data.token);
+                                that.$router.push({path: '/admin/home'});
                             }else {
                                 that.$message.error({showClose: true, message: result.msg || '登录失败', duration: 2000});
                             }
                         }).catch(error => {
-                            //超时之后在这里捕抓错误信息.
-                            if (error.response) {
-                                console.log('error.response');
-                                console.log(error.response);
-                                that.$message.error({showClose: true, message: result.msg || '登录失败', duration: 2000});
-                            } else if (error.request) {
-                                console.log('error.request');
-                                if(error.request.readyState == 4 && error.request.status == 0){
-                                    //我在这里重新请求
-                                    console.log("重新请求")
-                                }
-                            } else {
-                                console.log('Error', error.message);
-                                that.$message.error({showClose: true, message: result.msg || '登录失败', duration: 2000});
-                            }
-                            console.log(error.config);
+                            console.log('login_error');
+                            // if (error.response) {
+                            //     that.$message.error({showClose: true, message: result.msg || '登录失败', duration: 2000});
+                            // } else if (error.request) {
+                            //     if(error.request.readyState == 4 && error.request.status == 0){
+                            //     }
+                            // } else {
+                            //     that.$message.error({showClose: true, message: result.msg || '登录失败', duration: 2000});
+                            // }
                         })
                     }
                 });
             },
-
             enterToLogin(ev){
                 ev.keyCode === 13 && this.handleLogin()
             }
