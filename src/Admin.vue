@@ -163,7 +163,7 @@ export default {
             border:none;
         }
         .el-badge__content{
-            background-color: transparent;:'#409EFF';
+                background:'#409eff';
             }
         .f22{
             margin-right: 20px;
