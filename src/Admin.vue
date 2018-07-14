@@ -87,7 +87,7 @@ export default {
         };
     },
     created() {
-        Vue.use(VueWebsocket, "ws://vanke.a-cubic.com", {
+        var ws = Vue.use(VueWebsocket, "ws://vanke.a-cubic.com", {
             path: "/vanke/user/ws",
             query: {
                 token: getToken()
@@ -96,6 +96,7 @@ export default {
             reconnection: false
 
         });
+        console.log(ws)
     },
     methods: {
         add() {
