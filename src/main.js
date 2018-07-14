@@ -3,6 +3,8 @@ import App 				from './App.vue'
 import store			from './vuex/vuex.js'
 import router           from'./router/router.js';
 import ElementUI 		from 'element-ui'
+
+
 import './resource/resiyrce.js';
 import './component/custom/custom.js';
 import './directive/directive.js';
@@ -15,7 +17,8 @@ import './assets/css/reset01.css';
 /* mockjs*/
 require('./mock/mock.js'); //引入mock
 
-Vue.use(ElementUI)
+Vue.use(ElementUI);
+
 // Vue.use(VueRouter)
 // Vue.use(VueResource)
 // require('./assets/css/amazeui.min.css');
