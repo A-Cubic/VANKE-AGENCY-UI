@@ -86,6 +86,9 @@
 </template>
 <script>
     // import Default from './component/default'
+    import Vue 				from 'vue'
+    import VueWebsocket 	from 'vue-websocket';
+    import { getToken }               from './util/global'
 export default {
     name: 'app',
     // components:{Default},
@@ -100,7 +103,20 @@ export default {
             }
         };
     },
+    created() {
+        var ws = Vue.use(VueWebsocket, "ws://vanke.a-cubic.com", {
+            path: "/vanke/user/ws",
+            query: {
+                token: getToken()
+            },
+            transports: ['websocket'],
+            reconnection: false
+
+        });
+        console.log(ws)
+    },
     methods: {
+
     	handleCloseAddressBook(done) {
 
     		this.addressBook.visible = false
@@ -110,6 +126,17 @@ export default {
         //   })
         //   .catch(_ => {});
       },
+
+        add() {
+            this.$socket.emit("add", { a: 5, b: 3 });
+        },
+
+        get() {
+            this.$socket.emit("get", { id: 12 }, (response) => {
+                console.log(response)
+            });
+        },
+
         loginHidden(){
             this.header = true;
             this.$router.push({path: '/log'});
@@ -123,7 +150,40 @@ export default {
         // view_application(item){
         //     this.$refs.viewRequisition.$emit('start', this.copy(item));
         // },
+    },
+    socket: {
+        // Prefix for event names
+        // prefix: "/counter/",
+
+        // If you set `namespace`, it will create a new socket connection to the namespace instead of `/`
+        // namespace: "/counter",
+
+        events: {
+
+            // Similar as this.$socket.on("changed", (msg) => { ... });
+            // If you set `prefix` to `/counter/`, the event name will be `/counter/changed`
+            //
+            changed(msg) {
+                console.log("Something changed: " + msg);
+            },
+
+
+            connect() {
+                console.log("Websocket connected to " + this.$socket.nsp);
+            },
+
+            disconnect() {
+                console.log("Websocket disconnected from " + this.$socket.nsp);
+            },
+
+            error(err) {
+                console.error("Websocket error!", err);
+            }
+
+
+        }
     }
+
 }
 </script>
 <style lang="less" scoped>
