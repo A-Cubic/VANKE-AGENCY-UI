@@ -3,6 +3,7 @@ import App 				from './App.vue'
 import store			from './vuex/vuex.js'
 import router           from'./router/router.js';
 import ElementUI 		from 'element-ui'
+import _ from 'lodash';
 import './resource/resiyrce.js';
 import './component/custom/custom.js';
 import './directive/directive.js';

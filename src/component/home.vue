@@ -70,7 +70,7 @@
                             </div>
                         </el-card>
                         <el-card class="box-card" shadow="always">
-                            <div slot="header" class="clearfix">资讯</div>
+                            <div slot="header" class="clearfix">最新资讯</div>
                             <div v-for="(item, index) in newsList" :key="index" class="text item">
                                 {{ item.news }}
                             </div>

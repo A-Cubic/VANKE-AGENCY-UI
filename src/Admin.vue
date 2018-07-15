@@ -1,7 +1,7 @@
 <template>
     <section class="app">
         <!--<Default :success="loginHidden"></Default>-->
-        <header :class="header?'this_header':'this_header none'">
+        <header class="this_header">
             <img src="./assets/img/wankeLogo的副本.png" alt="logo">
             <!-- <h1>万科有家</h1> -->
             <nav class="this_nav">
@@ -61,7 +61,6 @@
              <span class="f22">
                  <i class="el-icon-setting "></i>
              </span>
-             
         </header>
         <section class="this_section">
             <!-- <nav class="this_nav">
@@ -69,7 +68,21 @@
             </nav> -->
             <router-view class="view router"></router-view>
         </section>
+        <aside class="alert">
+            <el-dialog
+                  title="提示"
+                  :visible.sync="addressBook.visible"
+                  width="800px"
+                  :before-close="handleCloseAddressBook">
+                  <span>这是一段信息</span>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="addressBook.visible = false">确 定</el-button>
+                  </span>
+                </el-dialog>
+        </aside>
     </section>
+    
 </template>
 <script>
     // import Default from './component/default'
@@ -78,12 +91,25 @@ export default {
     // components:{Default},
     data() {
         return {
-            header: true,
             activeIndex: '1',
             activeIndex2: '1',
+
+            addressBook:{
+                visible: true,
+                formLabelWidth: '120px',
+            }
         };
     },
     methods: {
+    	handleCloseAddressBook(done) {
+
+    		this.addressBook.visible = false
+        // this.$confirm('确认关闭？')
+        //   .then(_ => {
+        //     done();
+        //   })
+        //   .catch(_ => {});
+      },
         loginHidden(){
             this.header = true;
             this.$router.push({path: '/log'});
@@ -125,6 +151,7 @@ export default {
             top: 0;
             z-index: 999;
             width:100%;
+            min-width:1000px;
             height: 70px;
             display:flex;
             align-items:center;
@@ -161,11 +188,11 @@ export default {
             display:flex;
             // border:1px solid red;
             .this_nav{
-                min-width: 200px;
+                // min-width: 200px;
                 // background: rgb(238, 246, 243);
                 // height: 100%;
                 // max-height: 100%;
-                overflow: auto;
+                // overflow: auto;
             }
             .view{
                 display:flex;
