@@ -22,18 +22,18 @@
                             </div>
                         </li>
                         <li>
-                            <span class="user-title">客源编号: </span>
+                            <span class="user-title">客源编号： </span>
                             <span class="user-mes">{{formUser.userCode}}</span>
                         </li>
                         <li>
-                            <span class="user-title">上次维护: </span>
+                            <span class="user-title">上次维护： </span>
                             <span class="user-mes">{{formUser.lastTime}}</span>
-                            <span class="user-title">委托时间: </span>
+                            <span class="user-title">委托时间： </span>
                             <span class="user-mes">{{formUser.entrustTime}}</span>
                         </li>
                         <li>
-                            <span class="user-title">标签:: </span>
-                            <el-tag v-for="(item, index) in formUser.userTags" :key="index">
+                            <span class="user-title">标签：</span>
+                            <el-tag v-for="(item, index) in formUser.userTags" :key="index" type="success">
                                 {{ item.tagName }}
                             </el-tag>
                         </li>

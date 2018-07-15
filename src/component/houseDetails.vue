@@ -63,11 +63,6 @@
                             </div>
                         </li>
                         <li>
-                            <!--<el-card class="box-card" shadow="never">-->
-                                <!--<div slot="header" class="clearfix"><span>看房情况</span><el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
-                                <!--</div>-->
-                                <!--<div v-for="o in 4" :key="o" class="text item">{{'列表内容 ' + o }}</div>-->
-                            <!--</el-card>-->
                             <div class="radius-wrap">
                                 <div class="radius-block">
                                     <div><i class="el-icon-edit"></i></div>
@@ -83,11 +78,21 @@
                                     <div><i class="el-icon-edit"></i></div>
                                     <div>实勘</div>
                                     <div class="radius-data">{{ radiusForm.examine }}</div>
+                                    <el-button type="text"
+                                               size="small"
+                                               icon="el-icon-plus"
+                                               @click="examineHandel">
+                                    </el-button>
                                 </div>
                                 <div class="radius-block">
                                     <div><i class="el-icon-edit"></i></div>
                                     <div>钥匙</div>
                                     <div class="radius-data">{{ radiusForm.key }}</div>
+                                    <el-button type="text"
+                                               size="small"
+                                               icon="el-icon-plus"
+                                               @click="keyHandel">
+                                    </el-button>
                                 </div>
                                 <div class="radius-block">
                                     <div><i class="el-icon-edit"></i></div>
@@ -116,22 +121,73 @@
                                             @current-change="">
                                     </el-pagination>
                                 </div>
-
                                 <div class="trace-template">
                                     <div class="trace-title">跟进</div>
                                     <div class="trace-textarea">
                                         <el-input type="textarea" :rows="4" placeholder="请输入反馈" v-model="traceForm.textMes"></el-input>
                                     </div>
                                 </div>
-
                                 <div class="trace-button">
-                                    <el-button type="primary" @click="">提交</el-button>
+                                    <el-button type="primary" size="mini" @click="">提交</el-button>
                                 </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="带看">
+                                <el-table :data="lookForm.lookList" :show-header="false" style="width: 100%">
+                                    <el-table-column prop="date" label="日期"></el-table-column>
+                                    <el-table-column prop="peopleName" label="维护人"></el-table-column>
+                                </el-table>
+                                <div class="pagination-template">
+                                    <el-pagination
+                                            layout="prev, pager, next, jumper, total"
+                                            :page-size="lookForm.pageSize"
+                                            :current-page.sync="lookForm.pageNo"
+                                            :total ="lookForm.totalRow"
+                                            @current-change="">
+                                    </el-pagination>
+                                </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="修改">
+                                <el-form :model="editForm" ref="editForm" label-width="60px" class="demo-ruleForm">
+                                    <el-form-item label="价格:">
+                                        <el-input placeholder="请输入" v-model="editForm.totalPrice"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="户型:">
+                                        <el-input placeholder="请输入" v-model="editForm.houseType"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="面积:">
+                                        <el-input placeholder="请输入" v-model="editForm.area"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="朝向:">
+                                        <el-input placeholder="请输入" v-model="editForm.orientation"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="楼层:">
+                                        <el-input placeholder="请输入" v-model="editForm.floor"></el-input>
+                                    </el-form-item>
+                                    <div style="text-align: right">
+                                        <el-button type="primary" size="mini" @click="editSubmit">提交</el-button>
+                                    </div>
+                                </el-form>
+                            </el-tab-pane>
+                            <el-tab-pane label="其他">
+                                <el-form :model="otherForm"
+                                         ref="otherForm"
+                                         label-width="120px"
+                                         class="demo-ruleForm"
+                                         label-position="left">
+                                    <el-form-item label="特殊房源:">
+                                        <el-switch v-model="otherForm.specialHouse"></el-switch>
+                                    </el-form-item>
+                                    <el-form-item label="无效房源:">
+                                        <el-switch v-model="otherForm.invalidHouse"></el-switch>
+                                    </el-form-item>
+                                    <el-form-item label="房源转让:">
+                                        <el-button type="text" size="mini"
+                                                   @click="transferHandel">点击转让
+                                        </el-button>
+                                    </el-form-item>
+                                </el-form>
 
                             </el-tab-pane>
-                            <el-tab-pane label="带看">带看</el-tab-pane>
-                            <el-tab-pane label="修改">修改</el-tab-pane>
-                            <el-tab-pane label="其他">其他</el-tab-pane>
                         </el-tabs>
                     </div>
                 </el-col>
@@ -155,6 +211,48 @@
                     </span>
                 </el-dialog>
 
+                <el-dialog title="实勘添加" :visible.sync="examineVisible" width="50%">
+                    <el-form :model="examineForm" ref="examineForm" label-width="60px" class="demo-ruleForm">
+                        <el-form-item label="室:">{{ examineForm.bedroom }}</el-form-item>
+                        <el-form-item label="厅:">{{ examineForm.sittingRoom }}</el-form-item>
+                        <el-form-item label="卫:">{{ examineForm.toilet }}</el-form-item>
+                        <el-form-item label="厨:">{{ examineForm.kitchen }}</el-form-item>
+                        <el-form-item label="户型图:">{{ examineForm.houseTypeImg }}</el-form-item>
+                        <el-form-item label="其他:">{{ examineForm.other }}</el-form-item>
+                    </el-form>
+
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="examineVisible = false">退 出</el-button>
+                    </span>
+                </el-dialog>
+
+                <el-dialog title="房屋转让" :visible.sync="transferVisible" width="80%">
+                    <div class="transfer-wrap">
+                        <div class="transfer-wrap-header">
+                            <el-input placeholder="请输入人名" v-model="transferForm.name" clearable></el-input>
+                            <el-button class="m-btn-addMenu" type="primary" @click="searchTransfer">查询</el-button>
+                        </div>
+                        <div class="transfer-wrap-table">
+                            <el-table :data="transferForm.personList" style="width: 100%">
+                                <el-table-column prop="userCode" label="编号"></el-table-column>
+                                <el-table-column prop="userName" label="姓名"></el-table-column>
+                                <el-table-column label="操作">
+                                    <template scope="scope">
+                                        <el-checkbox v-model="scope.row.checked"
+                                                     :disabled="scope.row.disabled"
+                                                     @change="checkTransfer(scope.row)">选择
+                                        </el-checkbox>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="transferVisible = false">退 出</el-button>
+                        <el-button type="primary" @click="finishTransfer">确 定</el-button>
+                    </span>
+                </el-dialog>
+
             </el-row>
         </div>
     </section>
@@ -175,19 +273,18 @@
                     keyVisible: '无',
                     maintenanceMan: '王小虎',
                     houseLevel: 'B',
-                },
+                },  //右侧头部数据
 
                 ownerVisible: false, //房主信息dialog
                 ownerForm: {
                     name: '王大虎',
                     phone: '13245678349',
                 },
-                placeVisible: false,
+                placeVisible: false, //地址信息dialog
                 placeForm: {
                     placeName: '辽宁省大连市甘井子区',
                 },
-
-                uploadData:{},
+                uploadData:{},  //提交postData
                 carouselList:[
                     {
                         imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg'
@@ -205,14 +302,23 @@
                         imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=621015648,1160215088&fm=27&gp=0.jpg'
                     }
 
-                ],
-
+                ],  //走马灯
                 radiusForm:{
                     entering: '钢铁侠',
                     maintain: '美国队长',
                     examine: '绿巨人',
                     key: '雷神',
                     exclusive: '蜘蛛侠',
+                },  //圆框标签
+
+                examineVisible: false, //实勘dialog
+                examineForm:{
+                    bedroom: 2,
+                    sittingRoom: 1,
+                    toilet: 1,
+                    kitchen: 1,
+                    houseTypeImg: 3,
+                    other: 2,
                 },
 
                 traceForm: {
@@ -223,10 +329,65 @@
                         {
                             date: '2018-06-09',
                             peopleName: '王小虎',
+                        },
+                        {
+                            date: '2018-06-09',
+                            peopleName: '王小虎',
+                        },
+                        {
+                            date: '2018-06-09',
+                            peopleName: '王小虎',
+                        },
+                        {
+                            date: '2018-06-09',
+                            peopleName: '王小虎',
+                        },
+                        {
+                            date: '2018-06-09',
+                            peopleName: '王小虎',
                         }
                     ],
                     textMes: ''
+                },  //跟进
+                lookForm:{
+                    pageNo: 1,
+                    pageSize: 5,
+                    totalRow: 0,
+                    lookList: [
+                        {
+                            date: '2018-06-09',
+                            peopleName: '王大虎',
+                        },
+                        {
+                            date: '2018-06-09',
+                            peopleName: '王二虎',
+                        },
+                        {
+                            date: '2018-06-09',
+                            peopleName: '王三虎',
+                        }
+                    ],
+                },  //带看
+                editForm:{
+                    totalPrice: '100万',
+                    houseType: '2室',
+                    area: '91平',
+                    orientation: '南北',
+                    floor: '5楼',
+                },  //修改
+                otherForm: {
+                    specialHouse: false,
+                    invalidHouse: true,
+                    transferHouse: false,
                 },
+                transferVisible: false,  //转让dialog
+                transferForm: {
+                    name:'',
+                    personList: [],
+                    chooseName: '',
+                    chooseCode: '',
+                },
+                checkTransferList: [],
 
 
 
@@ -251,7 +412,74 @@
             },  //查看房主信息
             placeHandle(){
                 this.placeVisible = true;
-            },
+            },  //查看地址信息
+            examineHandel(){
+                this.examineVisible = true;
+            },  //实勘填图
+            keyHandel(){
+                this.$confirm('此操作将钥匙所有人更改为当前用户, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '更改成功!'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消更改!'
+                    });
+                });
+            },  //修改钥匙所有人
+
+            editSubmit(){
+                var postData = this.editForm;
+                console.log(postData);
+                this.$message({
+                    message: '修改成功!',
+                    type: 'success'
+                });
+            },  //修改提交
+            transferHandel(){
+                this.transferForm.name = '';
+                this.transferForm.personList = [];
+                this.transferForm.chooseName = '';
+                this.transferForm.chooseCode = '';
+                this.transferVisible = true;
+            },  //点击转让
+            searchTransfer(){
+                var that = this;
+                var postData = {
+                    user_name: this.transferForm.name
+                };
+                that.transferForm.personList = [];
+                that.transferForm.personList.push({
+                    id: 0,
+                    userName: '李明',
+                    userCode: '12345',
+                    checked: false,
+                    disabled: false,
+                });
+            },  //查找用户
+            checkTransfer(item){
+                this.transferForm.chooseName = item.userName;
+                this.transferForm.chooseCode = item.userCode;
+            },  //选择用户
+            finishTransfer(){
+                var postData = {
+                    id: this.transferForm.chooseCode,
+                    recordUserName: this.transferForm.chooseName
+                };
+                console.log(postData);
+                var url = '/vanke/house/updateRecordUserr';
+                this.transferVisible = false;
+                this.$message({
+                    message: '转让成功!',
+                    type: 'success'
+                });
+            },  //确定选择
 
 
 
@@ -355,22 +583,22 @@
                                 display: inline-block;
                                 box-shadow: 0px 0px 10px #e3e3e3;
                                 border-radius: 100px;
+                                position: relative;
+                                .el-button{
+                                    position: absolute;
+                                    bottom: 0;
+                                    left: 4.3vw;
+                                }
                                 div{
+                                    margin-top: 2px;
                                     &:first-child {
-                                        line-height: 2;
                                         font-size: 16px;
-                                    }
-                                    &:last-child {
-                                        color: #666666;
-                                        margin-top: 2px;
                                     }
                                 }
                             }
                         }
-
                     }
                 }
-
                 .tab-content{
                     box-shadow: 0px 0px 10px #e3e3e3;
                     .el-tabs{
@@ -379,8 +607,9 @@
                         box-shadow: none;
                         position: relative;
                         .pagination-template{
-                            margin-top: 10px;
+                            padding: 10px 0;
                             text-align: right;
+                            border-bottom: 1px solid #f2f2f2;
                         }
                         .trace-template{
                             margin-top: 10px;
@@ -397,6 +626,23 @@
                         .trace-button{
                             margin-top: 10px;
                             text-align: right;
+                        }
+                    }
+                }
+                .transfer-wrap{
+                    .transfer-wrap-header{
+                        padding: 20px;
+                        box-shadow: 0px 0px 10px #e3e3e3;
+                        .el-input{
+                            width: 200px;
+                        }
+                    }
+                    .transfer-wrap-table{
+                        padding: 20px;
+                        margin-top: 20px;
+                        box-shadow: 0px 0px 10px #e3e3e3;
+                        img{
+                            height: 11vw;
                         }
                     }
                 }
