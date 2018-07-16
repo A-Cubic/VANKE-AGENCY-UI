@@ -99,26 +99,31 @@ export default {
             addressBook:{
                 visible: true,
                 formLabelWidth: '120px',
-            }
+            },
+
+            chatRoomWebsocket: null
         };
     },
     created() {
-        this.ws = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
-        this.ws.onopen = this.wsOnOpen;
-        this.ws.onmessage = this.wsOnMessage;
-        this.ws.onclose = this.wsOnClose;
+        this.initWebsocket()
     },
     methods: {
+        initWebsocket() {
+            this.chatRoomWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
+            this.chatRoomWebsocket.onopen = this.wsOnOpen;
+            this.chatRoomWebsocket.onmessage = this.wsOnMessage;
+            this.chatRoomWebsocket.onclose = this.wsOnClose;
+        },
         wsOnOpen() {
             console.log('数据发送中...')
-            this.ws.send('Holle')
+            this.chatRoomWebsocket.send('Holle')
             console.log('数据发送完成')
         },
         wsOnMessage(e) {
             console.log('数据已接收...'+e.data)
         },
         wsOnClose() {
-            console.log('连接已关闭...')
+            console.log('数据已关闭')
         },
     	handleCloseAddressBook(done) {
     		this.addressBook.visible = false
