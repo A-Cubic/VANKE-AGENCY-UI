@@ -86,11 +86,10 @@
 </template>
 <script>
     // import Default from './component/default'
-    import Vue 				from 'vue'
-    import VueWebsocket 	from 'vue-websocket';
     import { getToken }               from './util/global'
 export default {
     name: 'app',
+    ws: null,
     // components:{Default},
     data() {
         return {
@@ -104,39 +103,31 @@ export default {
         };
     },
     created() {
-        var ws = Vue.use(VueWebsocket, "ws://vanke.a-cubic.com", {
-            path: "/vanke/com/ws",
-            query: {
-                token: getToken()
-            },
-            transports: ['websocket'],
-            reconnection: false
-
-        });
-        console.log(ws)
+        this.ws = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
+        this.ws.onopen = this.wsOnOpen;
+        this.ws.onmessage = this.wsOnMessage;
+        this.ws.onclose = this.wsOnClose;
     },
     methods: {
-
+        wsOnOpen() {
+            console.log('数据发送中...')
+            this.ws.send('Holle')
+            console.log('数据发送完成')
+        },
+        wsOnMessage(e) {
+            console.log('数据已接收...'+e.data)
+        },
+        wsOnClose() {
+            console.log('连接已关闭...')
+        },
     	handleCloseAddressBook(done) {
-
     		this.addressBook.visible = false
-        // this.$confirm('确认关闭？')
-        //   .then(_ => {
-        //     done();
-        //   })
-        //   .catch(_ => {});
-      },
-
-        add() {
-            this.$socket.emit("add", { a: 5, b: 3 });
+            // this.$confirm('确认关闭？')
+            //   .then(_ => {
+            //     done();
+            //   })
+            //   .catch(_ => {});
         },
-
-        get() {
-            this.$socket.emit("get", { id: 12 }, (response) => {
-                console.log(response)
-            });
-        },
-
         loginHidden(){
             this.header = true;
             this.$router.push({path: '/log'});
@@ -150,38 +141,6 @@ export default {
         // view_application(item){
         //     this.$refs.viewRequisition.$emit('start', this.copy(item));
         // },
-    },
-    socket: {
-        // Prefix for event names
-        // prefix: "/counter/",
-
-        // If you set `namespace`, it will create a new socket connection to the namespace instead of `/`
-        // namespace: "/counter",
-
-        events: {
-
-            // Similar as this.$socket.on("changed", (msg) => { ... });
-            // If you set `prefix` to `/counter/`, the event name will be `/counter/changed`
-            //
-            changed(msg) {
-                console.log("Something changed: " + msg);
-            },
-
-
-            connect() {
-                console.log("Websocket connected to " + this.$socket.nsp);
-            },
-
-            disconnect() {
-                console.log("Websocket disconnected from " + this.$socket.nsp);
-            },
-
-            error(err) {
-                console.error("Websocket error!", err);
-            }
-
-
-        }
     }
 
 }
