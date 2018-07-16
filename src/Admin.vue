@@ -105,7 +105,7 @@ export default {
     },
     created() {
         var ws = Vue.use(VueWebsocket, "ws://vanke.a-cubic.com", {
-            path: "/vanke/user/ws",
+            path: "/vanke/com/ws",
             query: {
                 token: getToken()
             },
