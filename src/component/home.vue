@@ -9,7 +9,16 @@
                         </div>
                         <div class="user-mes">
                             <div class="user_name">
-                                你叫狗剩
+                                名字：{{basic.name}}
+                            </div>
+                            <div class="user_name">
+                                工号：{{basic.workNum}}
+                            </div>
+                            <div class="user_name">
+                                门店：{{basic.shop}}
+                            </div>
+                            <div class="user_name">
+                                电话：{{basic.phone}}
                             </div>
                         </div>
                     </div>
@@ -17,13 +26,13 @@
                 <el-col :span="8">
                     <div class="grid-content-col8">
                         <div class="title">当前业绩</div>
-                        <div class="number">786</div>
+                        <div class="number">{{basic.currentResults}}</div>
                     </div>
                 </el-col>
                 <el-col :span="8">
                     <div class="grid-content-col8">
                         <div class="title">潜在业绩</div>
-                        <div class="number">1234</div>
+                        <div class="number">{{basic.potentialResults}}</div>
                     </div>
                 </el-col>
             </el-row>
@@ -36,25 +45,32 @@
                             </div>
                             <div class="table-button">
                                 <el-button type="primary"
-                                           :plain="dataStatus == 0 ? false : true"
+                                           :plain="ranking.dataStatus == 0 ? false : true"
                                            @click="search(0)">周</el-button>
                                 <el-button type="primary"
-                                           :plain="dataStatus == 1 ? false : true"
+                                           :plain="ranking.dataStatus == 1 ? false : true"
                                            @click="search(1)">月</el-button>
                             </div>
                             <div class="table-wrap">
-                                <el-table :data="dataList" style="width: 100%">
-                                    <el-table-column prop="date" label="日期" width="180"></el-table-column>
+                                <el-table :data="ranking.dataList" style="width: 100%">
+                                    <el-table-column  label="" width="40">
+                                        <template scope="scope">
+                                            <i class='el-icon-star-off' v-show='scope.row.rank*1==1'></i>
+                                            <i class='el-icon-star-on' v-show='scope.row.rank*1==2'></i>
+                                            <i class='el-icon-star-off' v-show='scope.row.rank*1==3'></i>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="rank" label="排名" width="180"></el-table-column>
                                     <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-                                    <el-table-column prop="address" label="地址"></el-table-column>
+                                    <el-table-column prop="address" label="业绩"></el-table-column>
                                 </el-table>
                             </div>
                             <div class="table-pagination">
                                 <el-pagination
                                         layout="prev, pager, next, jumper, total"
-                                        :page-size="page_size"
-                                        :current-page.sync="page_no"
-                                        :total ="total_row"
+                                        :page-size="ranking.pageSize"
+                                        :current-page.sync="ranking.currentPage"
+                                        :total ="ranking.total"
                                         @current-change="handleCurrentChangeSearch">
                                 </el-pagination>
                             </div>
@@ -86,32 +102,42 @@
 export default {
     data() {
         return {
-            dataStatus: 0,
-            dataList:[
-                {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '大连市甘井子区'
-                },
-                {
-                    date: '2016-05-04',
-                    name: '王小龙',
-                    address: '大连市金州区'
-                },
-                {
-                    date: '2016-05-01',
-                    name: '王小豹',
-                    address: '大连市西岗区'
-                },
-                {
-                    date: '2016-05-03',
-                    name: '王小狼',
-                    address: '大连市中山区'
-                },
-            ],
-            total_row: 0,
-            page_no: 1,
-            page_size: 10,
+            basic:{
+                name:'狗剩',
+                workNum:'12345',
+                shop:'中华门店',
+                phone:'155555555',
+                currentResults:'123',
+                potentialResults:'1234'
+            },
+            ranking:{
+                dataStatus: 0,
+                dataList:[
+                    {
+                        rank: 1,
+                        name: '王小虎',
+                        address: '大连市甘井子区'
+                    },
+                    {
+                        rank: 2,
+                        name: '王小龙',
+                        address: '大连市金州区'
+                    },
+                    {
+                        rank: 3,
+                        name: '王小豹',
+                        address: '大连市西岗区'
+                    },
+                    {
+                        rank: 4,
+                        name: '王小狼',
+                        address: '大连市中山区'
+                    },
+                ],
+                total: 0,
+                pageSize:10,
+                currentPage:1
+            },
 
             goodHouseList:[
                 {
@@ -130,35 +156,28 @@ export default {
             newsList:[
                 {
                     id: 0,
-                    news: '万科樱花园促销'
+                    news: '暂无'
                 },
-                {
-                    id: 1,
-                    news: '万科溪之谷大酬宾'
-                },
-                {
-                    id: 2,
-                    news: '万科新开盘'
-                }
+                
             ],
         };
     },
     methods: {
         handleCurrentChangeSearch(val){
-            this.page_no = val;
+            this.ranking.currentPage = val;
             this.doSearch();
         },
         doSearch(){
             var that = this;
             var postData = {
-                status: this.dataStatus,
+                status: this.ranking.dataStatus,
             };
             // _axios.JH_mes('', postData)
             //     .then(res => {
             //         if(typeof(res) != "object") res = JSON.parse(res);
             //         if(res.success){
             //             console.log(res.data);
-            //             that.dataList = [];
+            //             that.ranking.dataList = [];
             //         }else{
             //             console.log(res);
             //         }
@@ -168,8 +187,8 @@ export default {
             //     });
         },
         search(status){
-            this.page_no = 1;
-            this.dataStatus = status;
+            this.ranking.currentPage = 1;
+            this.ranking.dataStatus = status;
             this.doSearch();
 
         }

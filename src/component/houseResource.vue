@@ -7,12 +7,12 @@
                 <div class="house_search_header">
                     <el-input size="medium" v-model="searchMes" placeholder="请输入内容"></el-input>
                     <el-button size="medium"  type="primary" icon="el-icon-search">搜索</el-button>
-                    <el-button type="text" icon="el-icon-plus" class="add_button">新增</el-button>
+                    <el-button type="text" icon="el-icon-plus" class="add_button" @click="alertAdd.visible=true">新增</el-button>
                 </div>
                 <div class="house_search_block">
                     <el-form :model="formData" ref="formData" class="form-wrap">
                         <el-form-item label="商圈:">
-							<el-button :type="item.choosed == false ? '' : 'primary'"
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.businessList"
                                        @click="searchHouseType(index, formData.houseTypeList)">
@@ -95,7 +95,118 @@
 
             <!--</el-col>-->
         <!--</el-row>-->
+        <el-dialog
+          title="新增房源"
+          :visible.sync="alertAdd.visible"
+          width="80%"
+          >
+          <el-steps :active="alertAdd.active">
+              <el-step title="录入房源基本信息"></el-step>
+              <el-step title="录入实勘"></el-step>
+          </el-steps>
+          <div v-if="alertAdd.active == 0">
+
+            <el-form :model="alertAdd.ruleForm" :rules="alertAdd.rules" ref="alertAdd.ruleForm" label-width="100px" class="demo-ruleForm">
+              <el-row type="flex" class="row-bg" justify="space-around">
+                 <el-col :span="10">
+		              <el-form-item label="大连市" prop="name">
+		                <el-cascader
+		                	style="width: 100%;"
+									    :options="alertAdd.ruleForm.addressOptions"
+									    v-model="alertAdd.ruleForm.addressSelectedOptions"
+									    @change="handleChange">
+									  </el-cascader>
+		              </el-form-item>
+			          </el-col>
+			          <el-col :span="10">
+		              <el-form-item label="小区名称" prop="region">
+		                <el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">
+		                  <el-option label="区域一" value="shanghai"></el-option>
+		                  <el-option label="区域二" value="beijing"></el-option>
+		                </el-select>
+		              </el-form-item>
+		              </el-col>
+              </el-row>
+							<el-row type="flex" class="row-bg" justify="space-around">
+                 <el-col :span="4">
+		              <el-form-item label="详细地址" prop="name">
+		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
+		              </el-form-item>
+			          </el-col>
+			          <el-col :span="4">
+		              <el-form-item label="详细地址" prop="name">
+		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
+		              </el-form-item>
+			          </el-col>
+			          <el-col :span="4">
+		              <el-form-item label="详细地址" prop="name">
+		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
+		              </el-form-item>
+			          </el-col>
+			          <el-col :span="4">
+		              <el-form-item label="详细地址" prop="name">
+		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
+		              </el-form-item>
+			          </el-col>
+			          <el-col :span="4">
+		              <el-form-item label="有无钥匙" prop="region">
+		                <el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">
+		                  <el-option label="有钥匙" value="0"></el-option>
+		                  <el-option label="无钥匙" value="1"></el-option>
+		                </el-select>
+		              </el-form-item>
+		              </el-col>
+              </el-row>
+              <el-row type="flex" class="row-bg" justify="space-around">
+                 <el-col :span="10">
+		              <el-form-item label="备注详情" prop="name">
+		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
+		              </el-form-item>
+			          </el-col>
+			          <el-col :span="10">
+		              <el-form-item label="有无钥匙" prop="region">
+		                <el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">
+		                  <el-option label="有钥匙" value="0"></el-option>
+		                  <el-option label="无钥匙" value="1"></el-option>
+		                </el-select>
+		              </el-form-item>
+		              </el-col>
+              </el-row>
+              <el-row type="flex" class="row-bg" justify="space-around">
+                 <el-col :span="10">
+		              <el-form-item label="活动名称" prop="name">
+		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
+		              </el-form-item>
+			          </el-col>
+			          <el-col :span="10">
+		              <el-form-item label="活动区域" prop="region">
+		                <el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">
+		                  <el-option label="区域一" value="shanghai"></el-option>
+		                  <el-option label="区域二" value="beijing"></el-option>
+		                </el-select>
+		              </el-form-item>
+		              </el-col>
+              </el-row>
+            </el-form>
+            <!-- <el-row type="flex" class="row-bg" justify="space-around">
+              <el-col :span="11">aaa</el-col>
+              <el-col :span="11">ss</el-col>
+            </el-row> -->
+          </div>
+
+          <div v-else>
+              实勘
+          </div>
+
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="alertAdd.visible = false">取 消</el-button>
+            <el-button type="primary" @click="alertAdd.visible = false">确 定</el-button>
+            <el-button @click="lastActive">上一步</el-button>
+            <el-button @click="nextActive">下一步</el-button>
+          </span>
+        </el-dialog>
     </section>
+
 </template>
 <script>
 export default {
@@ -396,7 +507,33 @@ export default {
                     followUp: 2,
                     people: '李二蛋'
                 }
-            ]
+            ],
+            alertAdd:{
+                active:0,
+                visible:true,
+                ruleForm: {
+                	addressOptions:[{
+                		value: 'zhinan',
+					          label: '中山区',
+					          children: [{
+					            value: 'shejiyuanze',
+					            label: '人民街道'}]
+                	}],
+                	addressSelectedOptions:[],
+
+                  name: '',
+                  region: ''
+                },
+                rules: {
+                  name: [
+                    { required: true, message: '请输入活动名称', trigger: 'blur' },
+                    { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+                  ],
+                  region: [
+                    { required: true, message: '请选择活动区域', trigger: 'change' }
+                  ]
+                }
+            }
 
         };
     },
@@ -406,6 +543,20 @@ export default {
     
 
     methods: {
+        lastActive(){
+            if(this.alertAdd.active <= 0){
+               return;
+            }
+            this.alertAdd.active--;
+        },
+        nextActive(){
+            if(this.alertAdd.active >= 2){
+               return;
+            }
+            this.alertAdd.active++;
+            
+        },
+
         search(){
             var postData = {
                 houseTypeId: this.formData.houseTypeId,
@@ -445,7 +596,7 @@ export default {
 @import "../assets/css/element.less";
 
 .houseResource {
-	/*border:1px solid red;*/
+    /*border:1px solid red;*/
     .house_template{
         width: 100%;
         padding: 25px 50px;
