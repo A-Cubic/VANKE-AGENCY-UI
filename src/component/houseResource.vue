@@ -106,9 +106,120 @@
           </el-steps>
           <div v-if="alertAdd.active == 0">
 
-            <el-form :model="alertAdd.ruleForm" :rules="alertAdd.rules" ref="alertAdd.ruleForm" label-width="100px" class="demo-ruleForm">
-              <el-row type="flex" class="row-bg" justify="space-around">
-                 <el-col :span="10">
+            <el-form :model="alertAdd.ruleForm" :rules="alertAdd.rules" ref="alertAdd.ruleForm" label-width="80px" class="demo-ruleForm">
+
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="价钱" prop="add_price">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="7">
+                        <el-form-item label="面积" prop="add_area">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="1" style="text-align: center; line-height: 40px">
+                        m2
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="朝向" prop="add_orientation">
+                            <el-select v-model="alertAdd.ruleForm.orientation" style="width: 100%;" placeholder="请选择房屋朝向">
+                                <el-option label="正南" value="0"></el-option>
+                                <el-option label="正北" value="1"></el-option>
+                                <el-option label="正东" value="2"></el-option>
+                                <el-option label="正西" value="3"></el-option>
+                                <el-option label="东南" value="4"></el-option>
+                                <el-option label="西南" value="5"></el-option>
+                                <el-option label="东北" value="6"></el-option>
+                                <el-option label="西北" value="7"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+                <el-row type="flex" class="row-bg" >
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="户型" prop="add_room">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="5">
+                        <el-form-item label="室" label-width="40px" prop="add_hall">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="5">
+                        <el-form-item label="厅" label-width="40px" prop="add_toilet">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="5">
+                        <el-form-item label="卫" label-width="40px" prop="add_kitchen">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="1" style="text-align: center; line-height: 40px">
+                        厨
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="10">
+                        <el-form-item label="有无钥匙" prop="add_has_key">
+                            <el-select v-model="alertAdd.ruleForm.hasKey" style="width: 100%;" placeholder="请选择有无钥匙">
+                                <el-option label="有钥匙" value="0"></el-option>
+                                <el-option label="无钥匙" value="1"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="9">
+                        <el-form-item label="隐藏面积" prop="add_hide_area">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="1" style="text-align: center; line-height: 40px">
+                        m2
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="10">
+                        <el-form-item label="房屋等级" prop="add_grade">
+                            <el-select v-model="alertAdd.ruleForm.grade" style="width: 100%;" placeholder="请选择房屋等级">
+                                <el-option label="A" value="0"></el-option>
+                                <el-option label="B" value="1"></el-option>
+                                <el-option label="C" value="2"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-form-item label="房屋类型" prop="add_type">
+                            <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择房屋类型">
+                                <el-option label="买卖" value="0"></el-option>
+                                <el-option label="租赁" value="1"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+
+                <el-row type="flex" class="row-bg" >
+                  <el-col :span="1" >
+                  </el-col>
+                  <el-col :span="20">
 		              <el-form-item label="大连市" prop="name">
 		                <el-cascader
 		                	style="width: 100%;"
@@ -118,75 +229,130 @@
 									  </el-cascader>
 		              </el-form-item>
 			          </el-col>
-			          <el-col :span="10">
-		              <el-form-item label="小区名称" prop="region">
-		                <el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">
-		                  <el-option label="区域一" value="shanghai"></el-option>
-		                  <el-option label="区域二" value="beijing"></el-option>
-		                </el-select>
-		              </el-form-item>
-		              </el-col>
-              </el-row>
-							<el-row type="flex" class="row-bg" justify="space-around">
-                 <el-col :span="4">
-		              <el-form-item label="详细地址" prop="name">
-		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
-		              </el-form-item>
-			          </el-col>
-			          <el-col :span="4">
-		              <el-form-item label="详细地址" prop="name">
-		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
-		              </el-form-item>
-			          </el-col>
-			          <el-col :span="4">
-		              <el-form-item label="详细地址" prop="name">
-		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
-		              </el-form-item>
-			          </el-col>
-			          <el-col :span="4">
-		              <el-form-item label="详细地址" prop="name">
-		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
-		              </el-form-item>
-			          </el-col>
-			          <el-col :span="4">
-		              <el-form-item label="有无钥匙" prop="region">
-		                <el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">
-		                  <el-option label="有钥匙" value="0"></el-option>
-		                  <el-option label="无钥匙" value="1"></el-option>
-		                </el-select>
-		              </el-form-item>
-		              </el-col>
-              </el-row>
-              <el-row type="flex" class="row-bg" justify="space-around">
-                 <el-col :span="10">
-		              <el-form-item label="备注详情" prop="name">
-		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
-		              </el-form-item>
-			          </el-col>
-			          <el-col :span="10">
-		              <el-form-item label="有无钥匙" prop="region">
-		                <el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">
-		                  <el-option label="有钥匙" value="0"></el-option>
-		                  <el-option label="无钥匙" value="1"></el-option>
-		                </el-select>
-		              </el-form-item>
-		              </el-col>
-              </el-row>
-              <el-row type="flex" class="row-bg" justify="space-around">
-                 <el-col :span="10">
-		              <el-form-item label="活动名称" prop="name">
-		                <el-input v-model="alertAdd.ruleForm.name"></el-input>
-		              </el-form-item>
-			          </el-col>
-			          <el-col :span="10">
-		              <el-form-item label="活动区域" prop="region">
-		                <el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">
-		                  <el-option label="区域一" value="shanghai"></el-option>
-		                  <el-option label="区域二" value="beijing"></el-option>
-		                </el-select>
-		              </el-form-item>
-		              </el-col>
-              </el-row>
+			          <!--<el-col :span="10" >-->
+		              <!--<el-form-item label="小区名称" prop="region">-->
+		                <!--<el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">-->
+		                  <!--<el-option label="区域一" value="shanghai"></el-option>-->
+		                  <!--<el-option label="区域二" value="beijing"></el-option>-->
+		                <!--</el-select>-->
+		              <!--</el-form-item>-->
+		              <!--</el-col>-->
+                  <el-col :span="3" >
+                  </el-col>
+                </el-row>
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="" prop="add_room">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="号楼" label-width="50px" prop="add_room">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="单元" label-width="50px" prop="add_room">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="层 /" label-width="50px" prop="add_room">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="层(顶层)" label-width="80px" prop="add_room">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="1" style="text-align: center; line-height: 40px">
+                        号
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="10" >
+                        <el-form-item label="房主信息" prop="add_owner_name">
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="10">
+                        <el-form-item label="房主姓名" prop="add_owner_name">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-form-item label="房主电话" prop="add_owner_phone">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="10">
+                        <el-form-item label="房主姓名" prop="add_owner_name_bak">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-form-item label="房主电话" prop="add_owner_phone_bak">
+                            <el-input ></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+              <!--<el-row type="flex" class="row-bg">-->
+                  <!--<el-col :span="1" >-->
+                  <!--</el-col>-->
+                 <!--<el-col :span="10">-->
+		              <!--<el-form-item label="备注详情" prop="name">-->
+		                <!--<el-input v-model="alertAdd.ruleForm.name"></el-input>-->
+		              <!--</el-form-item>-->
+			          <!--</el-col>-->
+			          <!--<el-col :span="10">-->
+		              <!--<el-form-item label="有无钥匙" prop="region">-->
+		                <!--<el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">-->
+		                  <!--<el-option label="有钥匙" value="0"></el-option>-->
+		                  <!--<el-option label="无钥匙" value="1"></el-option>-->
+		                <!--</el-select>-->
+		              <!--</el-form-item>-->
+		              <!--</el-col>-->
+                  <!--<el-col :span="3" >-->
+                  <!--</el-col>-->
+              <!--</el-row>-->
+              <!--<el-row type="flex" class="row-bg" >-->
+                  <!--<el-col :span="1" >-->
+                  <!--</el-col>-->
+                 <!--<el-col :span="10">-->
+		              <!--<el-form-item label="活动名称" prop="name">-->
+		                <!--<el-input v-model="alertAdd.ruleForm.name"></el-input>-->
+		              <!--</el-form-item>-->
+			          <!--</el-col>-->
+			          <!--<el-col :span="10">-->
+		              <!--<el-form-item label="活动区域" prop="region">-->
+		                <!--<el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">-->
+		                  <!--<el-option label="区域一" value="shanghai"></el-option>-->
+		                  <!--<el-option label="区域二" value="beijing"></el-option>-->
+		                <!--</el-select>-->
+		              <!--</el-form-item>-->
+		              <!--</el-col>-->
+                  <!--<el-col :span="3" >-->
+                  <!--</el-col>-->
+              <!--</el-row>-->
             </el-form>
             <!-- <el-row type="flex" class="row-bg" justify="space-around">
               <el-col :span="11">aaa</el-col>
@@ -525,13 +691,25 @@ export default {
                   region: ''
                 },
                 rules: {
-                  name: [
-                    { required: true, message: '请输入活动名称', trigger: 'blur' },
-                    { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-                  ],
-                  region: [
-                    { required: true, message: '请选择活动区域', trigger: 'change' }
-                  ]
+                    name: [
+                      { required: true, message: '请输入活动名称', trigger: 'blur' },
+                      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+                    ],
+                    region: [
+                        { required: true, message: '请选择活动区域', trigger: 'change' }
+                        ],
+                    hasKey: [
+                        { required: true, message: '请选择有无钥匙', trigger: 'change' }
+                    ],
+                    grade: [
+                        { required: true, message: '请选择房屋等级', trigger: 'change' }
+                    ],
+                    type: [
+                        { required: true, message: '请选择房屋类型', trigger: 'change' }
+                    ],
+                    orientation: [
+                        { required: true, message: '请选择房屋朝向', trigger: 'change' }
+                    ],
                 }
             }
 
