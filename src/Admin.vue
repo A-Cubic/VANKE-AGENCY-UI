@@ -2,7 +2,7 @@
     <section class="app">
         <!--<Default :success="loginHidden"></Default>-->
         <header class="this_header">
-            <img src="./assets/img/wankeLogo的副本.png" alt="logo">
+            <img src="https://cubic-vanke.oss-cn-qingdao.aliyuncs.com/home/wankeLogo_white.png" alt="logo">
             <!-- <h1>万科有家</h1> -->
             <nav class="this_nav">
                 <el-menu
