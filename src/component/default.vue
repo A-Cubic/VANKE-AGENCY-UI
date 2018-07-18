@@ -172,7 +172,7 @@
 			top: 0px;
 			bottom: 0px;
 			width: 100%;
-			background: url("../assets/img/bgpic.jpg") 0 0 no-repeat/cover;
+			background: url("https://cubic-vanke.oss-cn-qingdao.aliyuncs.com/home/bgpic.jpg") 0 0 no-repeat/cover;
 			/*background-size: 100% 100%;*/
 			.main {
 				display: -webkit-box;
