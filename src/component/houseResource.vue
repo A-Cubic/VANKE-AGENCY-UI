@@ -106,19 +106,19 @@
           </el-steps>
           <div v-if="alertAdd.active == 0">
 
-            <el-form :model="alertAdd.ruleForm" :rules="alertAdd.rules" ref="alertAdd.ruleForm" label-width="80px" class="demo-ruleForm">
+            <el-form :model="alertAdd.ruleForm" :rules="alertAdd.rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
 
                 <el-row type="flex" class="row-bg">
                     <el-col :span="1" >
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="价钱" prop="add_price">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_price"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="7">
                         <el-form-item label="面积" prop="add_area">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_area">></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -146,7 +146,7 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="户型" prop="add_room">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_room" ></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="5">
@@ -225,7 +225,8 @@
 		                	style="width: 100%;"
 									    :options="alertAdd.ruleForm.addressOptions"
 									    v-model="alertAdd.ruleForm.addressSelectedOptions"
-									    @change="handleChange">
+									    @change=""
+									    >
 									  </el-cascader>
 		              </el-form-item>
 			          </el-col>
@@ -361,14 +362,80 @@
           </div>
 
           <div v-else>
-              实勘
+              <el-form :model="alertAdd.examineForm" ref="examineForm" label-width="60px"
+                             class="demo-ruleForm examine-form">
+                        <el-form-item label="室:">
+                            <el-upload
+                                    v-for="(item, index) in alertAdd.examineForm.bedroom"
+                                    action="https://jsonplaceholder.typicode.com/posts/"
+                                    :auto-upload='false'
+                                    :show-file-list="false"
+                                    list-type="picture-card"
+                                    :on-change='changeUpload'>
+                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
+                                <i v-else class="el-icon-plus"></i>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="厅:">
+                            <el-upload
+                                    v-for="(item, index) in alertAdd.examineForm.sittingRoom"
+                                    action="https://jsonplaceholder.typicode.com/posts/"
+                                    :show-file-list="false"
+                                    list-type="picture-card">
+                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
+                                <i v-else class="el-icon-plus"></i>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="卫:">
+                            <el-upload
+                                    v-for="(item, index) in alertAdd.examineForm.toilet"
+                                    action="https://jsonplaceholder.typicode.com/posts/"
+                                    :show-file-list="false"
+                                    list-type="picture-card">
+                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
+                                <i v-else class="el-icon-plus"></i>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="厨:">
+                            <el-upload
+                                    v-for="(item, index) in alertAdd.examineForm.kitchen"
+                                    action="https://jsonplaceholder.typicode.com/posts/"
+                                    :show-file-list="false"
+                                    list-type="picture-card">
+                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
+                                <i v-else class="el-icon-plus"></i>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="户型图:">
+                            <el-upload
+                                    v-for="(item, index) in alertAdd.examineForm.houseTypeImg"
+                                    action="https://jsonplaceholder.typicode.com/posts/"
+                                    :show-file-list="false"
+                                    list-type="picture-card">
+                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
+                                <i v-else class="el-icon-plus"></i>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="其他:">
+                            <el-upload
+                                    v-for="(item, index) in alertAdd.examineForm.other"
+                                    action="https://jsonplaceholder.typicode.com/posts/"
+                                    :show-file-list="false"
+                                    list-type="picture-card">
+                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
+                                <i v-else class="el-icon-plus"></i>
+                            </el-upload>
+                        </el-form-item>
+                    </el-form>
           </div>
 
           <span slot="footer" class="dialog-footer">
             <el-button @click="alertAdd.visible = false">取 消</el-button>
-            <el-button type="primary" @click="alertAdd.visible = false">确 定</el-button>
-            <el-button @click="lastActive">上一步</el-button>
-            <el-button @click="nextActive">下一步</el-button>
+            <el-button v-show="alertAdd.active > 0" @click="lastActive">上一步</el-button>
+            <el-button :type="alertAdd.active >= 1 ? 'primary' : ''" @click="nextActive('ruleForm')">
+            	<span v-show="alertAdd.active < 1">下一步</span>
+            	<span v-show="alertAdd.active >= 1">确 定</span>
+            </el-button>
           </span>
         </el-dialog>
     </section>
@@ -678,6 +745,9 @@ export default {
                 active:0,
                 visible:true,
                 ruleForm: {
+                	add_price: '',
+                	add_area: '',
+                	addressValue: '',
                 	addressOptions:[{
                 		value: 'zhinan',
 					          label: '中山区',
@@ -687,30 +757,62 @@ export default {
                 	}],
                 	addressSelectedOptions:[],
 
-                  name: '',
-                  region: ''
+                	add_room: ''
                 },
                 rules: {
-                    name: [
-                      { required: true, message: '请输入活动名称', trigger: 'blur' },
-                      { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+                    add_price: [
+                      { required: true, message: '请输入价格', trigger: 'blur' },
                     ],
-                    region: [
-                        { required: true, message: '请选择活动区域', trigger: 'change' }
-                        ],
-                    hasKey: [
-                        { required: true, message: '请选择有无钥匙', trigger: 'change' }
+                    add_area: [
+                      { required: true, message: '请输入面积', trigger: 'blur' },
                     ],
-                    grade: [
-                        { required: true, message: '请选择房屋等级', trigger: 'change' }
+
+                    add_room: [
+                      { required: true, message: '请输入户型', trigger: 'blur' },
+                    ]
+                },
+                examineForm:{
+                    bedroom: [
+                        {
+                            imgId: 0,
+                            imgUrl: ''
+                        },
+                        {
+                            imgId: 1,
+                            imgUrl: ''
+                        },
                     ],
-                    type: [
-                        { required: true, message: '请选择房屋类型', trigger: 'change' }
+                    sittingRoom: [
+                        {
+                            imgId: 1,
+                            imgUrl: ''
+                        },
                     ],
-                    orientation: [
-                        { required: true, message: '请选择房屋朝向', trigger: 'change' }
+                    toilet: [
+                        {
+                            imgId: 0,
+                            imgUrl: ''
+                        }
                     ],
-                }
+                    kitchen: [
+                        {
+                            imgId: 1,
+                            imgUrl: ''
+                        },
+                    ],
+                    houseTypeImg: [
+                        {
+                            imgId: 0,
+                            imgUrl: ''
+                        }
+                    ],
+                    other: [
+                        {
+                            imgId: 1,
+                            imgUrl: ''
+                        },
+                    ],
+                },
             }
 
         };
@@ -725,14 +827,29 @@ export default {
             if(this.alertAdd.active <= 0){
                return;
             }
-            this.alertAdd.active--;
+            this.alertAdd.active=0;
         },
-        nextActive(){
-            if(this.alertAdd.active >= 2){
-               return;
-            }
-            this.alertAdd.active++;
-            
+        nextActive(ruleForm){
+        	if(this.alertAdd.active >= 0){
+        		  this.$refs[ruleForm].validate((valid) => {
+                  if (valid) {
+                  	this.alertAdd.active = 0;
+                      console.log('submit!!');
+                      this.alertAdd.active++;
+                  } else {
+                      console.log('error submit!!');
+                      // alert('请填写完成!');
+                      
+                      return false;
+                  }
+              });
+        	}
+        	else if(this.alertAdd.active >= 1){
+            	this.alertAdd.active = 2;
+            	this.alertAdd.visible = false;
+              return;
+          };
+        	// this.alertAdd.active++;
         },
 
         search(){
@@ -766,7 +883,11 @@ export default {
         examineById(row){
             console.log(row.id);
             this.$router.push({path: '/admin/houseDetails/'+row.id})
-        }
+        },
+
+        changeUpload(){
+
+        }, //上传Change
     }
 };
 </script>
@@ -827,6 +948,32 @@ export default {
                 }
             }
         }
+    }
+
+    .el-dialog{
+    	.examine-form{
+                        .el-form-item{
+                            overflow: hidden;
+                            .el-upload{
+                                width: 100px;
+                                height: 100px;
+                                line-height: 106px;
+                                margin-left: 20px;
+                                cursor: pointer;
+                                float: left;
+                                img{
+                                    width: 100%;
+                                    height: 100%;
+                                }
+                            }
+                            .el-upload:hover {
+                                border-color: #409EFF;
+                            }
+
+
+                        }
+
+                    }
     }
 
 
