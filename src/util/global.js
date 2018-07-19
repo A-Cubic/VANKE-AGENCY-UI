@@ -4,6 +4,9 @@ const ROLE = 'User-Role';
 
 export const BASE_API = '/vanke'
 
+export let WsCall = {
+}
+
 export function getToken() {
     return window.localStorage.getItem(TOKEN)
 }
@@ -18,4 +21,18 @@ export function getRole() {
 
 export function setRole(role) {
     window.localStorage.setItem(ROLE, role)
+}
+
+export function addWsCall(current, f) {
+    WsCall[current] = f
+    console.log(WsCall)
+}
+
+export function removeWsCall(current, f) {
+    WsCall[current] = undefined
+}
+
+export function clearWsCall() {
+    WsCall = {}
+    console.log(WsCall)
 }

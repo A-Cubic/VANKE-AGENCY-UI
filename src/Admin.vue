@@ -54,7 +54,7 @@
                 <i class="el-icon-tickets "></i>
             </span>
             <span class="f22">
-                <el-badge :value="12" class="item ">
+                <el-badge v-bind:value="Noticebadge" class="item ">
                     <i class="el-icon-bell "></i>
                 </el-badge>
              </span>
@@ -86,7 +86,7 @@
 </template>
 <script>
     // import Default from './component/default'
-    import { getToken }               from './util/global'
+    import { getToken, WsCall, addWsCall, clearWsCall }               from './util/global'
 export default {
     name: 'app',
     ws: null,
@@ -101,29 +101,44 @@ export default {
                 formLabelWidth: '120px',
             },
 
-            chatRoomWebsocket: null
+            Noticebadge: undefined,
+            vankeWebsocket: null
         };
     },
     created() {
         this.initWebsocket()
+        addWsCall('Notice', this.wsNotice)
+    },
+    destroyed() {
+        this.vankeWebsocket.close()
+        clearWsCall()
     },
     methods: {
         initWebsocket() {
-            this.chatRoomWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
-            this.chatRoomWebsocket.onopen = this.wsOnOpen;
-            this.chatRoomWebsocket.onmessage = this.wsOnMessage;
-            this.chatRoomWebsocket.onclose = this.wsOnClose;
+            this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic/vanke/com/ws/?token=' + getToken());
+            this.vankeWebsocket.onopen = this.wsOnOpen;
+            this.vankeWebsocket.onmessage = this.wsOnMessage;
+            this.vankeWebsocket.onclose = this.wsOnClose;
         },
         wsOnOpen() {
-            console.log('数据发送中...')
-            this.chatRoomWebsocket.send('Holle')
-            console.log('数据发送完成')
+            this.vankeWebsocket.send('vanke')
         },
         wsOnMessage(e) {
-            console.log('数据已接收...'+e.data)
+            Object.keys(WsCall).forEach((value) => {
+                if(WsCall[value] !== undefined){
+                    WsCall[value](e.data)
+                }
+            })
         },
         wsOnClose() {
-            console.log('数据已关闭')
+
+        },
+        wsNotice(data) {
+            console.log('Notice', data)
+            if(data === 0){
+                data = undefined
+            }
+            this.Noticebadge = data
         },
     	handleCloseAddressBook(done) {
     		this.addressBook.visible = false
