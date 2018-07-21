@@ -190,6 +190,9 @@
                                     <el-form-item label="无效房源:">
                                         <el-switch v-model="otherForm.invalidHouse"></el-switch>
                                     </el-form-item>
+                                    <el-form-item label="优质房源:">
+                                        <el-switch v-model="otherForm.goodHouse"></el-switch>
+                                    </el-form-item>
                                     <el-form-item label="房源转让:">
                                         <el-button type="text" size="mini"
                                                    @click="transferHandel">点击转让
@@ -475,6 +478,7 @@
                 otherForm: {
                     specialHouse: false,
                     invalidHouse: true,
+                    goodHouse:true,
                     transferHouse: false,
                 },
                 transferVisible: false,  //转让dialog
@@ -700,8 +704,9 @@
                             /*overflow: hidden;*/
                             text-align: center;
                             .radius-block{
-                                width: 10vw;
-                                height: 10vw;
+                                width: 8vw;
+                                height: 8vw;
+                                margin: 1vw;
                                 display: inline-block;
                                 box-shadow: 0px 0px 10px #e3e3e3;
                                 border-radius: 100px;
@@ -709,7 +714,7 @@
                                 .el-button{
                                     position: absolute;
                                     bottom: 0;
-                                    left: 4.3vw;
+                                    left: 3.5vw;
                                 }
                                 div{
                                     margin-top: 2px;

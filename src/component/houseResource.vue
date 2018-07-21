@@ -126,7 +126,7 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="朝向" prop="add_orientation">
-                            <el-select v-model="alertAdd.ruleForm.orientation" style="width: 100%;" placeholder="请选择房屋朝向">
+                            <el-select v-model="alertAdd.ruleForm.add_orientation" style="width: 100%;" placeholder="请选择房屋朝向">
                                 <el-option label="正南" value="0"></el-option>
                                 <el-option label="正北" value="1"></el-option>
                                 <el-option label="正东" value="2"></el-option>
@@ -151,17 +151,17 @@
                     </el-col>
                     <el-col :span="5">
                         <el-form-item label="室" label-width="40px" prop="add_hall">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_hall"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="5">
                         <el-form-item label="厅" label-width="40px" prop="add_toilet">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_toilet"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="5">
                         <el-form-item label="卫" label-width="40px" prop="add_kitchen">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_kitchen"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -175,7 +175,7 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="有无钥匙" prop="add_has_key">
-                            <el-select v-model="alertAdd.ruleForm.hasKey" style="width: 100%;" placeholder="请选择有无钥匙">
+                            <el-select v-model="alertAdd.ruleForm.add_has_key" style="width: 100%;" placeholder="请选择有无钥匙">
                                 <el-option label="有钥匙" value="0"></el-option>
                                 <el-option label="无钥匙" value="1"></el-option>
                             </el-select>
@@ -183,7 +183,7 @@
                     </el-col>
                     <el-col :span="9">
                         <el-form-item label="隐藏面积" prop="add_hide_area">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_hide_area"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -197,7 +197,7 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房屋等级" prop="add_grade">
-                            <el-select v-model="alertAdd.ruleForm.grade" style="width: 100%;" placeholder="请选择房屋等级">
+                            <el-select v-model="alertAdd.ruleForm.add_grade" style="width: 100%;" placeholder="请选择房屋等级">
                                 <el-option label="A" value="0"></el-option>
                                 <el-option label="B" value="1"></el-option>
                                 <el-option label="C" value="2"></el-option>
@@ -206,7 +206,7 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房屋类型" prop="add_type">
-                            <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择房屋类型">
+                            <el-select v-model="alertAdd.ruleForm.add_type" style="width: 100%;" placeholder="请选择房屋类型">
                                 <el-option label="买卖" value="0"></el-option>
                                 <el-option label="租赁" value="1"></el-option>
                             </el-select>
@@ -220,7 +220,7 @@
                   <el-col :span="1" >
                   </el-col>
                   <el-col :span="20">
-		              <el-form-item label="大连市" prop="name">
+		              <el-form-item label="大连市" prop="addressSelectedOptions">
 		                <el-cascader
 		                	style="width: 100%;"
 									    :options="alertAdd.ruleForm.addressOptions"
@@ -245,28 +245,28 @@
                     <el-col :span="1" >
                     </el-col>
                     <el-col :span="4">
-                        <el-form-item label="" prop="add_room">
-                            <el-input ></el-input>
+                        <el-form-item label="" prop="add_tower">
+                            <el-input v-model="alertAdd.ruleForm.add_tower"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
-                        <el-form-item label="号楼" label-width="50px" prop="add_room">
-                            <el-input ></el-input>
+                        <el-form-item label="号楼" label-width="50px" prop="add_unit">
+                            <el-input v-model="alertAdd.ruleForm.add_unit"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
-                        <el-form-item label="单元" label-width="50px" prop="add_room">
-                            <el-input ></el-input>
+                        <el-form-item label="单元" label-width="50px" prop="add_layer">
+                            <el-input v-model="alertAdd.ruleForm.add_layer"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
-                        <el-form-item label="层 /" label-width="50px" prop="add_room">
-                            <el-input ></el-input>
+                        <el-form-item label="层 /" label-width="50px" prop="add_allLayer">
+                            <el-input v-model="alertAdd.ruleForm.add_allLayer"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
-                        <el-form-item label="层(顶层)" label-width="80px" prop="add_room">
-                            <el-input ></el-input>
+                        <el-form-item label="层(顶层)" label-width="80px" prop="add_mark">
+                            <el-input v-model="alertAdd.ruleForm.add_mark"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -280,7 +280,7 @@
                     <el-col :span="1" >
                     </el-col>
                     <el-col :span="10" >
-                        <el-form-item label="房主信息" prop="add_owner_name">
+                        <el-form-item label="房主信息" prop="add_owner_mes">
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -289,12 +289,12 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房主姓名" prop="add_owner_name">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_owner_name"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房主电话" prop="add_owner_phone">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_owner_phone"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="3" >
@@ -305,12 +305,12 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房主姓名" prop="add_owner_name_bak">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_owner_name_bak"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房主电话" prop="add_owner_phone_bak">
-                            <el-input ></el-input>
+                            <el-input v-model="alertAdd.ruleForm.add_owner_phone_bak"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="3" >
@@ -430,7 +430,7 @@
           </div>
 
           <span slot="footer" class="dialog-footer">
-            <el-button @click="alertAdd.visible = false">取 消</el-button>
+            <el-button @click="alertAdd.visible = false;resetForm('ruleForm')">取 消</el-button>
             <el-button v-show="alertAdd.active > 0" @click="lastActive">上一步</el-button>
             <el-button :type="alertAdd.active >= 1 ? 'primary' : ''" @click="nextActive('ruleForm')">
             	<span v-show="alertAdd.active < 1">下一步</span>
@@ -747,7 +747,19 @@ export default {
                 ruleForm: {
                 	add_price: '',
                 	add_area: '',
-                	addressValue: '',
+                	add_orientation:'',
+
+                	add_room:'',
+                	add_hall:'',
+                	add_toilet:'',
+                	add_kitchen:'',
+
+                	add_has_key:'',
+                	add_hide_area:'',
+
+                	add_grade:'',
+                	add_type:'',
+
                 	addressOptions:[{
                 		value: 'zhinan',
 					          label: '中山区',
@@ -757,7 +769,16 @@ export default {
                 	}],
                 	addressSelectedOptions:[],
 
-                	add_room: ''
+                	add_tower: '',
+                	add_unit: '',
+                	add_layer: '',
+                	add_allLayer: '',
+                	add_mark: '',
+
+                	add_owner_name: '',  //房主姓名*
+                	add_owner_phone: '',  //房主电话*
+                	add_owner_name_bak: '',  //房主姓名
+                	add_owner_phone_bak: '',  //房主姓名
                 },
                 rules: {
                     add_price: [
@@ -766,9 +787,61 @@ export default {
                     add_area: [
                       { required: true, message: '请输入面积', trigger: 'blur' },
                     ],
+                    add_orientation: [
+                      { required: true, message: '请选择朝向', trigger: 'change' },
+                    ],
 
                     add_room: [
-                      { required: true, message: '请输入户型', trigger: 'blur' },
+                      { required: true, message: '请输入卧室数量', trigger: 'blur' },
+                    ],
+                    add_hall: [
+                      { required: true, message: '请输入厅数量', trigger: 'blur' },
+                    ],
+                    add_toilet: [
+                      { required: true, message: '请输入卫生间数量', trigger: 'blur' },
+                    ],
+                    add_kitchen: [
+                      { required: true, message: '请输入厨房数量', trigger: 'blur' },
+                    ],
+
+                    add_has_key: [
+                      { required: true, message: '请选择有无钥匙', trigger: 'change' },
+                    ],
+                    add_hide_area: [
+                      { required: true, message: '请输入隐藏面积', trigger: 'blur' },
+                    ],
+
+                    add_grade: [
+                      { required: true, message: '请选择房屋等级', trigger: 'change' },
+                    ],
+                    add_type: [
+                      { required: true, message: '请选择房屋类型', trigger: 'change' },
+                    ],
+                    addressSelectedOptions: [
+                      { required: true, message: '请选择市区街道', trigger: 'change' },
+                    ],
+                    add_tower: [
+                      { required: true, message: '请输入楼号', trigger: 'blur' },
+                    ],
+                    add_unit: [
+                      { required: true, message: '请输入单元', trigger: 'blur' },
+                    ],
+                    add_layer: [
+                      { required: true, message: '请输入楼层', trigger: 'blur' },
+                    ],
+                    add_allLayer: [
+                      { required: true, message: '请输入总楼层', trigger: 'blur' },
+                    ],
+                    add_mark: [
+                      { required: true, message: '请输入门牌号', trigger: 'blur' },
+                    ],
+
+
+                    add_owner_name:[
+                      { required: true, message: '请添加房主姓名', trigger: 'blur' },
+                    ],
+                    add_owner_phone:[
+                      { required: true, message: '请添加房主电话', trigger: 'blur' },
                     ]
                 },
                 examineForm:{
@@ -823,6 +896,9 @@ export default {
     
 
     methods: {
+	    	resetForm(formName) {
+	        this.$refs[formName].resetFields();
+	      },
         lastActive(){
             if(this.alertAdd.active <= 0){
                return;
@@ -830,7 +906,7 @@ export default {
             this.alertAdd.active=0;
         },
         nextActive(ruleForm){
-        	if(this.alertAdd.active >= 0){
+        	if(this.alertAdd.active == 0){
         		  this.$refs[ruleForm].validate((valid) => {
                   if (valid) {
                   	this.alertAdd.active = 0;
@@ -847,6 +923,8 @@ export default {
         	else if(this.alertAdd.active >= 1){
             	this.alertAdd.active = 2;
             	this.alertAdd.visible = false;
+            	this.alertAdd.active = 0;
+            	this.resetForm('ruleForm');
               return;
           };
         	// this.alertAdd.active++;
