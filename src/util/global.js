@@ -2,7 +2,7 @@
 const TOKEN = 'Admin-Token';
 const ROLE = 'User-Role';
 
-export const BASE_API = '/vanke'
+export const BASE_API = 'http://vanke.a-cubic.com/vanke'
 
 export let WsCall = {
 }
