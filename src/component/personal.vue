@@ -16,7 +16,7 @@
                                             :data="uploadData"
                                             :on-success="handleSuccess"
                                             :on-error="handleError">
-                                        <img src="https://ss0.baidu.com/73t1bjeh1BF3odCf/it/u=997774994,3212421299&fm=85&s=6F5A0FC106032EE77999A51B030080D2" alt="">
+                                        <img v-bind:src="form.avatar" alt="">
                                     </el-upload>
                                     <el-button size="mini" type="text" @click="passHandle">
                                         修改密码
@@ -24,15 +24,18 @@
                                 </div>
                                 <div class="person-form">
                                     <el-form :model="form" status-icon ref="form" label-width="120px" class="demo-ruleForm">
-                                        <el-form-item label="姓名:">{{form.user_name}}</el-form-item>
-                                        <el-form-item label="工号:">{{form.number}}</el-form-item>
+                                        <el-form-item label="账号:">{{form.username}}</el-form-item>
+                                        <el-form-item label="工号:">{{form.user_no}}</el-form-item>
+                                        <el-form-item label="姓名:">{{form.relname}}</el-form-item>
                                         <el-form-item label="电话:">{{form.phone}}</el-form-item>
-                                        <el-form-item label="电话:">{{form.phone}}</el-form-item>
+                                        <el-form-item label="门店:">{{form.store_name}}</el-form-item>
+                                        <el-form-item label="角色:">{{form.desc}}</el-form-item>
+                                        <el-form-item label="注册:">{{form.register_time}}</el-form-item>
                                     </el-form>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane label="我的房源">我的房源</el-tab-pane>
-                            <el-tab-pane label="我的客源">我的客源</el-tab-pane>
+                            <el-tab-pane label="我维护的房源">我维护的房源</el-tab-pane>
+                            <el-tab-pane label="我关注的客源">我关注的客源</el-tab-pane>
                         </el-tabs>
                     </div>
                 </el-col>
@@ -49,20 +52,35 @@
     </section>
 </template>
 <script>
+import PersonalApi from '../api/api_personal.js';
 export default {
     data() {
         return {
             uploadData: {},
             form:{
-                user_name: '李白',
-                number: '12306',
-                phone: '13099997788',
-
-
+                relname: '',
+                user_no: '',
+                phone: '',
+                register_time:'',
+                avatar:'',
+                store_name:'',
+                username:'',
+                desc:''
             },
 
             dialogVisible: false,
         };
+    },
+    mounted:function(){
+        var that = this;
+        PersonalApi.userinfo().then(function (result) {
+            console.log(result)
+            if(typeof(result) != "object"){result = JSON.parse(result)}
+            that.form=result.data;
+        }).catch(error => {
+            console.log('userinfo_error');
+        });
+
     },
     methods: {
         passHandle(){

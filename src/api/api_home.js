@@ -1,6 +1,6 @@
 /**
- * Created by pwz on 2018/04/10
- * 用户相关api
+ * Created by pwz on 2018/07/24
+ * 首页相关api
  */
 import * as API from './'
 
