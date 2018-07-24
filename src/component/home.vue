@@ -46,10 +46,10 @@
                             <div class="table-button">
                                 <el-button type="primary"
                                            :plain="ranking.dataStatus == 1 ? false : true"
-                                           @click="search(1)">周</el-button>
+                                           @click="search(1)">周排行</el-button>
                                 <el-button type="primary"
                                            :plain="ranking.dataStatus == 2 ? false : true"
-                                           @click="search(2)">月</el-button>
+                                           @click="search(2)">月排行</el-button>
                             </div>
                             <div class="table-wrap">
                                 <el-table :data="ranking.list" style="width: 100%">
@@ -272,7 +272,7 @@ export default {
                 .table-button{
                     padding: 0 10px;
                     .el-button{
-                        width: 49.6%;
+                        width: 120px;
                     }
                 }
                 .table-wrap{

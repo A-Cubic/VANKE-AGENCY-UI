@@ -6,6 +6,9 @@
   // cursor: default;
   user-select: none;
 }
+.el-menu-item{
+  font-size: 17px;padding: 0 27px;
+}
 .el-badge__content{
   background: #409eff;
 }

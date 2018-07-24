@@ -6,6 +6,7 @@
             <!-- <h1>万科有家</h1> -->
             <nav class="this_nav">
                 <el-menu
+                font-size="30px"
                 background-color="#c51010"
                 text-color="#fff"
                 active-text-color="#fff"
@@ -58,9 +59,7 @@
                     <i class="el-icon-bell "></i>
                 </el-badge>
              </span>
-             <span class="f22">
-                 <i class="el-icon-setting "></i>
-             </span>
+             <span class="logout">退出</span>
         </header>
         <section class="this_section">
             <!-- <nav class="this_nav">
@@ -174,12 +173,20 @@ export default {
                 background:'#409eff';
             }
         .f22{
+            cursor: pointer;
             margin-right: 20px;
             font-size:22px;
             color:#fff;
             i{
                 font-size:22px;
             }
+
+        }
+        .logout{
+            margin-right: 20px;
+            font-size:16px;
+            color:#fff;
+            cursor: pointer;
         }
         display:flex;
         flex-direction:column;
@@ -196,7 +203,7 @@ export default {
             align-items:center;
             border-bottom:3px solid rgb(238, 246, 243);
             background:#c51010;
-            padding-left: 1.5em;
+            padding-left: 3.5em;
             img{
                 width:100px;
                 // height: 30%;

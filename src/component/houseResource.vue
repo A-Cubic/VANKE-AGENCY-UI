@@ -5,9 +5,9 @@
         <div class="house_template">
             <div class="house_search">
                 <div class="house_search_header">
-                    <el-input size="medium" v-model="searchMes" placeholder="请输入内容"></el-input>
+                    <el-input size="medium" v-model="formData.searchMes" placeholder="请输入内容"></el-input>
                     <el-button size="medium"  type="primary" icon="el-icon-search">搜索</el-button>
-                    <el-button type="text" icon="el-icon-plus" class="add_button" @click="alertAdd.visible=true">新增</el-button>
+                    <el-button type="primary" icon="el-icon-plus" class="add_button" @click="alertAdd.visible=true">新增房源</el-button>
                 </div>
                 <div class="house_search_block">
                     <el-form :model="formData" ref="formData" class="form-wrap">
@@ -71,8 +71,7 @@
             </div>
 
             <div class="house_table">
-
-                <el-table :data="tableData"  size="medium" style="width: 100%" @row-click="examineById">
+                <el-table :data="tableData.tableList"  size="medium" style="width: 100%" @row-click="examineById">
                     <el-table-column fixed label="标题图" width="180">
                         <template scope="scope">
                             <img class="imageUrl" :src="scope.row.imageUrl" alt="">
@@ -86,10 +85,19 @@
                     <el-table-column prop="orientation" label="朝向"></el-table-column>
                     <el-table-column prop="followUp" label="跟进"></el-table-column>
                     <el-table-column prop="people" label="维护人"></el-table-column>
-
                 </el-table>
-
+                <div class="table-pagination">
+                   <el-pagination
+                            layout="prev, pager, next, jumper, total"
+                            :page-size="tableData.pageSize"
+                            :current-page.sync="tableData.pageCurrent"
+                            :total ="tableData.total"
+                            @current-change="handleCurrentChangeSearch">
+                    </el-pagination>
+                </div>
             </div>
+
+            
 
         </div>
 
@@ -100,11 +108,7 @@
           :visible.sync="alertAdd.visible"
           width="80%"
           >
-          <el-steps :active="alertAdd.active">
-              <el-step title="录入房源基本信息"></el-step>
-              <el-step title="录入实勘"></el-step>
-          </el-steps>
-          <div v-if="alertAdd.active == 0">
+          <div >
 
             <el-form :model="alertAdd.ruleForm" :rules="alertAdd.rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
 
@@ -219,7 +223,7 @@
                 <el-row type="flex" class="row-bg" >
                   <el-col :span="1" >
                   </el-col>
-                  <el-col :span="20">
+                  <el-col :span="10">
 		              <el-form-item label="大连市" prop="addressSelectedOptions">
 		                <el-cascader
 		                	style="width: 100%;"
@@ -230,14 +234,18 @@
 									  </el-cascader>
 		              </el-form-item>
 			          </el-col>
-			          <!--<el-col :span="10" >-->
-		              <!--<el-form-item label="小区名称" prop="region">-->
-		                <!--<el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">-->
-		                  <!--<el-option label="区域一" value="shanghai"></el-option>-->
-		                  <!--<el-option label="区域二" value="beijing"></el-option>-->
-		                <!--</el-select>-->
-		              <!--</el-form-item>-->
-		              <!--</el-col>-->
+			          <el-col :span="10" >
+		              <el-form-item label="小区名称" prop="region">
+		                <el-autocomplete
+                        style="width: 100%;"
+                          class="inline-input"
+                          v-model="alertAdd.ruleForm.region"
+                          :fetch-suggestions="querySearch"
+                          placeholder="请输入小区名字"
+                        ></el-autocomplete>
+
+		              </el-form-item>
+		              </el-col>
                   <el-col :span="3" >
                   </el-col>
                 </el-row>
@@ -316,44 +324,7 @@
                     <el-col :span="3" >
                     </el-col>
                 </el-row>
-              <!--<el-row type="flex" class="row-bg">-->
-                  <!--<el-col :span="1" >-->
-                  <!--</el-col>-->
-                 <!--<el-col :span="10">-->
-		              <!--<el-form-item label="备注详情" prop="name">-->
-		                <!--<el-input v-model="alertAdd.ruleForm.name"></el-input>-->
-		              <!--</el-form-item>-->
-			          <!--</el-col>-->
-			          <!--<el-col :span="10">-->
-		              <!--<el-form-item label="有无钥匙" prop="region">-->
-		                <!--<el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">-->
-		                  <!--<el-option label="有钥匙" value="0"></el-option>-->
-		                  <!--<el-option label="无钥匙" value="1"></el-option>-->
-		                <!--</el-select>-->
-		              <!--</el-form-item>-->
-		              <!--</el-col>-->
-                  <!--<el-col :span="3" >-->
-                  <!--</el-col>-->
-              <!--</el-row>-->
-              <!--<el-row type="flex" class="row-bg" >-->
-                  <!--<el-col :span="1" >-->
-                  <!--</el-col>-->
-                 <!--<el-col :span="10">-->
-		              <!--<el-form-item label="活动名称" prop="name">-->
-		                <!--<el-input v-model="alertAdd.ruleForm.name"></el-input>-->
-		              <!--</el-form-item>-->
-			          <!--</el-col>-->
-			          <!--<el-col :span="10">-->
-		              <!--<el-form-item label="活动区域" prop="region">-->
-		                <!--<el-select v-model="alertAdd.ruleForm.region" style="width: 100%;" placeholder="请选择活动区域">-->
-		                  <!--<el-option label="区域一" value="shanghai"></el-option>-->
-		                  <!--<el-option label="区域二" value="beijing"></el-option>-->
-		                <!--</el-select>-->
-		              <!--</el-form-item>-->
-		              <!--</el-col>-->
-                  <!--<el-col :span="3" >-->
-                  <!--</el-col>-->
-              <!--</el-row>-->
+             
             </el-form>
             <!-- <el-row type="flex" class="row-bg" justify="space-around">
               <el-col :span="11">aaa</el-col>
@@ -361,81 +332,11 @@
             </el-row> -->
           </div>
 
-          <div v-else>
-              <el-form :model="alertAdd.examineForm" ref="examineForm" label-width="60px"
-                             class="demo-ruleForm examine-form">
-                        <el-form-item label="室:">
-                            <el-upload
-                                    v-for="(item, index) in alertAdd.examineForm.bedroom"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :auto-upload='false'
-                                    :show-file-list="false"
-                                    list-type="picture-card"
-                                    :on-change='changeUpload'>
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
-                            </el-upload>
-                        </el-form-item>
-                        <el-form-item label="厅:">
-                            <el-upload
-                                    v-for="(item, index) in alertAdd.examineForm.sittingRoom"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
-                            </el-upload>
-                        </el-form-item>
-                        <el-form-item label="卫:">
-                            <el-upload
-                                    v-for="(item, index) in alertAdd.examineForm.toilet"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
-                            </el-upload>
-                        </el-form-item>
-                        <el-form-item label="厨:">
-                            <el-upload
-                                    v-for="(item, index) in alertAdd.examineForm.kitchen"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
-                            </el-upload>
-                        </el-form-item>
-                        <el-form-item label="户型图:">
-                            <el-upload
-                                    v-for="(item, index) in alertAdd.examineForm.houseTypeImg"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
-                            </el-upload>
-                        </el-form-item>
-                        <el-form-item label="其他:">
-                            <el-upload
-                                    v-for="(item, index) in alertAdd.examineForm.other"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
-                            </el-upload>
-                        </el-form-item>
-                    </el-form>
-          </div>
+          
 
           <span slot="footer" class="dialog-footer">
             <el-button @click="alertAdd.visible = false;resetForm('ruleForm')">取 消</el-button>
-            <el-button v-show="alertAdd.active > 0" @click="lastActive">上一步</el-button>
-            <el-button :type="alertAdd.active >= 1 ? 'primary' : ''" @click="nextActive('ruleForm')">
-            	<span v-show="alertAdd.active < 1">下一步</span>
-            	<span v-show="alertAdd.active >= 1">确 定</span>
-            </el-button>
+            <el-button type="primary" @click="submitAdd('ruleForm')">确 定 </el-button>
           </span>
         </el-dialog>
     </section>
@@ -445,8 +346,9 @@
 export default {
     data() {
         return {
-            searchMes: '',
+            
             formData :{
+                searchMes: '',  //搜索框
                 houseTypeList:[
                     {
                         name: '不限',
@@ -715,7 +617,11 @@ export default {
                 ],
                 floorId: 0,
             },
-            tableData: [
+            tableData: {
+                pageSize: 10,
+                pageCurrent: 1,
+                total: 0,
+                tableList: [
                 {
                     id: 0,
                     imageUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1531038527286&di=e32f5bc68986d591090cb2d8e687b5b8&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F87%2F08%2F55a0dcd4ab768_1024.jpg',
@@ -740,7 +646,9 @@ export default {
                     followUp: 2,
                     people: '李二蛋'
                 }
-            ],
+                ],
+            },
+            
             alertAdd:{
                 active:0,
                 visible:true,
@@ -768,6 +676,7 @@ export default {
 					            label: '人民街道'}]
                 	}],
                 	addressSelectedOptions:[],
+                    region:'',
 
                 	add_tower: '',
                 	add_unit: '',
@@ -819,6 +728,9 @@ export default {
                     ],
                     addressSelectedOptions: [
                       { required: true, message: '请选择市区街道', trigger: 'change' },
+                    ],
+                    region: [
+                      { required: true, message: '请选择小区', trigger: 'blur' },
                     ],
                     add_tower: [
                       { required: true, message: '请输入楼号', trigger: 'blur' },
@@ -896,58 +808,62 @@ export default {
     
 
     methods: {
+
+        querySearch(queryString, cb) {
+        var restaurants = this.restaurants;
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+        // 调用 callback 返回建议列表的数据
+        cb(results);
+      },
 	    	resetForm(formName) {
 	        this.$refs[formName].resetFields();
 	      },
-        lastActive(){
-            if(this.alertAdd.active <= 0){
-               return;
-            }
-            this.alertAdd.active=0;
-        },
-        nextActive(ruleForm){
+       
+        submitAdd(ruleForm){
         	if(this.alertAdd.active == 0){
         		  this.$refs[ruleForm].validate((valid) => {
                   if (valid) {
-                  	this.alertAdd.active = 0;
                       console.log('submit!!');
-                      this.alertAdd.active++;
+                        this.$confirm('确定新增该房源?', '提示', {
+                          confirmButtonText: '确定',
+                          cancelButtonText: '取消',
+                          type: 'warning'
+                        }).then(() => {
+                          //  确定新增接口
+                        }).catch(() => {
+                          this.$message({
+                            type: 'info',
+                            message: '已取消保存'
+                          });
+                        });
                   } else {
                       console.log('error submit!!');
                       // alert('请填写完成!');
-                      
                       return false;
                   }
               });
         	}
-        	else if(this.alertAdd.active >= 1){
-            	this.alertAdd.active = 2;
-            	this.alertAdd.visible = false;
-            	this.alertAdd.active = 0;
-            	this.resetForm('ruleForm');
-              return;
-          };
-        	// this.alertAdd.active++;
         },
 
         search(){
             var postData = {
+                searchMes: this.formData.searchMes,
                 houseTypeId: this.formData.houseTypeId,
                 totalPriceId: this.formData.totalPriceId,
             }
             console.log(postData);
         },
         searchHouseType(index, list){
-           var id = this.doSearch(index, list);
+           var id = this.getId(index, list);
            this.formData.houseTypeId = id;
            this.search();
         }, //房型
         searchTotalPrice(index, list){
-           var id = this.doSearch(index, list);
+           var id = this.getId(index, list);
            this.formData.totalPriceId = id;
            this.search();
         }, //价格
-        doSearch(index, list){
+        getId(index, list){
             var id = 0;
             list.forEach((item) => {
                 item.choosed = false;
@@ -1024,6 +940,10 @@ export default {
                     width: 150px;
                     // border: 1px solid #d7d7d7
                 }
+            }
+            .table-pagination{
+                margin-top: 20px;
+                text-align: right;
             }
         }
     }
