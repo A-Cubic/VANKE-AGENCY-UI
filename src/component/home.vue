@@ -5,20 +5,20 @@
                 <el-col :span="8">
                     <div class="grid-content-col8">
                         <div class="header-img">
-                            <img src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg" alt="">
+                            <img v-bind:src="basic.avatar" alt="">
                         </div>
                         <div class="user-mes">
                             <div class="user_name">
-                                名字：{{basic.name}}
+                                {{basic.relname}}
                             </div>
                             <div class="user_name">
-                                工号：{{basic.workNum}}
+                                {{basic.user_no}}
                             </div>
                             <div class="user_name">
-                                门店：{{basic.shop}}
+                                {{basic.store_name}}
                             </div>
                             <div class="user_name">
-                                电话：{{basic.phone}}
+                                {{basic.desc}}
                             </div>
                         </div>
                     </div>
@@ -26,13 +26,13 @@
                 <el-col :span="8">
                     <div class="grid-content-col8">
                         <div class="title">当前业绩</div>
-                        <div class="number">{{basic.currentResults}}</div>
+                        <div class="number">{{basic.current_score}}</div>
                     </div>
                 </el-col>
                 <el-col :span="8">
                     <div class="grid-content-col8">
                         <div class="title">潜在业绩</div>
-                        <div class="number">{{basic.potentialResults}}</div>
+                        <div class="number">{{basic.latent_score}}</div>
                     </div>
                 </el-col>
             </el-row>
@@ -41,28 +41,30 @@
                     <div class="grid-content">
                         <el-card class="box-card" shadow="always">
                             <div slot="header" class="clearfix">
-                                <span>排行榜</span>
+                                <span>业绩排行榜</span>
                             </div>
                             <div class="table-button">
                                 <el-button type="primary"
-                                           :plain="ranking.dataStatus == 0 ? false : true"
-                                           @click="search(0)">周</el-button>
-                                <el-button type="primary"
                                            :plain="ranking.dataStatus == 1 ? false : true"
-                                           @click="search(1)">月</el-button>
+                                           @click="search(1)">周</el-button>
+                                <el-button type="primary"
+                                           :plain="ranking.dataStatus == 2 ? false : true"
+                                           @click="search(2)">月</el-button>
                             </div>
                             <div class="table-wrap">
-                                <el-table :data="ranking.dataList" style="width: 100%">
+                                <el-table :data="ranking.list" style="width: 100%">
                                     <el-table-column  label="" width="40">
                                         <template scope="scope">
                                             <i class='el-icon-star-off' v-show='scope.row.rank*1==1'></i>
                                             <i class='el-icon-star-on' v-show='scope.row.rank*1==2'></i>
                                             <i class='el-icon-star-off' v-show='scope.row.rank*1==3'></i>
+                                            <i class='el-icon-star-off' v-show='scope.row.rank*1==4'></i>
                                         </template>
                                     </el-table-column>
                                     <el-table-column prop="rank" label="排名" width="180"></el-table-column>
-                                    <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-                                    <el-table-column prop="address" label="业绩"></el-table-column>
+                                    <el-table-column prop="real_name" label="姓名" width="180"></el-table-column>
+                                    <el-table-column prop="store_name" label="门店" width="180"></el-table-column>
+                                    <el-table-column prop="score" label="业绩"></el-table-column>
                                 </el-table>
                             </div>
                             <div class="table-pagination">
@@ -82,7 +84,7 @@
                         <el-card class="box-card" shadow="always">
                             <div slot="header" class="clearfix">优质房源</div>
                             <div v-for="(item, index) in goodHouseList" :key="index" class="text item">
-                                {{ item.houseName }}
+                                {{ item.xiaoquName }}
                             </div>
                         </el-card>
                         <el-card class="box-card" shadow="always">
@@ -98,59 +100,40 @@
     </section>
 </template>
 <script>
+import HomeApi from '../api/api_home.js';
+import { setRole, setToken } from '../util/global'
     import _axios from '../axios/axios.js'
 export default {
     data() {
         return {
             basic:{
-                name:'狗剩',
-                workNum:'12345',
-                shop:'中华门店',
-                phone:'155555555',
-                currentResults:'123',
-                potentialResults:'1234'
+                avatar:'',
+                relname:'',
+                user_no:'',
+                store_name:'',
+                desc:'',
+                current_score:'',
+                latent_score:''
             },
             ranking:{
-                dataStatus: 0,
-                dataList:[
+                dataStatus: 1,
+                list:[
                     {
-                        rank: 1,
-                        name: '王小虎',
-                        address: '大连市甘井子区'
-                    },
-                    {
-                        rank: 2,
-                        name: '王小龙',
-                        address: '大连市金州区'
-                    },
-                    {
-                        rank: 3,
-                        name: '王小豹',
-                        address: '大连市西岗区'
-                    },
-                    {
-                        rank: 4,
-                        name: '王小狼',
-                        address: '大连市中山区'
-                    },
+                        rank: '',
+                        real_name: '',
+                        store_name: '',
+                        score:''
+                    }
                 ],
                 total: 0,
                 pageSize:10,
-                currentPage:1
+                pageNum:1
             },
 
             goodHouseList:[
                 {
                     id: 0,
-                    houseName: '万科樱花园'
-                },
-                {
-                    id: 1,
-                    houseName: '万科溪之谷'
-                },
-                {
-                    id: 2,
-                    houseName: '万科翡翠之光'
+                    xiaoquName: ''
                 }
             ],
             newsList:[
@@ -162,6 +145,37 @@ export default {
             ],
         };
     },
+    mounted:function(){
+        var that = this;
+        HomeApi.userinfo().then(function (result) {
+            console.log(result)
+            if(typeof(result) != "object"){result = JSON.parse(result)}
+            that.basic=result.data;
+        }).catch(error => {
+            console.log('userinfo_error');
+        });
+
+        HomeApi.goodhouse().then(function (result) {
+
+            if(typeof(result) != "object"){result = JSON.parse(result)}
+            that.goodHouseList=result.data;
+        }).catch(error => {
+            console.log(error);
+            console.log('goodHouseList_error');
+        });
+
+        var postData = {
+            type: 1,
+            page: 1,
+            size: 10,
+        };
+        HomeApi.rank(postData).then(function (result) {
+            if(typeof(result) != "object"){result = JSON.parse(result)}
+            that.ranking=result.data;
+        }).catch(error => {
+            console.log('rank_error');
+        })
+    },
     methods: {
         handleCurrentChangeSearch(val){
             this.ranking.currentPage = val;
@@ -170,8 +184,16 @@ export default {
         doSearch(){
             var that = this;
             var postData = {
-                status: this.ranking.dataStatus,
+                type: this.ranking.dataStatus,
+                page: this.ranking.currentPage,
+                size: 10,
             };
+            HomeApi.rank(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.ranking=result.data;
+            }).catch(error => {
+                console.log('rank_error');
+            })
             // _axios.JH_mes('', postData)
             //     .then(res => {
             //         if(typeof(res) != "object") res = JSON.parse(res);
@@ -185,6 +207,7 @@ export default {
             //     .catch(error => {
             //         console.log(error);
             //     });
+
         },
         search(status){
             this.ranking.currentPage = 1;
@@ -197,7 +220,6 @@ export default {
 </script>
 <style lang="less">
 @import "../assets/css/element.less";
-
 .home {
     /*border:1px solid red;*/
     .home-template{
