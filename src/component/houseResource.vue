@@ -11,6 +11,24 @@
                 </div>
                 <div class="house_search_block">
                     <el-form :model="formData" ref="formData" class="form-wrap">
+                        <el-form-item label="范围:">
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
+                                       size="mini"
+                                       v-for="(item, index) in formData.rangeTypeList"
+                                       @click="searchHouseType(index, formData.rangeTypeList)">
+                                {{ item.name }}
+                            </el-button>
+                        </el-form-item>
+
+                        <el-form-item label="类型:">
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
+                                       size="mini"
+                                       v-for="(item, index) in formData.typeList"
+                                       @click="searchHouseType(index, formData.typeList)">
+                                {{ item.name }}
+                            </el-button>
+                        </el-form-item>
+
                         <el-form-item label="商圈:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
@@ -349,6 +367,33 @@ export default {
             
             formData :{
                 searchMes: '',  //搜索框
+                rangeTypeList:[{
+                        name: '不限',
+                        id: 0,
+                        choosed: true,
+                    },
+                    {
+                        name: '范围盘',
+                        id: 1,
+                        choosed: false,
+                    },
+                    {
+                        name: '共享池',
+                        id: 2,
+                        choosed: false,
+                    }],
+                    rangeType:0,
+                    typeList:[{
+                        name: '买卖',
+                        id: 1,
+                        choosed: true,
+                    },
+                    {
+                        name: '租赁',
+                        id: 2,
+                        choosed: false,
+                    }],
+                    tpye:1,
                 houseTypeList:[
                     {
                         name: '不限',
