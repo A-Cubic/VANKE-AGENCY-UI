@@ -15,7 +15,7 @@
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.rangeTypeList"
-                                       @click="searchHouseType(index, formData.rangeTypeList)">
+                                       @click="searchRangeType(index, formData.rangeTypeList)">
                                 {{ item.name }}
                             </el-button>
                         </el-form-item>
@@ -24,7 +24,7 @@
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
                                        v-for="(item, index) in formData.typeList"
-                                       @click="searchHouseType(index, formData.typeList)">
+                                       @click="searchType(index, formData.typeList)">
                                 {{ item.name }}
                             </el-button>
                         </el-form-item>
@@ -32,51 +32,63 @@
                         <el-form-item label="商圈:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
-                                       v-for="(item, index) in formData.businessList"
-                                       @click="searchHouseType(index, formData.houseTypeList)">
+                                       v-for="(item, index) in formData.positionTypeList"
+                                       @click="searchPositionType(index, formData.positionTypeList)">
                                 {{ item.name }}
                             </el-button>
                         </el-form-item>
                         
 
-                        <el-form-item label="价格:">
+                        <el-form-item v-if="formData.type == 1" label="价格:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
-                                       v-for="(item, index) in formData.totalPriceList"
-                                       @click="searchTotalPrice(index, formData.totalPriceList)">
+                                       v-for="(item, index) in formData.priceTypeSellList"
+                                       @click="searchPriceType(index, formData.priceTypeSellList)">
                                 {{ item.name }}
                             </el-button>
                         </el-form-item>
 
+                        <el-form-item v-else label="价格:">
+                            <el-button :type="item.choosed == false ? '' : 'primary'"
+                                       size="mini"
+                                       v-for="(item, index) in formData.priceTypeRentList"
+                                       @click="searchPriceType(index, formData.priceTypeRentList)">
+                                {{ item.name }}
+                            </el-button>
+                        </el-form-item>
+
+
+                        
+
                         <el-form-item label="面积:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
-                                       v-for="(item, index) in formData.areaList"
-                                       @click="searchTotalPrice(index, formData.totalPriceList)">
+                                       v-for="(item, index) in formData.areaTypeList"
+                                       @click="searchAreaType(index, formData.areaTypeList)">
                                 {{ item.name }}
                             </el-button>
                         </el-form-item>
                         <el-form-item label="房型:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
-                                       v-for="(item, index) in formData.houseTypeList"
-                                       @click="searchHouseType(index, formData.houseTypeList)">
+                                       v-for="(item, index) in formData.huxingTypeList"
+                                       @click="searchUnitType(index, formData.huxingTypeList)">
                                 {{ item.name }}
                             </el-button>
                         </el-form-item>
                         <el-form-item label="朝向:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
-                                       v-for="(item, index) in formData.towardList"
-                                       @click="searchHouseType(index, formData.houseTypeList)">
+                                       v-for="(item, index) in formData.chaoxiangTypeList"
+                                       @click="searchTowardType(index, formData.chaoxiangTypeList)">
                                 {{ item.name }}
                             </el-button>
                         </el-form-item>
                         <el-form-item label="楼层:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
-                                       v-for="(item, index) in formData.floorList"
-                                       @click="searchHouseType(index, formData.houseTypeList)">
+                                       v-for="(item, index) in formData.floorTypeList"
+                                       @click="searchFloorType(index, formData.floorTypeList)">
                                 {{ item.name }}
                             </el-button>
                         </el-form-item>
@@ -367,7 +379,8 @@ export default {
             
             formData :{
                 searchMes: '',  //搜索框
-                rangeTypeList:[{
+                rangeTypeList:[
+                    {
                         name: '不限',
                         id: 0,
                         choosed: true,
@@ -381,9 +394,11 @@ export default {
                         name: '共享池',
                         id: 2,
                         choosed: false,
-                    }],
-                    rangeType:0,
-                    typeList:[{
+                    }
+                ],
+                rangeType:0,
+                typeList:[
+                    {
                         name: '买卖',
                         id: 1,
                         choosed: true,
@@ -392,75 +407,158 @@ export default {
                         name: '租赁',
                         id: 2,
                         choosed: false,
-                    }],
-                    tpye:1,
-                houseTypeList:[
+                    }
+                ],
+                type:1,
+                positionType:0,
+                positionTypeList:[
                     {
                         name: '不限',
                         id: 0,
                         choosed: true,
                     },
                     {
-                        name: '一室',
+                        name: '中山区',
+                        id: 210202,
+                        choosed: false,
+                    },
+                    {
+                        name: '西岗区',
+                        id: 210203,
+                        choosed: false,
+                    },
+                    {
+                        name: '沙河口区',
+                        id: 210204,
+                        choosed: false,
+                    },
+                    {
+                        name: '甘井子区',
+                        id: 210211,
+                        choosed: false,
+                    },
+                    {
+                        name: '旅顺口区',
+                        id: 210212,
+                        choosed: false,
+                    },
+                    {
+                        name: '金州',
+                        id: 210213,
+                        choosed: false,
+                    },
+                    {
+                        name: '长海县',
+                        id: 210224,
+                        choosed: false,
+                    },
+                    {
+                        name: '瓦房店',
+                        id: 210281,
+                        choosed: false,
+                    },
+                    {
+                        name: '普兰店',
+                        id: 210282,
+                        choosed: false,
+                    },
+                    {
+                        name: '庄河',
+                        id: 210283,
+                        choosed: false,
+                    },
+                    // {
+                    //     name: '高新园区',
+                    //     id: 11,
+                    //     choosed: false,
+                    // },
+                    // {
+                    //     name: '开发区',
+                    //     id: 12,
+                    //     choosed: false,
+                    // }
+                ],
+                priceType:0,
+                priceTypeSellList:[
+                    {
+                        name: '不限',
+                        id: 0,
+                        choosed: true,
+                    },{
+                        name: '30万以下',
                         id: 1,
                         choosed: false,
-                    },
-                    {
-                        name: '两室',
+                    },{
+                        name: '30万-40万',
                         id: 2,
                         choosed: false,
-                    },
-                    {
-                        name: '三室',
+                    },{
+                        name: '40万-50万',
                         id: 3,
                         choosed: false,
-                    },
-                    {
-                        name: '四室',
+                    },{
+                        name: '50万-60万',
                         id: 4,
                         choosed: false,
-                    },
-                    {
-                        name: '五室',
+                    },{
+                        name: '60万-80万',
                         id: 5,
                         choosed: false,
-                    },
-                    {
-                        name: '五室以上',
+                    },{
+                        name: '80万-100万',
                         id: 6,
                         choosed: false,
-                    }
-                ],
-                houseTypeId: 0,
-                totalPriceList:[
+                    },{
+                        name: '100万-150万',
+                        id: 7,
+                        choosed: false,
+                    },{
+                        name: '150万-200万',
+                        id: 8,
+                        choosed: false,
+                    },{
+                        name: '200万',
+                        id: 9,
+                        choosed: false,
+                    },
+                ],  //出售
+                priceTypeRentList:[
                     {
                         name: '不限',
                         id: 0,
                         choosed: true,
-                    },
-                    {
-                        name: '100万以下',
+                    },{
+                        name: '500元以下',
                         id: 1,
                         choosed: false,
-                    },
-                    {
-                        name: '100万-150万',
+                    },{
+                        name: '500元-800元',
                         id: 2,
                         choosed: false,
-                    },
-                    {
-                        name: '150万-200万',
+                    },{
+                        name: '800元-1500元',
                         id: 3,
                         choosed: false,
-                    },
-                    {
-                        name: '200万-250万',
+                    },{
+                        name: '1500元-2000元',
                         id: 4,
                         choosed: false,
+                    },{
+                        name: '2000元-3000元',
+                        id: 5,
+                        choosed: false,
+                    },{
+                        name: '3000元-5000元',
+                        id: 6,
+                        choosed: false,
+                    },{
+                        name: '5000元以上',
+                        id: 7,
+                        choosed: false,
                     }
-                ],
-                totalPriceId: 0,
-                areaList:[
+                ],  //租赁
+                areaType: 0,
+                areaTypeList:[
                     {
                         name: '不限',
                         id: 0,
@@ -507,160 +605,124 @@ export default {
                         choosed: false,
                     }
                 ],
-                areaId: 0,
-                businessList:[
+                huxingType: 0,
+                huxingTypeList:[
                     {
                         name: '不限',
                         id: 0,
                         choosed: true,
                     },
                     {
-                        name: '中山',
+                        name: '一室',
                         id: 1,
                         choosed: false,
                     },
                     {
-                        name: '西岗',
+                        name: '两室',
                         id: 2,
                         choosed: false,
                     },
                     {
-                        name: '沙河口',
+                        name: '三室',
                         id: 3,
                         choosed: false,
                     },
                     {
-                        name: '甘井子',
+                        name: '四室',
                         id: 4,
                         choosed: false,
                     },
                     {
-                        name: '旅顺口',
+                        name: '五室',
                         id: 5,
                         choosed: false,
                     },
                     {
-                        name: '金州',
+                        name: '五室以上',
                         id: 6,
-                        choosed: false,
-                    },
-                    {
-                        name: '长海',
-                        id: 7,
-                        choosed: false,
-                    },
-                    {
-                        name: '瓦房店',
-                        id: 8,
-                        choosed: false,
-                    },
-                    {
-                        name: '普兰店',
-                        id: 9,
-                        choosed: false,
-                    },
-                    {
-                        name: '庄河',
-                        id: 10,
-                        choosed: false,
-                    },
-                    {
-                        name: '高新园区',
-                        id: 11,
-                        choosed: false,
-                    },
-                    {
-                        name: '开发区',
-                        id: 12,
                         choosed: false,
                     }
                 ],
-                businessId: 0,
-                towardList:[
+                chaoxiangType: 0,
+                chaoxiangTypeList:[
                     {
                         name: '不限',
                         id: 0,
                         choosed: true,
                     },
                     {
-                        name: '东',
+                        name: '正南',
                         id: 1,
+                        choosed: false,
+                    },
+                    {
+                        name: '正北',
+                        id: 2,
+                        choosed: false,
+                    },
+                    {
+                        name: '正东',
+                        id: 3,
+                        choosed: false,
+                    },
+                    {
+                        name: '正西',
+                        id: 4,
                         choosed: false,
                     },
                     {
                         name: '东南',
-                        id: 2,
-                        choosed: false,
-                    },
-                    {
-                        name: '南',
-                        id: 3,
-                        choosed: false,
-                    },
-                    {
-                        name: '西南',
-                        id: 4,
-                        choosed: false,
-                    },
-                    {
-                        name: '西',
                         id: 5,
                         choosed: false,
                     },
                     {
-                        name: '西北',
+                        name: '西南',
                         id: 6,
                         choosed: false,
                     },
                     {
-                        name: '北',
+                        name: '东北',
                         id: 7,
                         choosed: false,
                     },
                     {
-                        name: '东北',
+                        name: '西北',
                         id: 8,
                         choosed: false,
                     },
-                    {
-                        name: '南北',
-                        id: 9,
-                        choosed: false,
-                    },
-                    {
-                        name: '东西',
-                        id: 10,
-                        choosed: false,
-                    }
+                    // {
+                    //     name: '南北',
+                    //     id: 9,
+                    //     choosed: false,
+                    // },
+                    // {
+                    //     name: '东西',
+                    //     id: 10,
+                    //     choosed: false,
+                    // }
                 ],
-                towardId: 0,
-                floorList:[
+                floorType: 0,
+                floorTypeList:[
                     {
                         name: '不限',
                         id: 0,
                         choosed: true,
                     },{
-                        name: '地下室',
+                        name: '低',
                         id: 1,
                         choosed: false,
                     },
                     {
-                        name: '一层',
+                        name: '中',
                         id: 2,
                         choosed: false,
                     },
                     {
-                        name: '顶层',
+                        name: '高',
                         id: 3,
                         choosed: false,
-                    },
-                    {
-                        name: '其他',
-                        id: 4,
-                        choosed: false,
-                    },
+                    }
                 ],
-                floorId: 0,
             },
             tableData: {
                 pageSize: 10,
@@ -849,6 +911,91 @@ export default {
     },
 
     computed: {
+        priceTypeList(){
+            var priceTypeList =[];
+            if(this.formData.type==1){
+                priceTypeList=[
+                    {
+                        name: '不限',
+                        id: 0,
+                        choosed: true,
+                    },{
+                        name: '30万以下',
+                        id: 1,
+                        choosed: false,
+                    },{
+                        name: '30万-40万',
+                        id: 2,
+                        choosed: false,
+                    },{
+                        name: '40万-50万',
+                        id: 3,
+                        choosed: false,
+                    },{
+                        name: '50万-60万',
+                        id: 4,
+                        choosed: false,
+                    },{
+                        name: '60万-80万',
+                        id: 5,
+                        choosed: false,
+                    },{
+                        name: '80万-100万',
+                        id: 6,
+                        choosed: false,
+                    },{
+                        name: '100万-150万',
+                        id: 7,
+                        choosed: false,
+                    },{
+                        name: '150万-200万',
+                        id: 8,
+                        choosed: false,
+                    },{
+                        name: '200万',
+                        id: 9,
+                        choosed: false,
+                    },
+                ]
+            }else{
+                priceTypeList=[
+                    {
+                        name: '不限',
+                        id: 0,
+                        choosed: true,
+                    },{
+                        name: '500元以下',
+                        id: 1,
+                        choosed: false,
+                    },{
+                        name: '500元-800元',
+                        id: 2,
+                        choosed: false,
+                    },{
+                        name: '800元-1500元',
+                        id: 3,
+                        choosed: false,
+                    },{
+                        name: '1500元-2000元',
+                        id: 4,
+                        choosed: false,
+                    },{
+                        name: '2000元-3000元',
+                        id: 5,
+                        choosed: false,
+                    },{
+                        name: '3000元-5000元',
+                        id: 6,
+                        choosed: false,
+                    },{
+                        name: '5000元以上',
+                        id: 7,
+                        choosed: false,
+                    }
+                ]
+            }
+            return priceTypeList;
+        }
     },
     
 
@@ -893,21 +1040,81 @@ export default {
         search(){
             var postData = {
                 searchMes: this.formData.searchMes,
-                houseTypeId: this.formData.houseTypeId,
-                totalPriceId: this.formData.totalPriceId,
+                rangeType: this.formData.rangeType,
+                type: this.formData.type,
+                positionType: this.formData.positionType,
+                priceType: this.formData.priceType,
+                areaType: this.formData.areaType,
+                huxingType: this.formData.huxingType,
+                chaoxiangType: this.formData.chaoxiangType,
+                floorType: this.formData.floorType,
             }
             console.log(postData);
         },
-        searchHouseType(index, list){
+
+        //范围
+        searchRangeType(index, list){
            var id = this.getId(index, list);
-           this.formData.houseTypeId = id;
+           this.formData.rangeType = id;
            this.search();
-        }, //房型
-        searchTotalPrice(index, list){
+        },
+        //类型
+        searchType(index, list){
+            var that = this;
+            var id = this.getId(index, list);
+            this.formData.type = id;
+            this.formData.priceType = 0;
+            this.formData.priceTypeSellList.forEach((item) => {
+                item.choosed = false;
+                if(that.formData.priceTypeSellList.indexOf(item) == 0){
+                    item.choosed = true;
+                };
+            })
+            this.formData.priceTypeRentList.forEach((item) => {
+                item.choosed = false;
+                if(that.formData.priceTypeRentList.indexOf(item) == 0){
+                    item.choosed = true;
+                };
+            })
+            this.search();
+        },
+        //位置
+        searchPositionType(index, list){
            var id = this.getId(index, list);
-           this.formData.totalPriceId = id;
+           this.formData.positionType = id;
            this.search();
-        }, //价格
+        },
+        //价格
+        searchPriceType(index, list){
+           var id = this.getId(index, list);
+           this.formData.priceType = id;
+           this.search();
+        },
+        //面积
+        searchAreaType(index, list){
+           var id = this.getId(index, list);
+           this.formData.areaType = id;
+           this.search();
+        },
+        //房型
+        searchUnitType(index, list){
+           var id = this.getId(index, list);
+           this.formData.huxingType = id;
+           this.search();
+        },
+        //朝向
+        searchTowardType(index, list){
+           var id = this.getId(index, list);
+           this.formData.chaoxiangType = id;
+           this.search();
+        },
+        //楼层
+        searchFloorType(index, list){
+           var id = this.getId(index, list);
+           this.formData.floorType = id;
+           this.search();
+        },
+        
         getId(index, list){
             var id = 0;
             list.forEach((item) => {
@@ -918,6 +1125,9 @@ export default {
             return id;
         },
 
+        handleCurrentChangeSearch(val){
+            console.log(val)
+        },
 
         examineById(row){
             console.log(row.id);

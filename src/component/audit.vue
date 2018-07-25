@@ -53,9 +53,10 @@
                         </el-table-column>
                         <el-table-column label="操作">
                             <template scope="scope">
-                                <el-button size="mini" type="text" @click="putPass(scope.row)">通过</el-button>
+                                <el-button size="mini" type="text" @click="auditItem(scope.row)">审核</el-button>
+                                <!-- <el-button size="mini" type="text" @click="putPass(scope.row)">通过</el-button>
                                 <el-button size="mini" type="text" @click="unPassHandel(scope.row)">不通过
-                                </el-button>
+                                </el-button> -->
                             </template>
                         </el-table-column>
                     </el-table>
@@ -71,7 +72,37 @@
                 </div>
             </el-col>
 
-            <el-dialog title="原因: " :visible.sync="unPassForm.unPassVisible" width="40%">
+            <el-dialog title="审核: " :visible.sync="auditForm.auditVisible" width="80%">
+                <div class="audit-dialog-template" v-show="auditForm.aduitStatus == 1">
+                    <el-form :model="auditForm.imgDataForm" label-width="120px" class="demo-ruleForm">
+                        <el-form-item :label="item.label"
+                                      v-for="(item, index) in auditForm.imgDataForm.imgDataList"
+                                      :key="index">
+                            <img :src="img.imgUrl" 
+                                 alt=""
+                                 v-for="(img, index) in item.list" 
+                                 :key="index">
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <div class="audit-dialog-template" v-show="auditForm.aduitStatus == 2">
+                    当aduitStatus 为2显示的内容
+                </div>
+                <div class="btn-footer">
+                    
+                    <el-input
+                           type="textarea"
+  :autosize="{ minRows: 2, maxRows: 4}"
+  placeholder="请输入不通过理由"
+  v-model="auditForm.unPassMes">
+</el-input>
+
+                    <el-button class="btn-unpass" type="primary" @click="">不通过</el-button>
+                    <el-button class="btn-pass" type="primary" @click="">通过</el-button>
+                </div>
+            </el-dialog>
+
+            <!-- <el-dialog title="原因: " :visible.sync="unPassForm.unPassVisible" width="40%">
                 <el-input
                         type="textarea"
                         :rows="6"
@@ -81,7 +112,7 @@
                 <span slot="footer" class="dialog-footer">
                     <el-button type="primary" @click="putUnPass">确 定</el-button>
                 </span>
-            </el-dialog>
+            </el-dialog> -->
         </el-row>
     </section>
 </template>
@@ -156,7 +187,7 @@ export default {
                         date: '2016-05-02',
                         name: '王大虎',
                         type: 1,
-                        status: 1,
+                        status: 2,
                         result: 2
                     },
                     {
@@ -172,6 +203,75 @@ export default {
                 total: 0,
                 pageCurrent: 1,
 
+            },
+
+            auditForm:{
+                aduitStatus: '',
+                auditVisible: false,
+                imgDataForm: {
+                    imgDataList:[
+                        {
+                            label: '室',
+                            list: [
+                                {
+                                    imgcode: '',
+                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
+                                },
+                                {
+                                    imgcode: '',
+                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
+                                },
+                            ]
+                        },
+                        {
+                            label: '厅',
+                            list: [
+                                {
+                                    imgcode: '',
+                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
+                                }
+                            ]
+                        },
+                        {
+                            label: '卫',
+                            list: [
+                                {
+                                    imgcode: '',
+                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
+                                }
+                            ]
+                        },
+                        {
+                            label: '厨',
+                            list: [
+                                {
+                                    imgcode: '',
+                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
+                                }
+                            ]
+                        },
+                        {
+                            label: '户型',
+                            list: [
+                                {
+                                    imgcode: '',
+                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
+                                }
+                            ]
+                        },
+                        {
+                            label: '其他',
+                            list: [
+                                {
+                                    imgcode: '',
+                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
+                                }
+                            ]
+                        },
+
+                    ]
+                },
+                unPassMes: '',
             },
 
             unPassForm:{
@@ -201,6 +301,13 @@ export default {
         handleCurrentChangeSearch(val){
             this.tableForm.pageCurrent = val;
             this.doSearch();
+        },
+
+        auditItem(item){
+            console.log(item);
+            this.auditForm.aduitStatus = item.status;
+            this.auditForm.auditVisible = true;
+
         },
 
         unPassHandel(item){
@@ -263,6 +370,34 @@ export default {
             .table-pagination{
                 padding: 0 20px 20px;
                 text-align: right;
+            }
+        }
+
+        .el-dialog{
+
+            .audit-dialog-template{
+                .el-form{
+                    .el-form-item{
+                        img{
+                            width: 180px;
+                            height: 140px;
+                            margin-left: 10px;
+                        }
+                    }
+                }
+            }
+            .btn-footer{
+                overflow: hidden;
+                
+                .btn-pass{
+                    margin-top:10px;
+                    float: right;
+                }
+                .btn-unpass{
+                    margin-top:10px;
+                    margin-left:10px;
+                    float: right;
+                }
             }
         }
     }
