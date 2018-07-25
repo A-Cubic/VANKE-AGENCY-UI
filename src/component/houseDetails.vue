@@ -230,9 +230,10 @@
                             <el-upload
                                     v-for="(item, index) in examineForm.bedroom"
                                     action="https://jsonplaceholder.typicode.com/posts/"
-                                    :auto-upload='false'
+
                                     :show-file-list="false"
                                     list-type="picture-card"
+                                    :headers="curToken"
                                     :on-change='changeUpload'>
                                 <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
                                 <i v-else class="el-icon-plus"></i>
@@ -326,6 +327,7 @@
     </section>
 </template>
 <script>
+    import { getToken } from '../util/global'
     export default {
         name: "house-details",
         props: ['id'],
@@ -355,7 +357,7 @@
                     placeName: '辽宁省大连市甘井子区',
                 },
                 uploadData:{},  //提交postData
-
+                curToken: {Authorization: getToken()},
                 coverUrl: '',
                 carouselList:[
                     {
