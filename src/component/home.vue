@@ -71,7 +71,7 @@
                                 <el-pagination
                                         layout="prev, pager, next, jumper, total"
                                         :page-size="ranking.pageSize"
-                                        :current-page.sync="ranking.currentPage"
+                                        :current-page.sync="ranking.pageNum"
                                         :total ="ranking.total"
                                         @current-change="handleCurrentChangeSearch">
                                 </el-pagination>
@@ -148,7 +148,6 @@ export default {
     mounted:function(){
         var that = this;
         HomeApi.userinfo().then(function (result) {
-            console.log(result)
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.basic=result.data;
         }).catch(error => {
@@ -156,11 +155,9 @@ export default {
         });
 
         HomeApi.goodhouse().then(function (result) {
-
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.goodHouseList=result.data;
         }).catch(error => {
-            console.log(error);
             console.log('goodHouseList_error');
         });
 
@@ -178,14 +175,14 @@ export default {
     },
     methods: {
         handleCurrentChangeSearch(val){
-            this.ranking.currentPage = val;
+            this.ranking.pageNum = val;
             this.doSearch();
         },
         doSearch(){
             var that = this;
             var postData = {
                 type: this.ranking.dataStatus,
-                page: this.ranking.currentPage,
+                page: this.ranking.pageNum,
                 size: 10,
             };
             HomeApi.rank(postData).then(function (result) {
@@ -210,7 +207,7 @@ export default {
 
         },
         search(status){
-            this.ranking.currentPage = 1;
+            this.ranking.pageNum = 1;
             this.ranking.dataStatus = status;
             this.doSearch();
 
