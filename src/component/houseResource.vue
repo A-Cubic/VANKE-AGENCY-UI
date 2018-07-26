@@ -377,7 +377,12 @@
 </template>
 <script>
     import HouseApi from '../api/api_house.js';
+    import Vue from 'vue';
+    import { Message } from 'element-ui';
 export default {
+    install(Vue) {
+        Vue.prototype.$message = Message
+    },
     data() {
         return {
 
@@ -749,7 +754,7 @@ export default {
 
             alertAdd:{
                 active:0,
-                visible:true,
+                visible:false,
                 ruleForm: {
                     price: '',
                     areas: '',
@@ -1050,6 +1055,12 @@ export default {
                             HouseApi.addhouse(this.alertAdd.ruleForm).then(function (result) {
                                 console.log(result);
                                 if(typeof(result) != "object"){result = JSON.parse(result)}
+
+                                Message({
+                                    message: "新增房源成功",
+                                    type: 'success'
+                                });
+                                this.alertAdd.visible=false;
                             }).catch(error => {
                                 console.log('addhouse_error');
                             });
