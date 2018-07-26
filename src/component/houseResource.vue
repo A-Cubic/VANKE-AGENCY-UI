@@ -1038,11 +1038,12 @@ export default {
             that.alertAdd.ruleForm.regionCode = item[0];
             that.alertAdd.ruleForm.streetId = item[1];
         },
-	    	resetForm(formName) {
+	    resetForm(formName) {
 	        this.$refs[formName].resetFields();
-	      },
+        },
 
         submitAdd(ruleForm){
+            var that = this;
         	if(this.alertAdd.active == 0){
         		  this.$refs[ruleForm].validate((valid) => {
                   if (valid) {
@@ -1060,7 +1061,8 @@ export default {
                                     message: "新增房源成功",
                                     type: 'success'
                                 });
-                                this.alertAdd.visible=false;
+                                that.alertAdd.visible=false;
+                                resetForm(ruleForm);
                             }).catch(error => {
                                 console.log('addhouse_error');
                             });
