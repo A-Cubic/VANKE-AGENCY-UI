@@ -46,6 +46,9 @@
                                        @click="searchPriceType(index, formData.priceTypeSellList)">
                                 {{ item.name }}
                             </el-button>
+                             <el-input size="mini" v-model="formData.priceUp" placeholder="请输入"></el-input> -
+                            <el-input size="mini" v-model="formData.priceDown" placeholder="请输入"></el-input>
+                            <el-button type="text" @click="search">确定</el-button>
                         </el-form-item>
 
                         <el-form-item v-else label="价格:">
@@ -55,6 +58,9 @@
                                        @click="searchPriceType(index, formData.priceTypeRentList)">
                                 {{ item.name }}
                             </el-button>
+                             <el-input size="mini" v-model="formData.priceUp" placeholder="请输入"></el-input> -
+                            <el-input size="mini" v-model="formData.priceDown" placeholder="请输入"></el-input>
+                            <el-button type="text" @click="search">确定</el-button>
                         </el-form-item>
 
 
@@ -488,6 +494,8 @@ export default {
                     // }
                 ],
                 priceType:0,
+                priceUp: '',
+                priceDown: '',
                 priceTypeSellList:[
                     {
                         name: '不限',
@@ -988,6 +996,7 @@ export default {
     mounted:function(){
         var that = this;
         var postData = {
+
             page: 1,
             size: 10,
             type: '1'
@@ -1084,6 +1093,8 @@ export default {
         search(){
             var that = this;
             var postData = {
+                priceUp: this.formData.priceUp,
+                priceDown: this.formData.priceDown,
                 searchText: this.formData.searchText,
                 rangeType: this.formData.rangeType,
                 type: this.formData.type,
@@ -1141,6 +1152,35 @@ export default {
         searchPriceType(index, list){
            var id = this.getId(index, list);
            this.formData.priceType = id;
+           if(index == 0){
+               this.formData.priceUp = '';
+               this.formData.priceDown = '';
+           }
+           else if(index == 1){
+            var strBefore
+            if(this.formData.type==0){
+                strBefore = list[index].name.split("万");
+            }else{
+                strBefore = list[index].name.split("元");
+            }
+               this.formData.priceUp = '';
+               this.formData.priceDown = strBefore[0];
+           }
+           else if(index == list.length-1){
+            var strLater
+                if(this.formData.type==0){
+                    strLater = list[index].name.split("万");
+                }else{
+                    strLater = list[index].name.split("元");
+                }
+               this.formData.priceUp = strLater[0];
+               this.formData.priceDown = '';
+           }
+           else{
+               var strs = list[index].name.split("-");
+               this.formData.priceUp = strs[0].substr(0, strs[0].length-1);
+               this.formData.priceDown = strs[1].substr(0, strs[1].length-1);
+           }
            this.search();
         },
         //面积
@@ -1228,6 +1268,12 @@ export default {
                         .el-button{
                             /*margin-left: 10px;*/
                             border: none;
+                        }
+                        .el-input{
+                            width: 100px;
+                            .el-input__inner{
+                                text-align: center;
+                            }
                         }
 
                     }
