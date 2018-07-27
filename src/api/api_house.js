@@ -25,4 +25,46 @@ export default {
         return API.POST('house/save', params)
     },
 
+    //房源详情
+    housedetail: params => {
+        return API.POST('house/detail', params)
+    },
+
+    //带看列表
+    looklist: params => {
+        return API.POST('house/lookrecord/list', params)
+    },
+
+    // 跟进列表
+    recordlist: params => {
+        return API.POST('house/record/list', params)
+    },
+
+    // 查看电话
+    detailPhone: params => {
+        return API.POST('house/detailPhone', params)
+    },
+
+    // 查看地址
+    detailAddress: params => {
+        return API.POST('house/detailAddress', params)
+    },
+
+    // 更改钥匙人
+    updateKey: params => {
+        return API.POST('house/updateKey', params)
+    },
+
+    // 新增跟进
+    insertRecord: params => {
+        return API.POST('house/record/insert', params)
+    },
+
+    // 修改房源
+    updateHouse: params => {
+        return API.POST('house/update', params)
+    },
+
+
+
 }

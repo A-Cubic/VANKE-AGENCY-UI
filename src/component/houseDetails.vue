@@ -1,7 +1,7 @@
 <template>
     <section class="house-details">
         <div class="house-template">
-            这条信息的id是{{id}}
+            {{houseDataForm.number}}
             <el-row :gutter="25">
                 <el-col :span="16">
                     <ul class="mes-concent">
@@ -18,36 +18,38 @@
                                         <!--:on-error="handleError">-->
                                     <!--<i class="el-icon-plus uploader-icon"></i>-->
                                 <!--</el-upload>-->
-                                <div v-show="carouselList.length < 0" class="blockCover">暂无图片</div>
-                                <div v-show="carouselList.length > 0" class="imgCover">
+                                <div v-show="houseDataForm.imgurl ==null || houseDataForm.imgurl.length == 0" class="blockCover">暂无图片</div>
+                                <div v-show="houseDataForm.imgurl !=null || houseDataForm.imgurl.length > 0" class="imgCover">
                                     <img :src="coverUrl" alt="暂无图片">
                                 </div>
-                                <el-carousel v-show="carouselList.length > 0"
+                                <el-carousel v-show="houseDataForm.imgurl !=null && houseDataForm.imgurl.length > 0"
                                              class="carousel-wrap"
                                              indicator-position="none"
                                              :interval="5000"
                                              type="card"
                                              height="110px"
                                              @change="coverHandel">
-                                    <el-carousel-item v-for="(item, index) in carouselList" :key="index">
-                                        <img :src="item.imgUrl" alt="">
+                                    <el-carousel-item v-for="(item, index) in houseDataForm.imgurl" :key="index">
+                                        <img :src="item" alt="">
                                     </el-carousel-item>
                                 </el-carousel>
                             </div>
                             <div class="mes-wrap">
-                                <div class="house-price">{{ houseDataForm.totalPrice }}</div>
+                                <div class="house-price">{{ houseDataForm.xiaoquName }}</div>
+                                <div class="house-price">{{ houseDataForm.priceText }}</div>
+                                <div class="house-price">{{ houseDataForm.priceOneText }}</div>
                                 <div class="house-basis-mes">
                                     <div class="basis-mes">
                                         <div>户型</div>
-                                        <div>{{ houseDataForm.houseType }}</div>
+                                        <div>{{ houseDataForm.huxing }}</div>
                                     </div>
                                     <div class="basis-mes">
                                         <div>面积</div>
-                                        <div>{{houseDataForm.area}}</div>
+                                        <div>{{houseDataForm.areas}}m²</div>
                                     </div>
                                     <div class="basis-mes">
                                         <div>朝向</div>
-                                        <div>{{ houseDataForm.orientation }}</div>
+                                        <div>{{ houseDataForm.chaoxiang }}</div>
                                     </div>
                                     <div class="basis-mes">
                                         <div>楼层</div>
@@ -56,15 +58,15 @@
                                 </div>
                                 <div class="house-other-mes">
                                     <div class="other-mes">
-                                        <div>挂牌时间: <span>{{ houseDataForm.handOutTime }}</span></div>
-                                        <div>有无钥匙: <span>{{ houseDataForm.keyVisible }}</span></div>
+                                        <div>挂牌时间: <span>{{ houseDataForm.createTime }}</span></div>
+                                        <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div>
                                         <div>房主信息:
                                             <el-button type="text" size="mini" @click="ownerHandle">查看</el-button>
                                         </div>
                                     </div>
                                     <div class="other-mes">
-                                        <div>维护人: <span>{{ houseDataForm.maintenanceMan }}</span></div>
-                                        <div>房屋等级: <span>{{ houseDataForm.houseLevel }}</span></div>
+                                        <div>维护人: <span>{{ houseDataForm.recordrelName==''?"暂无": radiusForm.recordrelName }}</span></div>
+                                        <div>房屋等级: <span>{{ houseDataForm.grade }}</span></div>
                                         <div>地址:
                                             <el-button type="text" size="mini" @click="placeHandle">查看</el-button>
                                         </div>
@@ -77,17 +79,17 @@
                                 <div class="radius-block">
                                     <div><i class="el-icon-edit"></i></div>
                                     <div>录入</div>
-                                    <div class="radius-data">{{ radiusForm.entering }}</div>
+                                    <div class="radius-data">{{ radiusForm.createrelName==''|| radiusForm.createrelName==null?"暂无":radiusForm.createrelName }}</div>
                                 </div>
                                 <div class="radius-block">
                                     <div><i class="el-icon-edit"></i></div>
                                     <div>维护</div>
-                                    <div class="radius-data">{{ radiusForm.maintain }}</div>
+                                    <div class="radius-data">{{ radiusForm.recordrelName==''|| radiusForm.recordrelName==null?"暂无": radiusForm.recordrelName}}</div>
                                 </div>
                                 <div class="radius-block">
                                     <div><i class="el-icon-edit"></i></div>
                                     <div>实勘</div>
-                                    <div class="radius-data">{{ radiusForm.examine }}</div>
+                                    <div class="radius-data">{{ radiusForm.explorationrelName=='' || radiusForm.explorationrelName==null?"暂无": radiusForm.explorationrelName}}</div>
                                     <el-button type="text"
                                                size="small"
                                                icon="el-icon-plus"
@@ -97,7 +99,7 @@
                                 <div class="radius-block">
                                     <div><i class="el-icon-edit"></i></div>
                                     <div>钥匙</div>
-                                    <div class="radius-data">{{ radiusForm.key }}</div>
+                                    <div class="radius-data">{{ radiusForm.keyrelName==''|| radiusForm.keyrelName==null?"暂无": radiusForm.keyrelName}}</div>
                                     <el-button type="text"
                                                size="small"
                                                icon="el-icon-plus"
@@ -107,7 +109,7 @@
                                 <div class="radius-block">
                                     <div><i class="el-icon-edit"></i></div>
                                     <div>独家</div>
-                                    <div class="radius-data">{{ radiusForm.exclusive }}</div>
+                                    <div class="radius-data">{{ radiusForm.exclusiverelName==''|| radiusForm.exclusiverelName==null?"暂无":radiusForm.exclusiverelName }}</div>
                                 </div>
                             </div>
 
@@ -118,17 +120,18 @@
                     <div class="tab-content">
                         <el-tabs type="border-card">
                             <el-tab-pane label="跟进">
-                                <el-table :data="traceForm.traceList" :show-header="false" style="width: 100%">
-                                    <el-table-column prop="date" label="日期"></el-table-column>
-                                    <el-table-column prop="peopleName" label="维护人"></el-table-column>
+                                <el-table :data="traceForm.list" :show-header="false" style="width: 100%">
+                                    <el-table-column prop="createTime" label="日期"></el-table-column>
+                                    <el-table-column prop="userRelName" label="维护人"></el-table-column>
+                                    <el-table-column prop="content" label="内容"></el-table-column>
                                 </el-table>
                                 <div class="pagination-template">
                                     <el-pagination
                                             layout="prev, pager, next, jumper, total"
                                             :page-size="traceForm.pageSize"
-                                            :current-page.sync="traceForm.pageNo"
-                                            :total ="traceForm.totalRow"
-                                            @current-change="">
+                                            :current-page.sync="traceForm.pageNum"
+                                            :total ="traceForm.total"
+                                            @current-change="handleCurrentChangeSearch">
                                     </el-pagination>
                                 </div>
                                 <div class="trace-template">
@@ -138,40 +141,40 @@
                                     </div>
                                 </div>
                                 <div class="trace-button">
-                                    <el-button type="primary" size="mini" @click="">提交</el-button>
+                                    <el-button type="primary" size="mini" @click="submitTrace">提交</el-button>
                                 </div>
                             </el-tab-pane>
                             <el-tab-pane label="带看">
-                                <el-table :data="lookForm.lookList" :show-header="false" style="width: 100%">
-                                    <el-table-column prop="date" label="日期"></el-table-column>
-                                    <el-table-column prop="peopleName" label="维护人"></el-table-column>
+                                <el-table :data="lookForm.list" :show-header="false" style="width: 100%">
+                                    <el-table-column prop="createTime" label="日期"></el-table-column>
+                                    <el-table-column prop="userRelName" label="维护人"></el-table-column>
                                 </el-table>
                                 <div class="pagination-template">
                                     <el-pagination
                                             layout="prev, pager, next, jumper, total"
                                             :page-size="lookForm.pageSize"
-                                            :current-page.sync="lookForm.pageNo"
-                                            :total ="lookForm.totalRow"
-                                            @current-change="">
+                                            :current-page.sync="lookForm.pageNum"
+                                            :total ="lookForm.total"
+                                            @current-change="handleCurrentChangeSearch1">
                                     </el-pagination>
                                 </div>
                             </el-tab-pane>
                             <el-tab-pane label="修改">
-                                <el-form :model="editForm" ref="editForm" label-width="60px" class="demo-ruleForm">
+                                <el-form :model="houseDataForm" ref="houseDataForm" label-width="60px" class="demo-ruleForm">
                                     <el-form-item label="价格:">
-                                        <el-input placeholder="请输入" v-model="editForm.totalPrice"></el-input>
+                                        <el-input placeholder="请输入" v-model="houseDataForm.price"></el-input>
                                     </el-form-item>
                                     <el-form-item label="户型:">
-                                        <el-input placeholder="请输入" v-model="editForm.houseType"></el-input>
+                                        <el-input placeholder="请输入" v-model="houseDataForm.huxing"></el-input>
                                     </el-form-item>
                                     <el-form-item label="面积:">
-                                        <el-input placeholder="请输入" v-model="editForm.area"></el-input>
+                                        <el-input placeholder="请输入" v-model="houseDataForm.areas"></el-input>
                                     </el-form-item>
                                     <el-form-item label="朝向:">
-                                        <el-input placeholder="请输入" v-model="editForm.orientation"></el-input>
+                                        <el-input placeholder="请输入" v-model="houseDataForm.chaoxiang"></el-input>
                                     </el-form-item>
                                     <el-form-item label="楼层:">
-                                        <el-input placeholder="请输入" v-model="editForm.floor"></el-input>
+                                        <el-input placeholder="请输入" v-model="houseDataForm.floor"></el-input>
                                     </el-form-item>
                                     <div style="text-align: right">
                                         <el-button type="primary" size="mini" @click="editSubmit">提交</el-button>
@@ -185,13 +188,13 @@
                                          class="demo-ruleForm"
                                          label-position="left">
                                     <el-form-item label="特殊房源:">
-                                        <el-switch v-model="otherForm.specialHouse"></el-switch>
+                                        <el-switch v-model="otherForm.isspecial==0 ||otherForm.isspecial==null?false:true"></el-switch>
                                     </el-form-item>
                                     <el-form-item label="无效房源:">
-                                        <el-switch v-model="otherForm.invalidHouse"></el-switch>
+                                        <el-switch v-model="otherForm.state==0 ||otherForm.state==null?false:true"></el-switch>
                                     </el-form-item>
                                     <el-form-item label="优质房源:">
-                                        <el-switch v-model="otherForm.goodHouse"></el-switch>
+                                        <el-switch v-model="otherForm.isfine==0 ||otherForm.isfine==null?false:true"></el-switch>
                                     </el-form-item>
                                     <el-form-item label="房源转让:">
                                         <el-button type="text" size="mini"
@@ -205,18 +208,20 @@
                     </div>
                 </el-col>
 
-                <el-dialog :title="'房主信息 '+'( 已看'+ownerVisibleNumber+'/20 )'" :visible.sync="ownerVisible" width="40%">
+                <el-dialog :title="'房主信息 '+'( 已看'+ownerForm.clickcount+'/20 )'" :visible.sync="ownerVisible" width="40%">
                     <el-form :model="ownerForm" ref="ownerForm" label-width="60px" class="demo-ruleForm">
-                        <el-form-item label="姓名:">{{ ownerForm.name }}</el-form-item>
+                        <el-form-item label="姓名:">{{ ownerForm.owner }}</el-form-item>
                         <el-form-item label="电话:">{{ ownerForm.phone }}</el-form-item>
+                        <el-form-item label="姓名:">{{ ownerForm.owner1 }}</el-form-item>
+                        <el-form-item label="电话:">{{ ownerForm.phone1 }}</el-form-item>
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="ownerVisible = false">退 出</el-button>
                     </span>
                 </el-dialog>
-                <el-dialog :title="'地址信息 '+'( 已看'+placeVisibleNumber+'/20 )'" :visible.sync="placeVisible" width="40%">
+                <el-dialog :title="'地址信息 '+'( 已看'+placeForm.clickcount+'/20 )'" :visible.sync="placeVisible" width="40%">
                     <el-form :model="placeForm" ref="placeForm" label-width="60px" class="demo-ruleForm">
-                        <el-form-item label="地址:">{{ placeForm.placeName }}</el-form-item>
+                        <el-form-item label="地址:">{{ placeForm.addressText }}</el-form-item>
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="placeVisible = false">退 出</el-button>
@@ -327,34 +332,48 @@
     </section>
 </template>
 <script>
-    import { getToken } from '../util/global'
+    import { getToken } from '../util/global';
+    import HouseApi from '../api/api_house.js';
+    import Vue from 'vue';
+    import { Message } from 'element-ui';
     export default {
+        install(Vue) {
+            Vue.prototype.$message = Message
+        },
         name: "house-details",
         props: ['id'],
         data() {
             return {
                 houseDataForm: {
-                    totalPrice: '100万',
-                    houseType: '2室',
-                    area: '91平',
-                    orientation: '南北',
-                    floor: '5楼',
-                    handOutTime: '2018-06-07',
-                    keyVisible: '无',
-                    maintenanceMan: '王小虎',
-                    houseLevel: 'B',
+                    number:'',
+                    imgurl:[],
+                    xiaoquName:'',
+                    price: '',
+                    priceText:'',
+                    priceOneText:'',
+                    huxing: '',
+                    areas: '',
+                    chaoxiang: '',
+                    floor: '',
+                    createTime: '',
+                    iskey: '',
+                    recordrelName: '',
+                    grade: '',
+                    isshare:''
                 },  //右侧头部数据
 
                 ownerVisible: false, //房主信息dialog
-                ownerVisibleNumber: 2,
                 ownerForm: {
-                    name: '王大虎',
-                    phone: '13245678349',
+                    owner: '',
+                    phone: '',
+                    owner1: '',
+                    phone1: '',
+                    clickcount:0
                 },
                 placeVisible: false, //地址信息dialog
-                placeVisibleNumber: 5,
                 placeForm: {
-                    placeName: '辽宁省大连市甘井子区',
+                    addressText: '辽宁省大连市甘井子区',
+                    clickcount:0
                 },
                 uploadData:{},  //提交postData
                 curToken: {Authorization: getToken()},
@@ -372,11 +391,11 @@
 
                 ],  //走马灯
                 radiusForm:{
-                    entering: '钢铁侠',
-                    maintain: '美国队长',
-                    examine: '绿巨人',
-                    key: '雷神',
-                    exclusive: '蜘蛛侠',
+                    createrelName: '',
+                    recordrelName: '',
+                    explorationrelName: '',
+                    keyrelName: '',
+                    exclusiverelName: '',
                 },  //圆框标签
 
                 examineVisible: false, //实勘dialog
@@ -424,64 +443,40 @@
                 },
 
                 traceForm: {
-                    pageNo: 1,
+                    pageNum: 1,
                     pageSize: 5,
-                    totalRow: 0,
-                    traceList: [
+                    total: 0,
+                    list: [
                         {
-                            date: '2018-06-09',
-                            peopleName: '王小虎',
-                        },
-                        {
-                            date: '2018-06-09',
-                            peopleName: '王小虎',
-                        },
-                        {
-                            date: '2018-06-09',
-                            peopleName: '王小虎',
-                        },
-                        {
-                            date: '2018-06-09',
-                            peopleName: '王小虎',
-                        },
-                        {
-                            date: '2018-06-09',
-                            peopleName: '王小虎',
+                            createTime: '',
+                            userRelName: '',
+                            content:''
                         }
                     ],
                     textMes: ''
                 },  //跟进
                 lookForm:{
-                    pageNo: 1,
+                    pageNum: 1,
                     pageSize: 5,
-                    totalRow: 0,
-                    lookList: [
+                    total: 0,
+                    list: [
                         {
-                            date: '2018-06-09',
-                            peopleName: '王大虎',
-                        },
-                        {
-                            date: '2018-06-09',
-                            peopleName: '王二虎',
-                        },
-                        {
-                            date: '2018-06-09',
-                            peopleName: '王三虎',
+                            createTime: '',
+                            userRelName: ''
                         }
                     ],
                 },  //带看
-                editForm:{
-                    totalPrice: '100万',
-                    houseType: '2室',
-                    area: '91平',
-                    orientation: '南北',
-                    floor: '5楼',
-                },  //修改
+                // editForm:{
+                //     price: '100万',
+                //     houseType: '2室',
+                //     area: '91平',
+                //     orientation: '南北',
+                //     floor: '5楼',
+                // },  //修改
                 otherForm: {
-                    specialHouse: false,
-                    invalidHouse: true,
-                    goodHouse:true,
-                    transferHouse: false,
+                    isspecial: 0,
+                    state: 0,
+                    isfine:0,
                 },
                 transferVisible: false,  //转让dialog
                 transferForm: {
@@ -496,7 +491,40 @@
 
             };
         },
+        mounted:function(){
+            var that = this;
+            var postData = {
+                id: this.id
+            };
+            HouseApi.housedetail(postData).then(function (result) {
+                console.log(result)
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.houseDataForm=result.data;
+                that.otherForm=result.data;
+                that.radiusForm=result.data;
+            }).catch(error => {
+                console.log('housedetail_error');
+            });
 
+            var postData1 = {
+                page: 1,
+                size: 5,
+                houseId: this.id
+            };
+            HouseApi.looklist(postData1).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.lookForm=result.data;
+            }).catch(error => {
+                console.log('looklist_error');
+            });
+
+            HouseApi.recordlist(postData1).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.traceForm=result.data;
+            }).catch(error => {
+                console.log('recordlist_error');
+            });
+        },
         computed: {
         },
         filter:{
@@ -510,16 +538,54 @@
             },
 
             coverHandel(index){
-                console.log(index);
-                this.coverUrl = this.carouselList[index].imgUrl;
+                // console.log(index);
+                this.coverUrl = this.houseDataForm.imgurl[index];
             },  //走马灯切换
 
 
             ownerHandle(){
-                this.ownerVisible = true;
+                var that = this;
+                if(this.houseDataForm.isshare==1){
+                    Message.error("房源为共享池房源，无法查看房主信息！");
+                }else{
+                    var postData = {
+                        houseId: this.id
+                    };
+                    HouseApi.detailPhone(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        if(result.data=='您今日查询联系信息的次数已用完'){
+                            Message.error("您今日查询联系信息的次数已用完");
+                        }else{
+                            that.ownerForm=result.data;
+                            that.ownerVisible = true;
+                        }
+                    }).catch(error => {
+                        console.log('detailPhone_error');
+                    });
+                }
+
             },  //查看房主信息
             placeHandle(){
-                this.placeVisible = true;
+                var that = this;
+                if(this.houseDataForm.isshare==1){
+                    Message.error("房源为共享池房源，无法查看地址信息！");
+                }else{
+                    var postData = {
+                        houseId: this.id
+                    };
+                    HouseApi.detailAddress(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        if(result.data=='您今日查询房屋地址的次数已用完'){
+                            Message.error("您今日查询房屋地址的次数已用完");
+                        }else{
+                            that.placeForm=result.data;
+                            that.placeVisible = true;
+                        }
+                    }).catch(error => {
+                        console.log('detailAddress_error');
+                    });
+                }
+
             },  //查看地址信息
             examineHandel(){
                 this.examineVisible = true;
@@ -530,12 +596,24 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this.$message({
-                        type: 'success',
-                        message: '更改成功!'
+                    var that = this;
+                    var postData = {
+                        id: this.id
+                    };
+                    HouseApi.updateKey(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.houseDataForm.iskey = "1";
+                        that.radiusForm.keyrelName=result.data;
+                        Message({
+                            type: 'success',
+                            message: '更改成功!'
+                        });
+                    }).catch(error => {
+                        console.log('updateKey_error'+error);
                     });
+
                 }).catch(() => {
-                    this.$message({
+                    Message({
                         type: 'info',
                         message: '已取消更改!'
                     });
@@ -543,12 +621,41 @@
             },  //修改钥匙所有人
 
             editSubmit(){
-                var postData = this.editForm;
-                console.log(postData);
-                this.$message({
-                    message: '修改成功!',
-                    type: 'success'
+                var that = this;
+                var hid = this.id;
+                var postData = {
+                    id: hid,
+                    price:this.houseDataForm.price,
+                    huxing: this.houseDataForm.huxing,
+                    areas: this.houseDataForm.areas,
+                    chaoxiang: this.houseDataForm.chaoxiang,
+                    floor: this.houseDataForm.floor
+                };
+                HouseApi.updateHouse(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    if(result.data=='1'){
+                        var postData1 = {
+                            id: hid
+                        };
+                        HouseApi.housedetail(postData1).then(function (result) {
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            that.houseDataForm=result.data;
+                            that.otherForm=result.data;
+                            that.radiusForm=result.data;
+                        }).catch(error => {
+                            console.log('housedetail_error');
+                        });
+                        Message({
+                            message: '修改成功!',
+                            type: 'success'
+                        });
+                    }else{
+                        Message.error('修改失败!');
+                    }
+                }).catch(error => {
+                    console.log('updateKey_error'+error);
                 });
+
             },  //修改提交
             transferHandel(){
                 this.transferForm.name = '';
@@ -592,7 +699,65 @@
                 console.log(fileList)
             },  //上传
 
+            handleCurrentChangeSearch(val){
+                var that = this;
+                that.traceForm.pageNum = val;
+                var postData = {
+                    houseId: this.id,
+                    page: val,
+                    size: 5,
+                };
+                HouseApi.recordlist(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.traceForm=result.data;
+                }).catch(error => {
+                    console.log('recordlist_error');
+                });
+            },
 
+            handleCurrentChangeSearch1(val){
+                var that = this;
+                that.lookForm.pageNum = val;
+                var postData = {
+                    houseId: this.id,
+                    page: val,
+                    size: 5,
+                };
+                HouseApi.looklist(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.lookForm=result.data;
+                }).catch(error => {
+                    console.log('looklist_error');
+                });
+            },
+
+            //提交跟进
+            submitTrace(){
+                var that = this;
+                var hid = this.id;
+                var postData = {
+                    houseId: hid,
+                    content:this.traceForm.textMes
+                };
+                HouseApi.insertRecord(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.traceForm.textMes='';
+                    var postData1 = {
+                        page: 1,
+                        size: 5,
+                        houseId: hid
+                    };
+
+                    HouseApi.recordlist(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.traceForm=result.data;
+                    }).catch(error => {
+                        console.log('recordlist_error'+error);
+                    });
+                }).catch(error => {
+                    console.log('insertRecord'+error);
+                });
+            }
 
 
         }

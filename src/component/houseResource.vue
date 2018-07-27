@@ -46,8 +46,8 @@
                                        @click="searchPriceType(index, formData.priceTypeSellList)">
                                 {{ item.name }}
                             </el-button>
-                             <el-input size="mini" v-model="formData.priceUp" placeholder="请输入"></el-input> -
-                            <el-input size="mini" v-model="formData.priceDown" placeholder="请输入"></el-input>
+                             <el-input size="mini" v-model="formData.priceUp" placeholder="请输入"></el-input> 万 -
+                            <el-input size="mini" v-model="formData.priceDown" placeholder="请输入"></el-input> 万
                             <el-button type="text" @click="search">确定</el-button>
                         </el-form-item>
 
@@ -58,8 +58,8 @@
                                        @click="searchPriceType(index, formData.priceTypeRentList)">
                                 {{ item.name }}
                             </el-button>
-                             <el-input size="mini" v-model="formData.priceUp" placeholder="请输入"></el-input> -
-                            <el-input size="mini" v-model="formData.priceDown" placeholder="请输入"></el-input>
+                             <el-input size="mini" v-model="formData.priceUp" placeholder="请输入"></el-input> 元 -
+                            <el-input size="mini" v-model="formData.priceDown" placeholder="请输入"></el-input> 元
                             <el-button type="text" @click="search">确定</el-button>
                         </el-form-item>
 
@@ -499,42 +499,52 @@ export default {
                 priceTypeSellList:[
                     {
                         name: '不限',
+                        value: '',
                         id: 0,
                         choosed: true,
                     },{
                         name: '30万以下',
+                        value: '-300000',
                         id: 1,
                         choosed: false,
                     },{
                         name: '30万-40万',
+                        value: '300000-400000',
                         id: 2,
                         choosed: false,
                     },{
                         name: '40万-50万',
+                        value: '400000-500000',
                         id: 3,
                         choosed: false,
                     },{
                         name: '50万-60万',
+                        value: '500000-600000',
                         id: 4,
                         choosed: false,
                     },{
                         name: '60万-80万',
+                        value: '600000-800000',
                         id: 5,
                         choosed: false,
                     },{
                         name: '80万-100万',
+                        value: '800000-1000000',
                         id: 6,
                         choosed: false,
                     },{
                         name: '100万-150万',
+                        value: '1000000-1500000',
                         id: 7,
                         choosed: false,
                     },{
                         name: '150万-200万',
+                        value: '1500000-2000000',
                         id: 8,
                         choosed: false,
                     },{
                         name: '200万以上',
+                        value: '2000000-',
                         id: 9,
                         choosed: false,
                     },
@@ -542,34 +552,42 @@ export default {
                 priceTypeRentList:[
                     {
                         name: '不限',
+                        value: '',
                         id: 0,
                         choosed: true,
                     },{
                         name: '500元以下',
+                        value: '-500',
                         id: 1,
                         choosed: false,
                     },{
                         name: '500元-800元',
+                        value: '500-800',
                         id: 2,
                         choosed: false,
                     },{
                         name: '800元-1500元',
+                        value: '800-1500',
                         id: 3,
                         choosed: false,
                     },{
                         name: '1500元-2000元',
+                        value: '1500-2000',
                         id: 4,
                         choosed: false,
                     },{
                         name: '2000元-3000元',
+                        value: '2000-3000',
                         id: 5,
                         choosed: false,
                     },{
                         name: '3000元-5000元',
+                        value: '3000-5000',
                         id: 6,
                         choosed: false,
                     },{
                         name: '5000元以上',
+                        value: '5000-',
                         id: 7,
                         choosed: false,
                     }
@@ -776,11 +794,11 @@ export default {
                     grade: '',
                     type: '',
                 	addressOptions:[{
-                		value: 'zhinan',
-					          label: '中山区',
+                		value: '',
+					          label: '',
 					          children: [{
-					            value: 'shejiyuanze',
-					            label: '人民街道'}]
+					            value: '',
+					            label: ''}]
                 	}],
                     xiaoquOptions:[],
                     xiaoquName: '',
@@ -1125,6 +1143,8 @@ export default {
         //类型
         searchType(index, list){
             var that = this;
+            that.formData.priceUp = '';
+            that.formData.priceDown = '';
             var id = this.getId(index, list);
             this.formData.type = id;
             this.formData.priceType = 0;
@@ -1157,9 +1177,9 @@ export default {
                this.formData.priceDown = '';
            }
            else if(index == 1){
-            var strBefore
-            if(this.formData.type==0){
-                strBefore = list[index].name.split("万");
+            var strBefore;
+            if(this.formData.type==1){
+                strBefore = list[index].name.split('万');
             }else{
                 strBefore = list[index].name.split("元");
             }
@@ -1168,7 +1188,7 @@ export default {
            }
            else if(index == list.length-1){
             var strLater
-                if(this.formData.type==0){
+                if(this.formData.type==1){
                     strLater = list[index].name.split("万");
                 }else{
                     strLater = list[index].name.split("元");
@@ -1217,9 +1237,40 @@ export default {
             id = list[index].id;
             return id;
         },
+        getValue(index, list){
+            var value = '';
+            list.forEach((item) => {
+                item.choosed = false;
+            });
+            list[index].choosed = true;
+            value = list[index].value;
+            return value;
+        },
 
         handleCurrentChangeSearch(val){
-            console.log(val)
+            var that = this;
+            var postData = {
+                priceUp: this.formData.priceUp,
+                priceDown: this.formData.priceDown,
+                searchText: this.formData.searchText,
+                rangeType: this.formData.rangeType,
+                type: this.formData.type,
+                positionType: this.formData.positionType,
+                priceType: this.formData.priceType,
+                areaType: this.formData.areaType,
+                huxingType: this.formData.huxingType,
+                chaoxiangType: this.formData.chaoxiangType,
+                floorType: this.formData.floorType,
+                page: this.tableData.pageNum,
+                size: 10
+            }
+            HouseApi.houselist(postData).then(function (result) {
+                console.log(result)
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.tableData=result.data;
+            }).catch(error => {
+                console.log('houselist_error');
+            });
         },
 
         examineById(row){
