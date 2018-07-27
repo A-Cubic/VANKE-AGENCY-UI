@@ -160,21 +160,21 @@
                                 </div>
                             </el-tab-pane>
                             <el-tab-pane label="修改">
-                                <el-form :model="houseDataForm" ref="houseDataForm" label-width="60px" class="demo-ruleForm">
+                                <el-form :model="editForm" ref="editForm" label-width="60px" class="demo-ruleForm">
                                     <el-form-item label="价格:">
-                                        <el-input placeholder="请输入" v-model="houseDataForm.price"></el-input>
+                                        <el-input placeholder="请输入" v-model="editForm.price"></el-input>
                                     </el-form-item>
                                     <el-form-item label="户型:">
-                                        <el-input placeholder="请输入" v-model="houseDataForm.huxing"></el-input>
+                                        <el-input placeholder="请输入" v-model="editForm.huxing"></el-input>
                                     </el-form-item>
                                     <el-form-item label="面积:">
-                                        <el-input placeholder="请输入" v-model="houseDataForm.areas"></el-input>
+                                        <el-input placeholder="请输入" v-model="editForm.areas"></el-input>
                                     </el-form-item>
                                     <el-form-item label="朝向:">
-                                        <el-input placeholder="请输入" v-model="houseDataForm.chaoxiang"></el-input>
+                                        <el-input placeholder="请输入" v-model="editForm.chaoxiang"></el-input>
                                     </el-form-item>
                                     <el-form-item label="楼层:">
-                                        <el-input placeholder="请输入" v-model="houseDataForm.floor"></el-input>
+                                        <el-input placeholder="请输入" v-model="editForm.floor"></el-input>
                                     </el-form-item>
                                     <div style="text-align: right">
                                         <el-button type="primary" size="mini" @click="editSubmit">提交</el-button>
@@ -466,13 +466,13 @@
                         }
                     ],
                 },  //带看
-                // editForm:{
-                //     price: '100万',
-                //     houseType: '2室',
-                //     area: '91平',
-                //     orientation: '南北',
-                //     floor: '5楼',
-                // },  //修改
+                editForm:{
+                    price: '',
+                    huxing: '',
+                    areas: '',
+                    chaoxiang: '',
+                    floor: '',
+                },  //修改
                 otherForm: {
                     isspecial: 0,
                     state: 0,
@@ -502,6 +502,7 @@
                 that.houseDataForm=result.data;
                 that.otherForm=result.data;
                 that.radiusForm=result.data;
+                that.editForm = result.data;
             }).catch(error => {
                 console.log('housedetail_error');
             });
@@ -625,11 +626,11 @@
                 var hid = this.id;
                 var postData = {
                     id: hid,
-                    price:this.houseDataForm.price,
-                    huxing: this.houseDataForm.huxing,
-                    areas: this.houseDataForm.areas,
-                    chaoxiang: this.houseDataForm.chaoxiang,
-                    floor: this.houseDataForm.floor
+                    price:this.editForm.price,
+                    huxing: this.editForm.huxing,
+                    areas: this.editForm.areas,
+                    chaoxiang: this.editForm.chaoxiang,
+                    floor: this.editForm.floor
                 };
                 HouseApi.updateHouse(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
@@ -642,6 +643,7 @@
                             that.houseDataForm=result.data;
                             that.otherForm=result.data;
                             that.radiusForm=result.data;
+                            that.editForm = result.data;
                         }).catch(error => {
                             console.log('housedetail_error');
                         });
