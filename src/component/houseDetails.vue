@@ -3,7 +3,7 @@
         <div class="house-template">
             {{houseDataForm.number}}
             <el-row :gutter="25">
-                <el-col :span="16">
+                <el-col :span="15">
                     <ul class="mes-concent">
                         <li>
                             <div class="upload-big">
@@ -59,18 +59,21 @@
                                 <div class="house-other-mes">
                                     <div class="other-mes">
                                         <div>挂牌时间: <span>{{ houseDataForm.createTime }}</span></div>
-                                        <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div>
+                                        <!-- <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div> -->
                                         <div>房主信息:
-                                            <el-button type="text" size="mini" @click="ownerHandle">查看</el-button>
+                                            <span class="span" @click="ownerHandle">查看</span>
                                         </div>
                                     </div>
                                     <div class="other-mes">
                                         <div>维护人: <span>{{ houseDataForm.recordrelName==''?"暂无": radiusForm.recordrelName }}</span></div>
                                         <div>房屋等级: <span>{{ houseDataForm.grade }}</span></div>
                                         <div>地址:
-                                            <el-button type="text" size="mini" @click="placeHandle">查看</el-button>
+                                            <span class="span" @click="placeHandle">查看</span>
                                         </div>
                                     </div>
+                                </div>
+                                <div>
+                                    <i :class="houseDataForm.likeVisible==false?'iconfont icon-love-b1':'iconfont icon-love-b'" @click="likeIt"></i>
                                 </div>
                             </div>
                         </li>
@@ -116,7 +119,7 @@
                         </li>
                     </ul>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="9">
                     <div class="tab-content">
                         <el-tabs type="border-card">
                             <el-tab-pane label="跟进">
@@ -160,18 +163,67 @@
                                 </div>
                             </el-tab-pane>
                             <el-tab-pane label="修改">
-                                <el-form :model="editForm" ref="editForm" label-width="60px" class="demo-ruleForm">
+                                <el-form :model="editForm" ref="editForm" label-width="45px" class="demo-ruleForm">
                                     <el-form-item label="价格:">
                                         <el-input placeholder="请输入" v-model="editForm.price"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="户型:">
-                                        <el-input placeholder="请输入" v-model="editForm.huxing"></el-input>
-                                    </el-form-item>
+                                    <el-row :gutter="1">
+                                        <el-col :span="1">
+                                            <el-form-item label="户型:">
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="5">
+                                            <el-form-item label="" label-width="30px">
+                                                <el-input placeholder="请输入室" v-model="editForm.huxingshi"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="5">
+                                            <el-form-item label="室" label-width="30px">
+                                                <el-input placeholder="请输入厅" v-model="editForm.huxingting"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="5">
+                                            <el-form-item label="厅" label-width="30px">
+                                                <el-input placeholder="请输入卫" v-model="editForm.huxingwei"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="5">
+                                            <el-form-item label="卫" label-width="30px">
+                                                <el-input placeholder="请输入厨" v-model="editForm.huxingchu"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+
+                                        <span style="text-align: center; line-height: 40px">
+                                            厨
+                                        </span>
+                                    </el-row>
+                                    <!-- <el-form-item label="户型:">
+                                        <el-col :span="6">
+                                            <el-input placeholder="请输入室" v-model="editForm.huxingshi"></el-input>
+                                        </el-col>
+                                        <el-col :span="6">
+                                            <el-input placeholder="请输入厅" v-model="editForm.huxingting"></el-input>
+                                        </el-col>
+                                        <el-col :span="6">
+                                            <el-input placeholder="请输入卫" v-model="editForm.huxingwei"></el-input>
+                                        </el-col>
+                                        <el-col :span="6">
+                                            <el-input placeholder="请输入厨" v-model="editForm.huxingchu"></el-input>
+                                        </el-col>
+                                    </el-form-item> -->
                                     <el-form-item label="面积:">
                                         <el-input placeholder="请输入" v-model="editForm.areas"></el-input>
                                     </el-form-item>
                                     <el-form-item label="朝向:">
-                                        <el-input placeholder="请输入" v-model="editForm.chaoxiang"></el-input>
+                                        <!-- <el-input placeholder="请输入" v-model="editForm.chaoxiang"></el-input> -->
+                                        <el-select v-model="editForm.chaoxiang" placeholder="请选择" style="width:100%">
+                                            <el-option
+                                                v-for="item in editForm.chaoxiangList"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                            </el-option>
+                                        </el-select>
                                     </el-form-item>
                                     <el-form-item label="楼层:">
                                         <el-input placeholder="请输入" v-model="editForm.floor"></el-input>
@@ -359,8 +411,9 @@
                     iskey: '',
                     recordrelName: '',
                     grade: '',
-                    isshare:''
-                },  //右侧头部数据
+                    isshare:'',
+                    likeVisible: false,
+                },  //左侧头部数据
 
                 ownerVisible: false, //房主信息dialog
                 ownerForm: {
@@ -468,9 +521,46 @@
                 },  //带看
                 editForm:{
                     price: '',
-                    huxing: '',
+                    huxingshi: "3",  //需求几室
+                    huxingting: "2",  //需求几厅
+                    huxingwei: "1",  //需求几卫
+                    huxingchu: "1",  //需求几厨
                     areas: '',
-                    chaoxiang: '',
+                    chaoxiang: 3,
+                    chaoxiangList: [
+                        {
+                            label: '正南',
+                            value: 1,
+                        },
+                        {
+                            label: '正北',
+                            value: 2,
+                        },
+                        {
+                            label: '正东',
+                            value: 3,
+                        },
+                        {
+                            label: '正西',
+                            value: 4,
+                        },
+                        {
+                            label: '东南',
+                            value: 5,
+                        },
+                        {
+                            label: '西南',
+                            value: 6,
+                        },
+                        {
+                            label: '东北',
+                            value: 7,
+                        },
+                        {
+                            label: '西北',
+                            value: 8,
+                        },
+                    ],
                     floor: '',
                 },  //修改
                 otherForm: {
@@ -542,6 +632,14 @@
                 // console.log(index);
                 this.coverUrl = this.houseDataForm.imgurl[index];
             },  //走马灯切换
+            likeIt(){
+                this.houseDataForm.likeVisible = !this.houseDataForm.likeVisible;
+                if(this.houseDataForm.likeVisible == true){
+                    Message.success("已赞！");
+                }else{
+                    Message.success("已取消点赞！");
+                }
+            },  //点赞
 
 
             ownerHandle(){
@@ -857,6 +955,13 @@
                                 padding: 10px 0;
                                 overflow: hidden;
                                 .other-mes{
+                                    div{
+                                        height:30px;
+                                        .span{
+                                            color:#C51010;
+                                        }
+                                    }
+
                                     width: 50%;
                                     float: left;
                                     span{

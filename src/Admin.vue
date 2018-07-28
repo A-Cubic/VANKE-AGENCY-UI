@@ -52,11 +52,11 @@
                 </el-menu>
             </nav>
             <span class="f22">
-                <i class="el-icon-tickets "></i>
+                <i class="el-icon-tickets " @click="addressBook.visible = true"></i>
             </span>
             <span class="f22">
                 <el-badge v-bind:value="Noticebadge" class="item ">
-                    <i class="el-icon-bell "></i>
+                    <i class="el-icon-bell " @click="inform.visible = true"></i>
                 </el-badge>
              </span>
              <span class="logout">退出</span>
@@ -69,16 +69,35 @@
         </section>
         <aside class="alert">
             <el-dialog
-                  title="提示"
-                  :visible.sync="addressBook.visible"
-                  width="800px"
-                  :before-close="handleCloseAddressBook">
-                  <span>这是一段信息</span>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="addressBook.visible = false">确 定</el-button>
-                  </span>
-                </el-dialog>
+                title="通讯录"
+                :visible.sync="addressBook.visible"
+                width="800px"
+                :before-close="handleCloseAddressBook">
+                <el-table :data="addressBook.addressList" border size="mini" max-height="320" style="width: 100%">
+                    <el-table-column prop="name" label="姓名"></el-table-column>
+                    <el-table-column prop="phone" label="电话"></el-table-column>
+                </el-table>
+                <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="addressBook.visible = false">关 闭</el-button>
+                </span>
+            </el-dialog>
+        </aside>
+        <aside class="inform">
+            <el-dialog
+                title="通知"
+                :visible.sync="inform.visible"
+                width="800px">
+                <el-table :data="inform.informList" 
+                          size="mini"
+                          :show-header="false"
+                          max-height="320"
+                          style="width: 100%">
+                    <el-table-column prop="message" label="内容"></el-table-column>
+                </el-table>
+                <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="inform.visible = false">关 闭</el-button>
+                </span>
+            </el-dialog>
         </aside>
     </section>
     
@@ -96,12 +115,51 @@ export default {
             activeIndex2: '1',
 
             addressBook:{
-                visible: true,
+                visible: false,
                 formLabelWidth: '120px',
+                addressList: [
+                    {
+                        name: '王小虎',
+                        phone: '1234567'
+                    },
+                    {
+                        name: '王小虎',
+                        phone: '1234567'
+                    },
+                    {
+                        name: '王小虎',
+                        phone: '1234567'
+                    },
+                    {
+                        name: '王小虎',
+                        phone: '1234567'
+                    },
+                    {
+                        name: '王小虎',
+                        phone: '1234567'
+                    },
+                    {
+                        name: '王小虎',
+                        phone: '1234567'
+                    },
+                    {
+                        name: '王小虎',
+                        phone: '1234567'
+                    }
+                ]
+            },
+
+            inform: {
+                visible: false,
+                informList: [
+                    {
+                        message: '今天下午两点半，有客户要去看房，请注意。'
+                    },
+                ]
             },
 
             Noticebadge: undefined,
-            vankeWebsocket: null
+            vankeWebsocket: null,
         };
     },
     created() {

@@ -13,6 +13,7 @@ import './util/permission'
 // import 'element-ui/lib/theme-chalk/index.css';
 import './theme/index.css'
 import './assets/css/reset01.css';
+import './assets/css/icon-font.css';
 
 /* mockjs*/
 require('./mock/mock.js'); //引入mock

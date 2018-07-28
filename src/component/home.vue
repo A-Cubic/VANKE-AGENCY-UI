@@ -55,10 +55,10 @@
                                 <el-table :data="ranking.list" style="width: 100%">
                                     <el-table-column  label="" width="40">
                                         <template scope="scope">
-                                            <i class='el-icon-star-off' v-show='scope.row.rank*1==1'></i>
-                                            <i class='el-icon-star-on' v-show='scope.row.rank*1==2'></i>
-                                            <i class='el-icon-star-off' v-show='scope.row.rank*1==3'></i>
-                                            <i class='el-icon-star-off' v-show='scope.row.rank*1==4'></i>
+                                            <i class='iconfont icon-first' v-show='scope.row.rank*1==1'></i>
+                                            <i class='iconfont icon-second' v-show='scope.row.rank*1==2'></i>
+                                            <i class='iconfont icon-third' v-show='scope.row.rank*1==3'></i>
+                                            <!-- <i class='el-icon-star-off' v-show='scope.row.rank*1==4'></i> -->
                                         </template>
                                     </el-table-column>
                                     <el-table-column prop="rank" label="排名" width="180"></el-table-column>
