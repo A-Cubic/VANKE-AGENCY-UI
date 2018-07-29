@@ -300,70 +300,114 @@
                              class="demo-ruleForm examine-form">
                         <el-form-item label="室:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.bedroom"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :on-preview="handlePreview"
-                                    :show-file-list="false"
+                                    action=""
                                     list-type="picture-card"
-                                    :headers="curToken"
-                                    :on-change='changeUpload'>
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    :limit="examineForm.shilimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg1"
+                                    :on-remove="handleRemove1"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
+                            <!--<el-upload-->
+                                    <!--v-for="(item, index) in examineForm.bedroom"-->
+                                    <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+                                    <!--:show-file-list="false"-->
+                                    <!--list-type="picture-card"-->
+                                    <!--:headers="curToken"-->
+                                    <!--:on-change='changeUpload'>-->
+                                <!--<img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">-->
+                                <!--<i v-else class="el-icon-plus"></i>-->
+                            <!--</el-upload>-->
                         </el-form-item>
                         <el-form-item label="厅:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.sittingRoom"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.tinglimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg2"
+                                    :on-remove="handleRemove2"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                         <el-form-item label="卫:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.toilet"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.weilimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg3"
+                                    :on-remove="handleRemove3"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                         <el-form-item label="厨:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.kitchen"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.chulimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg4"
+                                    :on-remove="handleRemove4"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                         <el-form-item label="户型图:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.houseTypeImg"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.huxinglimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg5"
+                                    :on-remove="handleRemove5"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                         <el-form-item label="其他:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.other"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.otherlimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg6"
+                                    :on-remove="handleRemove6"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="examineVisible = false">退 出</el-button>
+                        <el-button type="primary" @click="uploadImg">提交审核</el-button>
                     </span>
                 </el-dialog>
 
@@ -445,7 +489,7 @@
                 },
                 placeVisible: false, //地址信息dialog
                 placeForm: {
-                    addressText: '辽宁省大连市甘井子区',
+                    addressText: '',
                     clickcount:0
                 },
                 uploadData:{},  //提交postData
@@ -473,46 +517,20 @@
 
                 examineVisible: false, //实勘dialog
                 examineForm:{
-                    bedroom: [
-                        {
-                            imgId: 0,
-                            imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg'
-                        },
-                        {
-                            imgId: 1,
-                            imgUrl: ''
-                        },
-                    ],
-                    sittingRoom: [
-                        {
-                            imgId: 1,
-                            imgUrl: ''
-                        },
-                    ],
-                    toilet: [
-                        {
-                            imgId: 0,
-                            imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg'
-                        }
-                    ],
-                    kitchen: [
-                        {
-                            imgId: 1,
-                            imgUrl: ''
-                        },
-                    ],
-                    houseTypeImg: [
-                        {
-                            imgId: 0,
-                            imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg'
-                        }
-                    ],
-                    other: [
-                        {
-                            imgId: 1,
-                            imgUrl: ''
-                        },
-                    ],
+                    dialogImageUrl: '',
+                    dialogVisible: false,
+                    shilimit:1,
+                    tinglimit:1,
+                    weilimit:1,
+                    chulimit:1,
+                    huxinglimit:1,
+                    otherlimit:1,
+                    bedroom: [],
+                    sittingRoom: [ ],
+                    toilet: [],
+                    kitchen: [],
+                    houseTypeImg: [],
+                    other: [],
                 },
 
                 traceForm: {
@@ -613,14 +631,24 @@
                 id: this.id
             };
             HouseApi.housedetail(postData).then(function (result) {
-                console.log(result)
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.houseDataForm=result.data;
                 that.otherForm=result.data;
                 that.radiusForm=result.data;
                 that.editForm = result.data;
+
+                that.examineForm.bedroom=[];
+                that.examineForm.sittingRoom=[];
+                that.examineForm.toilet=[];
+                that.examineForm.kitchen=[];
+                that.examineForm.houseTypeImg=[];
+                that.examineForm.other=[];
+                that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
             }).catch(error => {
-                console.log('housedetail_error');
+                console.log('housedetail_error'+error);
             });
 
             var postData1 = {
@@ -655,7 +683,6 @@
             // },
 
             coverHandel(index){
-                // console.log(index);
                 this.coverUrl = this.houseDataForm.imgurl[index];
             },  //走马灯切换
 
@@ -690,7 +717,6 @@
                 }
             },  //点赞
 
-
             ownerHandle(){
                 var that = this;
                 if(this.houseDataForm.isshare==1){
@@ -713,6 +739,7 @@
                 }
 
             },  //查看房主信息
+
             placeHandle(){
                 var that = this;
 
@@ -736,6 +763,7 @@
                 }
 
             },  //查看地址信息
+
             examineHandel(){
                 this.examineVisible = true;
             },  //实勘填图
@@ -796,6 +824,10 @@
                             that.otherForm=result.data;
                             that.radiusForm=result.data;
                             that.editForm = result.data;
+                            that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                            that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                            that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                            that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
                         }).catch(error => {
                             console.log('housedetail_error');
                         });
@@ -859,6 +891,7 @@
                     });
                 });
             },
+
             stateHandel(){
                 var that = this;
                 var isData = this.otherForm.state;
@@ -988,9 +1021,11 @@
 
 
             },  //确定选择
-            changeUpload(file, fileList) {
-                console.log(fileList)
-            },  //上传
+//            changeUpload(file, fileList) {
+//                var that = this;
+////                that.examineForm.bedroom[0].imgUrl = file.url;
+////                console.log(fileList)
+//            },  //上传
 
             handleCurrentChangeSearch(val){
                 var that = this;
@@ -1051,11 +1086,208 @@
                     console.log('insertRecord'+error);
                 });
             },
+            handleRemove1(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.bedroom.length;i++){
+                    if(this.examineForm.bedroom[i].uid==fileUid){
+                        that.examineForm.bedroom.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleRemove2(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.sittingRoom.length;i++){
+                    if(this.examineForm.sittingRoom[i].uid==fileUid){
+                        that.examineForm.sittingRoom.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleRemove3(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.toilet.length;i++){
+                    if(this.examineForm.toilet[i].uid==fileUid){
+                        that.examineForm.toilet.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleRemove4(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.kitchen.length;i++){
+                    if(this.examineForm.kitchen[i].uid==fileUid){
+                        that.examineForm.kitchen.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleRemove5(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.houseTypeImg.length;i++){
+                    if(this.examineForm.houseTypeImg[i].uid==fileUid){
+                        that.examineForm.houseTypeImg.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleRemove6(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.other.length;i++){
+                    if(this.examineForm.other[i].uid==fileUid){
+                        that.examineForm.other.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleExceed(file, fileList) {
+                Message.error("超出上传范围！");
+            },
 
-            handlePreview(file) {
-                console.log(file);
-            }
+            handlePictureCardPreview(file) {
+                var that = this;
+                that.examineForm.dialogImageUrl = file.url;
+                that.examineForm.dialogVisible = true;
+            },
 
+
+            handleChangeImg1(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.bedroom.push(bean);
+                };
+            },
+            handleChangeImg2(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.sittingRoom.push(bean);
+                };
+            },
+            handleChangeImg3(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.toilet.push(bean);
+                };
+            },
+            handleChangeImg4(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.kitchen.push(bean);
+                };
+            },
+            handleChangeImg5(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.houseTypeImg.push(bean);
+                };
+            },
+            handleChangeImg6(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.other.push(bean);
+                };
+            },
+
+            uploadImg:function(param){
+                var that = this;
+                var hid = this.id;
+                var count = this.examineForm.shilimit
+                    +this.examineForm.tinglimit
+                    +this.examineForm.weilimit
+                    +this.examineForm.chulimit
+                    +this.examineForm.huxinglimit
+                    +this.examineForm.otherlimit;
+                var pcount = this.examineForm.bedroom.length
+                    +this.examineForm.sittingRoom.length
+                    +this.examineForm.toilet.length
+                    +this.examineForm.kitchen.length
+                    +this.examineForm.houseTypeImg.length
+                    +this.examineForm.other.length
+                if(pcount<count){
+                    Message.error("请上传完整数量的实勘图后，再提交审核。");
+                }else{
+                    this.$confirm('此操作将提交实勘审核, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        var shiImgList=[],tingImgList=[],weiImgList=[],chuImgList=[],huxingImgList=[],otherImgList=[];
+
+                        for(let i=0;i<that.examineForm.bedroom.length;i++){
+                            shiImgList.push(that.examineForm.bedroom[i].base64);
+                        }
+                        for(let i=0;i<that.examineForm.sittingRoom.length;i++){
+                            tingImgList.push(that.examineForm.sittingRoom[i].base64);
+                        }
+                        for(let i=0;i<that.examineForm.toilet.length;i++){
+                            weiImgList.push(that.examineForm.toilet[i].base64);
+                        }
+                        for(let i=0;i<that.examineForm.kitchen.length;i++){
+                            chuImgList.push(that.examineForm.kitchen[i].base64);
+                        }
+                        huxingImgList.push(that.examineForm.houseTypeImg[0].base64);
+                        otherImgList.push(that.examineForm.other[0].base64);
+                        var postData = {
+                            id:hid,
+                            shiImgList: shiImgList,
+                            tingImgList: tingImgList,
+                            weiImgList: weiImgList,
+                            chuImgList: chuImgList,
+                            huxingImgList: huxingImgList,
+                            otherImgList: otherImgList,
+                        };
+                        HouseApi.updateImg(postData).then(function (result) {
+                            console.log(result);
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            that.examineVisible = false;
+                            Message({
+                                message: '提交成功，请等待审核',
+                                type: 'success'
+                            });
+                        }).catch(error => {
+                            console.log('updateImg_error');
+                        });
+                    }).catch((error) => {
+                        console.log(error);
+                    });
+                }
+            },
         }
     };
 </script>
@@ -1243,31 +1475,31 @@
                         }
                     }
                 }
-                .el-dialog{
-                    .examine-form{
-                        .el-form-item{
-                            overflow: hidden;
-                            .el-upload{
-                                width: 100px;
-                                height: 100px;
-                                line-height: 106px;
-                                margin-left: 20px;
-                                cursor: pointer;
-                                float: left;
-                                img{
-                                    width: 100%;
-                                    height: 100%;
-                                }
-                            }
-                            .el-upload:hover {
-                                border-color: #409EFF;
-                            }
+                /*.el-dialog{*/
+                    /*.examine-form{*/
+                        /*.el-form-item{*/
+                            /*overflow: hidden;*/
+                            /*.el-upload{*/
+                                /*width: 100px;*/
+                                /*height: 100px;*/
+                                /*line-height: 106px;*/
+                                /*margin-left: 20px;*/
+                                /*cursor: pointer;*/
+                                /*float: left;*/
+                                /*img{*/
+                                    /*width: 100%;*/
+                                    /*height: 100%;*/
+                                /*}*/
+                            /*}*/
+                            /*.el-upload:hover {*/
+                                /*border-color: #409EFF;*/
+                            /*}*/
 
 
-                        }
+                        /*}*/
 
-                    }
-                }
+                    /*}*/
+                /*}*/
             }
         }
     }

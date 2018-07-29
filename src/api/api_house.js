@@ -100,10 +100,10 @@ export default {
         return API.POST('house/like/delete', params)
     },
 
-
-
-
-
+    // 上传实勘图
+    updateImg: params => {
+        return API.POST('house/updateImg', params)
+    },
 
 
 }
