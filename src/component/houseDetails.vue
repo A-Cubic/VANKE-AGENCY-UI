@@ -59,7 +59,7 @@
                                 <div class="house-other-mes">
                                     <div class="other-mes">
                                         <div>挂牌时间: <span>{{ houseDataForm.createTime }}</span></div>
-                                        <!-- <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div> -->
+                                         <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div>
                                         <div>房主信息:
                                             <span class="span" @click="ownerHandle">查看</span>
                                         </div>
@@ -73,7 +73,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <i :class="houseDataForm.likeVisible==false?'iconfont icon-love-b1':'iconfont icon-love-b'" @click="likeIt"></i>
+                                    <i :class="houseDataForm.likeType=='0'?'iconfont icon-love-b1':'iconfont icon-love-b'" @click="likeIt"></i>
                                 </div>
                             </div>
                         </li>
@@ -121,8 +121,8 @@
                 </el-col>
                 <el-col :span="9">
                     <div class="tab-content">
-                        <el-tabs type="border-card">
-                            <el-tab-pane label="跟进">
+                        <el-tabs v-model="editableTabsValue" type="border-card" >
+                            <el-tab-pane label="跟进" name="1">
                                 <el-table :data="traceForm.list" :show-header="false" style="width: 100%">
                                     <el-table-column prop="createTime" label="日期"></el-table-column>
                                     <el-table-column prop="userRelName" label="维护人"></el-table-column>
@@ -147,7 +147,7 @@
                                     <el-button type="primary" size="mini" @click="submitTrace">提交</el-button>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane label="带看">
+                            <el-tab-pane label="带看" name="2">
                                 <el-table :data="lookForm.list" :show-header="false" style="width: 100%">
                                     <el-table-column prop="createTime" label="日期"></el-table-column>
                                     <el-table-column prop="userRelName" label="维护人"></el-table-column>
@@ -162,7 +162,7 @@
                                     </el-pagination>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane label="修改">
+                            <el-tab-pane :disabled = "houseDataForm.user_type=='0'?true:false" label="修改" name="3" >
                                 <el-form :model="editForm" ref="editForm" label-width="45px" class="demo-ruleForm">
                                     <el-form-item label="价格:">
                                         <el-input placeholder="请输入" v-model="editForm.price"></el-input>
@@ -218,7 +218,7 @@
                                         <!-- <el-input placeholder="请输入" v-model="editForm.chaoxiang"></el-input> -->
                                         <el-select v-model="editForm.chaoxiang" placeholder="请选择" style="width:100%">
                                             <el-option
-                                                v-for="item in editForm.chaoxiangList"
+                                                v-for="item in chaoxiangList"
                                                 :key="item.value"
                                                 :label="item.label"
                                                 :value="item.value">
@@ -233,24 +233,39 @@
                                     </div>
                                 </el-form>
                             </el-tab-pane>
-                            <el-tab-pane label="其他">
+                            <el-tab-pane :disabled = "houseDataForm.user_type=='0'?true:false" label="其他" name="4" >
                                 <el-form :model="otherForm"
                                          ref="otherForm"
                                          label-width="120px"
                                          class="demo-ruleForm"
                                          label-position="left">
                                     <el-form-item label="特殊房源:">
-                                        <el-switch v-model="otherForm.isspecial==0 ||otherForm.isspecial==null?false:true"></el-switch>
+                                        <el-switch v-model="otherForm.isspecial==0 || otherForm.isspecial==2 || otherForm.isspecial==null?false:true"></el-switch>
+                                        <el-tag type="warning" v-show="otherForm.isspecial>1?true:false">等待审核中</el-tag>
+                                        <el-button type="text" size="mini"
+                                                   @click="isspecialHandel"
+                                                   v-show="otherForm.isspecial>1?false:true">审核
+                                        </el-button>
                                     </el-form-item>
                                     <el-form-item label="无效房源:">
-                                        <el-switch v-model="otherForm.state==0 ||otherForm.state==null?false:true"></el-switch>
+                                        <el-switch v-model="otherForm.state==0 || otherForm.state==2 || otherForm.state==null?false:true"></el-switch>
+                                        <el-tag type="warning" v-show="otherForm.state>1?true:false">等待审核中</el-tag>
+                                        <el-button type="text" size="mini"
+                                                   @click="stateHandel"
+                                                   v-show="otherForm.state>1?false:true">审核
+                                        </el-button>
                                     </el-form-item>
                                     <el-form-item label="优质房源:">
-                                        <el-switch v-model="otherForm.isfine==0 ||otherForm.isfine==null?false:true"></el-switch>
+                                        <el-switch v-model="otherForm.isfine==0 || otherForm.isfine==2 || otherForm.isfine==null?false:true"></el-switch>
+                                        <el-tag type="warning" v-show="otherForm.isfine>1?true:false">等待审核中</el-tag>
+                                        <el-button type="text" size="mini"
+                                                   @click="isfineHandel"
+                                                   v-show="otherForm.isfine>1?false:true">审核
+                                        </el-button>
                                     </el-form-item>
                                     <el-form-item label="房源转让:">
                                         <el-button type="text" size="mini"
-                                                   @click="transferHandel">点击转让
+                                                   @click="transferHandel">选择转让人
                                         </el-button>
                                     </el-form-item>
                                 </el-form>
@@ -287,7 +302,7 @@
                             <el-upload
                                     v-for="(item, index) in examineForm.bedroom"
                                     action="https://jsonplaceholder.typicode.com/posts/"
-
+                                    :on-preview="handlePreview"
                                     :show-file-list="false"
                                     list-type="picture-card"
                                     :headers="curToken"
@@ -352,31 +367,34 @@
                     </span>
                 </el-dialog>
 
-                <el-dialog title="房屋转让" :visible.sync="transferVisible" width="80%">
+                <el-dialog title="房源转让" :visible.sync="transferVisible" width="80%">
                     <div class="transfer-wrap">
                         <div class="transfer-wrap-header">
-                            <el-input placeholder="请输入人名" v-model="transferForm.name" clearable></el-input>
+                            <el-input placeholder="请输入编号后六位或全名" v-model="transferForm.usertext" clearable></el-input>
                             <el-button class="m-btn-addMenu" type="primary" @click="searchTransfer">查询</el-button>
                         </div>
                         <div class="transfer-wrap-table">
                             <el-table :data="transferForm.personList" style="width: 100%">
-                                <el-table-column prop="userCode" label="编号"></el-table-column>
-                                <el-table-column prop="userName" label="姓名"></el-table-column>
+                                <el-table-column prop="user_no" label="编号"></el-table-column>
+                                <el-table-column prop="relname" label="姓名"></el-table-column>
                                 <el-table-column label="操作">
+                                    <!--<template scope="scope">-->
+                                        <!--<el-checkbox v-model="scope.row.checked"-->
+                                                     <!--:disabled="scope.row.disabled"-->
+                                                     <!--@change="checkTransfer(scope.row)">选择-->
+                                        <!--</el-checkbox>-->
+                                    <!--</template>-->
                                     <template scope="scope">
-                                        <el-checkbox v-model="scope.row.checked"
-                                                     :disabled="scope.row.disabled"
-                                                     @change="checkTransfer(scope.row)">选择
-                                        </el-checkbox>
+                                        <el-button size="mini" type="text" @click="submitTransfer(scope.row)">转让</el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
                         </div>
                     </div>
-                    <span slot="footer" class="dialog-footer">
-                        <el-button @click="transferVisible = false">退 出</el-button>
-                        <el-button type="primary" @click="finishTransfer">确 定</el-button>
-                    </span>
+                    <!--<span slot="footer" class="dialog-footer">-->
+                        <!--<el-button @click="transferVisible = false">退 出</el-button>-->
+                        <!--<el-button type="primary" @click="finishTransfer">确 定</el-button>-->
+                    <!--</span>-->
                 </el-dialog>
 
             </el-row>
@@ -396,6 +414,7 @@
         props: ['id'],
         data() {
             return {
+                editableTabsValue:'1',
                 houseDataForm: {
                     number:'',
                     imgurl:[],
@@ -412,7 +431,8 @@
                     recordrelName: '',
                     grade: '',
                     isshare:'',
-                    likeVisible: false,
+                    likeType:'',
+                    user_type:'',
                 },  //左侧头部数据
 
                 ownerVisible: false, //房主信息dialog
@@ -521,48 +541,50 @@
                 },  //带看
                 editForm:{
                     price: '',
-                    huxingshi: "3",  //需求几室
-                    huxingting: "2",  //需求几厅
-                    huxingwei: "1",  //需求几卫
-                    huxingchu: "1",  //需求几厨
+                    huxingshi: '',  //需求几室
+                    huxingting: '',  //需求几厅
+                    huxingwei: '',  //需求几卫
+                    huxingchu: '',  //需求几厨
                     areas: '',
-                    chaoxiang: 3,
-                    chaoxiangList: [
-                        {
-                            label: '正南',
-                            value: 1,
-                        },
-                        {
-                            label: '正北',
-                            value: 2,
-                        },
-                        {
-                            label: '正东',
-                            value: 3,
-                        },
-                        {
-                            label: '正西',
-                            value: 4,
-                        },
-                        {
-                            label: '东南',
-                            value: 5,
-                        },
-                        {
-                            label: '西南',
-                            value: 6,
-                        },
-                        {
-                            label: '东北',
-                            value: 7,
-                        },
-                        {
-                            label: '西北',
-                            value: 8,
-                        },
-                    ],
+                    chaoxiang: '',
+
                     floor: '',
-                },  //修改
+                },
+                chaoxiangList: [
+                    {
+                        label: '正南',
+                        value: '1',
+                    },
+                    {
+                        label: '正北',
+                        value: '2',
+                    },
+                    {
+                        label: '正东',
+                        value: '3',
+                    },
+                    {
+                        label: '正西',
+                        value: '4',
+                    },
+                    {
+                        label: '东南',
+                        value: '5',
+                    },
+                    {
+                        label: '西南',
+                        value: '6',
+                    },
+                    {
+                        label: '东北',
+                        value: '7',
+                    },
+                    {
+                        label: '西北',
+                        value: '8',
+                    },
+                ],
+                //修改
                 otherForm: {
                     isspecial: 0,
                     state: 0,
@@ -570,15 +592,19 @@
                 },
                 transferVisible: false,  //转让dialog
                 transferForm: {
-                    name:'',
-                    personList: [],
+                    usertext:'',
+                    personList: [
+                        {
+                            relname: '',
+                            user_no: '',
+                            username: ''
+                        }
+                    ],
                     chooseName: '',
                     chooseCode: '',
+                    chooseAcc: '',
                 },
                 checkTransferList: [],
-
-
-
             };
         },
         mounted:function(){
@@ -621,23 +647,46 @@
         filter:{
         },
         methods: {
-            handleSuccess(response, file, fileList) {
-                console.log(response, file, fileList);
-            },
-            handleError(err, file, fileList) {
-                console.log(err, file, fileList);
-            },
+            // handleSuccess(response, file, fileList) {
+            //     console.log(response, file, fileList);
+            // },
+            // handleError(err, file, fileList) {
+            //     console.log(err, file, fileList);
+            // },
 
             coverHandel(index){
                 // console.log(index);
                 this.coverUrl = this.houseDataForm.imgurl[index];
             },  //走马灯切换
+
             likeIt(){
-                this.houseDataForm.likeVisible = !this.houseDataForm.likeVisible;
-                if(this.houseDataForm.likeVisible == true){
-                    Message.success("已赞！");
+                var that = this;
+                var isLike = this.houseDataForm.likeType;
+                var postData = {
+                    houseId: this.id
+                };
+                if(isLike == '0'){
+                    HouseApi.likeInsert(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.houseDataForm.likeType = '1';
+                        Message({
+                            type: 'success',
+                            message: '关注成功!'
+                        });
+                    }).catch(error => {
+                        console.log('likeInsert_error'+error);
+                    });
                 }else{
-                    Message.success("已取消点赞！");
+                    HouseApi.likeDelete(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.houseDataForm.likeType = '0';
+                        Message({
+                            type: 'success',
+                            message: '取消关注!'
+                        });
+                    }).catch(error => {
+                        console.log('likeDelete_error'+error);
+                    });
                 }
             },  //点赞
 
@@ -666,6 +715,7 @@
             },  //查看房主信息
             placeHandle(){
                 var that = this;
+
                 if(this.houseDataForm.isshare==1){
                     Message.error("房源为共享池房源，无法查看地址信息！");
                 }else{
@@ -689,6 +739,7 @@
             examineHandel(){
                 this.examineVisible = true;
             },  //实勘填图
+
             keyHandel(){
                 this.$confirm('此操作将钥匙所有人更改为当前用户, 是否继续?', '提示', {
                     confirmButtonText: '确定',
@@ -725,7 +776,10 @@
                 var postData = {
                     id: hid,
                     price:this.editForm.price,
-                    huxing: this.editForm.huxing,
+                    huxingshi: this.editForm.huxingshi,
+                    huxingting: this.editForm.huxingting,
+                    huxingchu: this.editForm.huxingchu,
+                    huxingwei: this.editForm.huxingwei,
                     areas: this.editForm.areas,
                     chaoxiang: this.editForm.chaoxiang,
                     floor: this.editForm.floor
@@ -757,43 +811,182 @@
                 });
 
             },  //修改提交
+
             transferHandel(){
-                this.transferForm.name = '';
+                this.transferForm.usertext = '';
                 this.transferForm.personList = [];
                 this.transferForm.chooseName = '';
                 this.transferForm.chooseCode = '';
+                this.transferForm.chooseAcc = '';
                 this.transferVisible = true;
             },  //点击转让
+
+            isspecialHandel(){
+                var that = this;
+                var isData = this.otherForm.isspecial;
+                var isData1 ;
+                var text = '申请审核此房源为特殊房源, 是否继续?';
+                if(isData=='0'){
+                    isData1='1';
+                }else if(isData=='1'){
+                    isData1='0';
+                    text = '申请审核取消特殊房源, 是否继续?';
+                }
+                this.$confirm(text, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var postData = {
+                        id: this.id,
+                        isspecial:isData1
+                    };
+                    HouseApi.updateSpecial(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.otherForm.isspecial = result.data;
+                        Message({
+                            type: 'success',
+                            message: '更改成功!'
+                        });
+                    }).catch(error => {
+                        console.log('updateSpecialy_error'+error);
+                    });
+
+                }).catch(() => {
+                    Message({
+                        type: 'info',
+                        message: '已取消更改!'
+                    });
+                });
+            },
+            stateHandel(){
+                var that = this;
+                var isData = this.otherForm.state;
+                var isData1 ;
+                var text = '申请审核此房源为无效房源, 是否继续?';
+                if(isData=='0'){
+                    isData1='1';
+                }else if(isData=='1'){
+                    isData1='0';
+                    text = '申请审核取消无效房源, 是否继续?';
+                }
+                this.$confirm(text, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var postData = {
+                        id: this.id,
+                        state:isData1
+                    };
+                    HouseApi.updateState(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.otherForm.state = result.data;
+                        Message({
+                            type: 'success',
+                            message: '更改成功!'
+                        });
+                    }).catch(error => {
+                        console.log('updateState_error'+error);
+                    });
+
+                }).catch(() => {
+                    Message({
+                        type: 'info',
+                        message: '已取消更改!'
+                    });
+                });
+            },
+            isfineHandel(){
+                var that = this;
+                var isData = this.otherForm.isfine;
+                var isData1 ;
+                var text = '申请审核此房源为优质房源, 是否继续?';
+                if(isData=='0'){
+                    isData1='1';
+                }else if(isData=='1'){
+                    isData1='0';
+                    text = '申请审核取消优质房源, 是否继续?';
+                }
+                this.$confirm(text, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var postData = {
+                        id: this.id,
+                        isfine:isData1
+                    };
+                    HouseApi.updateFine(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.otherForm.isfine = result.data;
+                        Message({
+                            type: 'success',
+                            message: '更改成功!'
+                        });
+                    }).catch(error => {
+                        console.log('updateFine_error'+error);
+                    });
+
+                }).catch(() => {
+                    Message({
+                        type: 'info',
+                        message: '已取消更改!'
+                    });
+                });
+            },
             searchTransfer(){
                 var that = this;
                 var postData = {
-                    user_name: this.transferForm.name
+                    usertext: this.transferForm.usertext
                 };
-                that.transferForm.personList = [];
-                that.transferForm.personList.push({
-                    id: 0,
-                    userName: '李明',
-                    userCode: '12345',
-                    checked: false,
-                    disabled: false,
+                HouseApi.searchUser(postData).then(function (result) {
+                    console.log(result);
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.transferForm.personList=result.data;
+                }).catch(error => {
+                    console.log('searchUser_error');
                 });
             },  //查找用户
-            checkTransfer(item){
-                this.transferForm.chooseName = item.userName;
-                this.transferForm.chooseCode = item.userCode;
-            },  //选择用户
-            finishTransfer(){
+            // checkTransfer(item){
+            //     var that = this;
+            //     that.transferForm.chooseName = item.relname;
+            //     that.transferForm.chooseCode = item.user_no;
+            //     that.transferForm.chooseAcc = item.username;
+            //     console.log(item.username);
+            // },  //选择用户
+            submitTransfer(item){
+                var that = this;
+                var hid = this.id;
                 var postData = {
-                    id: this.transferForm.chooseCode,
-                    recordUserName: this.transferForm.chooseName
+                    id: hid,
+                    recordUserName: item.username
                 };
-                console.log(postData);
-                var url = '/vanke/house/updateRecordUserr';
-                this.transferVisible = false;
-                this.$message({
-                    message: '转让成功!',
-                    type: 'success'
+                HouseApi.updateRecordUser(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.transferVisible = false;
+                    Message({
+                        message: '转让成功!',
+                        type: 'success'
+                    });
+                    that.editableTabsValue = '1';
+                    var postData1 = {
+                        id: hid
+                    };
+                    HouseApi.housedetail(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.houseDataForm=result.data;
+                        that.otherForm=result.data;
+                        that.radiusForm=result.data;
+                        that.editForm = result.data;
+                    }).catch(error => {
+                        console.log('housedetail_error');
+                    });
+                }).catch(error => {
+                    Message.error('转让失败!')
                 });
+
+
             },  //确定选择
             changeUpload(file, fileList) {
                 console.log(fileList)
@@ -857,8 +1050,11 @@
                 }).catch(error => {
                     console.log('insertRecord'+error);
                 });
-            }
+            },
 
+            handlePreview(file) {
+                console.log(file);
+            }
 
         }
     };

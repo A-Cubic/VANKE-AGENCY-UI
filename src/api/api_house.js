@@ -65,6 +65,45 @@ export default {
         return API.POST('house/update', params)
     },
 
+    // 无效房源
+    updateState: params => {
+        return API.POST('house/updateState', params)
+    },
+
+    // 特殊房源
+    updateSpecial: params => {
+        return API.POST('house/updateIsSpecial', params)
+    },
+
+    // 优质房源
+    updateFine: params => {
+        return API.POST('house/updateIsFine', params)
+    },
+
+    // 转让用户-查询
+    searchUser: params => {
+        return API.POST('house/listUser', params)
+    },
+
+    // 转让用户-确认
+    updateRecordUser: params => {
+        return API.POST('house/updateRecordUser', params)
+    },
+
+    // 关注
+    likeInsert: params => {
+        return API.POST('house/like/insert', params)
+    },
+
+    // 取消关注
+    likeDelete: params => {
+        return API.POST('house/like/delete', params)
+    },
+
+
+
+
+
 
 
 }
