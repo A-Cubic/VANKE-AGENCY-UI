@@ -236,17 +236,21 @@
                             <el-tab-pane label="其他">
                                 <el-form :model="otherForm"
                                          ref="otherForm"
-                                         label-width="120px"
+                                         label-width="100px"
                                          class="demo-ruleForm"
                                          label-position="left">
                                     <el-form-item label="特殊房源:">
-                                        <el-switch v-model="otherForm.isspecial==0 ||otherForm.isspecial==null?false:true"></el-switch>
+                                        <el-switch disabled v-model="isspecialVisible"></el-switch>
+                                        <span @click="applyIsspecial">申请特殊房源</span>
                                     </el-form-item>
                                     <el-form-item label="无效房源:">
                                         <el-switch v-model="otherForm.state==0 ||otherForm.state==null?false:true"></el-switch>
+                                        <span @click="applyState">申请无效房源</span>
+                                    </el-form-item>
                                     </el-form-item>
                                     <el-form-item label="优质房源:">
                                         <el-switch v-model="otherForm.isfine==0 ||otherForm.isfine==null?false:true"></el-switch>
+                                        <span @click="applyIsfine">申请优质房源</span>
                                     </el-form-item>
                                     <el-form-item label="房源转让:">
                                         <el-button type="text" size="mini"
@@ -564,9 +568,9 @@
                     floor: '',
                 },  //修改
                 otherForm: {
-                    isspecial: 0,
-                    state: 0,
-                    isfine:0,
+                    // isspecial: 0,
+                    // state: 0,
+                    // isfine: 0,
                 },
                 transferVisible: false,  //转让dialog
                 transferForm: {
@@ -617,6 +621,16 @@
             });
         },
         computed: {
+            isspecialVisible(){
+                var isspecial;
+                if(this.otherForm.isspecial == 0 || this.otherForm.isspecial == null){
+                    isspecial = false;
+                }
+                else{
+                    isspecial = true;
+                }
+                return isspecial;
+            }
         },
         filter:{
         },
@@ -635,9 +649,9 @@
             likeIt(){
                 this.houseDataForm.likeVisible = !this.houseDataForm.likeVisible;
                 if(this.houseDataForm.likeVisible == true){
-                    Message.success("已赞！");
+                    Message.success("已关注！");
                 }else{
-                    Message.success("已取消点赞！");
+                    Message.success("已取消关注！");
                 }
             },  //点赞
 
@@ -857,7 +871,24 @@
                 }).catch(error => {
                     console.log('insertRecord'+error);
                 });
-            }
+            },
+
+            // 申请优质房源
+            applyIsspecial(){
+                console.log(this.otherForm.isspecial);
+                // if(this.otherForm.isspecial == 0||this.otherForm.isspecial == null){
+                //     this.otherForm.isspecial = 1;
+                // }else{
+                //     this.otherForm.isspecial = 0;
+                // }
+                
+            },
+            applyState(){
+                this.otherForm.state = this.otherForm.state == 0 ? 1 : 0;
+            },
+            applyIsfine(){
+                this.otherForm.isfine = this.otherForm.isfine == 0 ? 1 : 0;
+            },
 
 
         }
