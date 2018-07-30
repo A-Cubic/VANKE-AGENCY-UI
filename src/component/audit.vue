@@ -148,7 +148,7 @@
                     </div>
                 </div>
                 <div class="audit-dialog-template" v-show="auditForm.aduitStatus != '4' && auditForm.aduitStatus != '10'">
-                    <label>{{auditForm.achAllText}},<router-link tag="a" target="_blank" :to="auditForm.achAllUrl">点击查看</router-link>详情</label>
+                    <label class="auditContent">{{auditForm.achAllText}}，<router-link tag="a" target="_blank" :to="auditForm.achAllUrl">点击查看详情</router-link></label>
                 </div>
                 <div class="btn-footer" style="margin-top: 20px">
                     <el-input
@@ -528,6 +528,13 @@ export default {
         .el-dialog{
 
             .audit-dialog-template{
+                .auditContent{
+                    margin-left:36px;
+                    a{
+                        color: #c51010;
+                    }
+                    
+                }
                 .el-form{
                     .el-form-item{
                         img{

@@ -193,7 +193,8 @@
                                 v-model="alertAdd.ruleForm.xiaoquName"
                                 :fetch-suggestions="querySearch"
                                 placeholder="请输入小区名字"
-                                @select="handleSelect"></el-autocomplete>
+                                @select=""
+                                ></el-autocomplete>
                         </el-form-item>
                     </el-col>
                     <el-col :span="3"></el-col>

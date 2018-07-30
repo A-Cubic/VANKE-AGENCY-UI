@@ -63,6 +63,12 @@ const Audit = resolve => {
         resolve(require('../component/audit.vue'))
     })
 }
+// 注册
+const register = resolve => {
+    require.ensure(['../component/register.vue'], () => {
+        resolve(require('../component/register.vue'))
+    })
+}
 
 //默认页面
 const Default = resolve => {
@@ -97,6 +103,7 @@ const routes= [
             {   path: 'achievements',           component: Achievements,        name: '业绩'},
             {   path: 'personal',               component: Personal,            name: '个人'},
             {   path: 'audit',                  component: Audit,               name: '审核'},
+            {   path: 'register',               component: register,            name: '注册'},
         ] },
 
     {	path: '/default',				component: Default, 			name: '默认首页'},
