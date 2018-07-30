@@ -96,6 +96,7 @@
                                     <el-button type="text"
                                                size="small"
                                                icon="el-icon-plus"
+                                               v-show="houseDataForm.examineState=='0' || houseDataForm.explorationTimeType=='1' || radiusForm.explorationrelName!='暂无'?false:true"
                                                @click="examineHandel">
                                     </el-button>
                                 </div>
@@ -491,6 +492,8 @@
                     isshare:'',
                     likeType:'',
                     user_type:'',
+                    examineState:'',
+                    explorationTimeType:''
                 },  //左侧头部数据
 
                 ownerVisible: false, //房主信息dialog

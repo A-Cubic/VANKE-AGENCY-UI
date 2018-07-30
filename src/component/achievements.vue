@@ -16,24 +16,25 @@
                     </el-date-picker>
                     <el-button type="primary" @click="search">查询</el-button>
                 </div>
-                <div class="total-performance">
-                    <span>当前总业绩: </span><span>{{ tableForm.totalPerformance }}</span>
-                </div>
+                <!--<div class="total-performance">-->
+                    <!--<span>当前总业绩: </span><span>{{ tableForm.totalPerformance }}</span>-->
+                <!--</div>-->
                 <div class="table-template">
-                    <el-table :data="tableForm.tableData" border>
-                        <el-table-column prop="dealCode" label="成交编号"></el-table-column>
-                        <el-table-column prop="contractCode" label="合同编号"></el-table-column>
-                        <el-table-column prop="houseName" label="小区名称"></el-table-column>
-                        <el-table-column prop="role" label="角色"></el-table-column>
-                        <el-table-column prop="proportion" label="占比"></el-table-column>
-                        <el-table-column prop="performance" label="业绩"></el-table-column>
+                    <el-table :data="tableForm.list" border>
+                        <el-table-column prop="dealNum" label="成交编号"></el-table-column>
+                        <el-table-column prop="contractNum" label="合同编号"></el-table-column>
+                        <el-table-column prop="createTime" label="成交日期"></el-table-column>
+                        <el-table-column prop="xiaoquName" label="小区名称"></el-table-column>
+                        <el-table-column prop="roleName" label="角色"></el-table-column>
+                        <el-table-column prop="proportion" label="占比(%)"></el-table-column>
+                        <el-table-column prop="sumprice" label="业绩"></el-table-column>
                     </el-table>
                 </div>
                 <div class="table-pagination">
                     <el-pagination
                             layout="prev, pager, next, jumper, total"
                             :page-size="tableForm.pageSize"
-                            :current-page.sync="tableForm.pageCurrent"
+                            :current-page.sync="tableForm.pageNum"
                             :total ="tableForm.total"
                             @current-change="handleCurrentChangeSearch">
                     </el-pagination>
@@ -43,6 +44,7 @@
     </section>
 </template>
 <script>
+    import AchApi from '../api/api_achievements.js';
 export default {
     data() {
         return {
@@ -52,20 +54,21 @@ export default {
             },
 
             tableForm: {
-                tableData: [
+                list: [
                     {
-                        dealCode: 'C232112',
-                        contractCode: 'H232112',
-                        houseName: '万科翡翠花园',
-                        role: '经理人',
-                        proportion: '30%',
-                        performance: '230,8900',
+                        dealNum: '',
+                        contractNum: '',
+                        xiaoquName: '',
+                        roleName: '',
+                        proportion: '',
+                        sumprice: '',
+                        createTime:''
                     }
                 ],
-                totalPerformance: '99.9999.9999',  //总业绩
+                //totalPerformance: '99.9999.9999',  //总业绩
                 pageSize: 10,
                 total: 0,
-                pageCurrent: 1,
+                pageNum: 1,
             },
         };
     },
@@ -74,19 +77,28 @@ export default {
     },
     methods: {
         doSearch(){
+            var that = this;
             var postData = {
-                startDate: this.searchForm.startDate,
-                endDate: this.searchForm.endDate,
+                createTimeStart: this.searchForm.startDate,
+                createTimeEnd: this.searchForm.endDate,
+                page: this.tableForm.pageNum,
+                size: this.tableForm.pageSize
             };
-            console.log(postData);
+            AchApi.searchAchievenments(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.tableForm=result.data;
+            }).catch(error => {
+                console.log('searchAchievenments_error');
+            });
+
         },
         search(){
-            this.tableForm.pageCurrent = 1;
+            this.tableForm.pageNum = 1;
             this.doSearch();
         },  //搜索
 
         handleCurrentChangeSearch(val){
-            this.tableForm.pageCurrent = val;
+            this.tableForm.pageNum = val;
             this.doSearch();
         },
 

@@ -33,21 +33,36 @@
                     <el-button type="primary" @click="search">查询</el-button>
                 </div>
                 <div class="table-template">
-                    <el-table :data="tableForm.tableData" border>
-                        <el-table-column prop="name" label="发起人"></el-table-column>
-                        <el-table-column prop="date" label="发起日期"></el-table-column>
-                        <el-table-column prop="type" label="类型"></el-table-column>
-                        <el-table-column prop="status" label="状态"></el-table-column>
-                        <el-table-column label="结果">
+                    <el-table :data="tableForm.list" border>
+                        <el-table-column prop="createTime" label="发起日期"></el-table-column>
+                        <el-table-column prop="userRelName" label="发起人"></el-table-column>
+                        <el-table-column prop="type" label="类型" :formatter="typeFormatter"></el-table-column>
+                        <el-table-column prop="state"
+                                         label="状态">
+                            <template slot-scope="scope">
+                                <el-tag
+                                        :type="scope.row.state === '0' ? 'primary' : 'success'"
+                                        disable-transitions>{{scope.row.state== '0'?'未审核':'已审核'}}</el-tag>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="result"
+                                         label="结果" >
+                            <template slot-scope="scope">
+                                <el-tag
+                                        :type="scope.row.result == '0' ? 'danger' : (scope.row.result == '1'?'success':'primary')"
+                                        disable-transitions>{{scope.row.result==null?'待处理': (scope.row.result=='0'?'未通过':'已通过')}}</el-tag>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="原因">
                             <template scope="scope">
                                 <el-popover placement="bottom" width="300" trigger="click">
                                     <div>
                                         <div>原因: </div>
                                         <div style="padding: 20px">
-                                            多选且可搜索时，是否在选中一个选项后保留当前的搜索关键词是否将弹出框插入至 body 元素。在弹出框的定位出现问题时，可将该属性设置为 false
+                                            {{ scope.row.content }}
                                         </div>
                                     </div>
-                                    <el-button slot="reference" size="mini" type="text">{{ scope.row.result }}</el-button>
+                                    <el-button slot="reference" size="mini" type="text">{{ scope.row.content }}</el-button>
                                 </el-popover>
                             </template>
                         </el-table-column>
@@ -65,7 +80,7 @@
                     <el-pagination
                             layout="prev, pager, next, jumper, total"
                             :page-size="tableForm.pageSize"
-                            :current-page.sync="tableForm.pageCurrent"
+                            :current-page.sync="tableForm.pageNum"
                             :total ="tableForm.total"
                             @current-change="handleCurrentChangeSearch">
                     </el-pagination>
@@ -73,32 +88,77 @@
             </el-col>
 
             <el-dialog title="审核: " :visible.sync="auditForm.auditVisible" width="80%">
-                <div class="audit-dialog-template" v-show="auditForm.aduitStatus == 1">
-                    <el-form :model="auditForm.imgDataForm" label-width="120px" class="demo-ruleForm">
-                        <el-form-item :label="item.label"
-                                      v-for="(item, index) in auditForm.imgDataForm.imgDataList"
-                                      :key="index">
-                            <img :src="img.imgUrl" 
+                <div class="audit-dialog-template" v-show="auditForm.aduitStatus == '4'">
+                    <el-form :model="auditForm" label-width="120px" class="demo-ruleForm">
+                        <el-form-item label="室">
+                            <img :src="img"
                                  alt=""
-                                 v-for="(img, index) in item.list" 
+                                 v-for="(img, index) in auditForm.achshiImglist"
+                                 :key="index">
+                        </el-form-item>
+                        <el-form-item label="厅">
+                            <img :src="img"
+                                 alt=""
+                                 v-for="(img, index) in auditForm.achtingImglist"
+                                 :key="index">
+                        </el-form-item>
+                        <el-form-item label="卫">
+                            <img :src="img"
+                                 alt=""
+                                 v-for="(img, index) in auditForm.achweiImglist"
+                                 :key="index">
+                        </el-form-item>
+                        <el-form-item label="厨">
+                            <img :src="img"
+                                 alt=""
+                                 v-for="(img, index) in auditForm.achchuImglist"
+                                 :key="index">
+                        </el-form-item>
+                        <el-form-item label="户型">
+                            <img :src="img"
+                                 alt=""
+                                 v-for="(img, index) in auditForm.achhuxingImglist"
+                                 :key="index">
+                        </el-form-item>
+                        <el-form-item label="其他">
+                            <img :src="img"
+                                 alt=""
+                                 v-for="(img, index) in auditForm.achotherImglist"
                                  :key="index">
                         </el-form-item>
                     </el-form>
                 </div>
-                <div class="audit-dialog-template" v-show="auditForm.aduitStatus == 2">
-                    当aduitStatus 为2显示的内容
+                <div class="audit-dialog-template" v-show="auditForm.aduitStatus == '10'">
+                    <div class="table-template1">
+                        <el-table :data="auditForm.achDataForm.list" border>
+                            <el-table-column prop="userrelname" label="经纪人"></el-table-column>
+                            <el-table-column prop="roleName" label="角色"></el-table-column>
+                            <el-table-column prop="proportion" label="占比(%)"></el-table-column>
+                            <el-table-column prop="sumprice" label="业绩"></el-table-column>
+                        </el-table>
+                    </div>
+                    <div class="table-pagination1">
+                        <el-pagination
+                                layout="prev, pager, next, jumper, total"
+                                :page-size="auditForm.achDataForm.pageSize"
+                                :current-page.sync="auditForm.achDataForm.pageNum"
+                                :total ="auditForm.achDataForm.total"
+                                @current-change="handleAuditChangeSearch">
+                        </el-pagination>
+                    </div>
                 </div>
-                <div class="btn-footer">
-                    
+                <div class="audit-dialog-template" v-show="auditForm.aduitStatus != '4' && auditForm.aduitStatus != '10'">
+                    <label>{{auditForm.achAllText}},<router-link tag="a" target="_blank" :to="auditForm.achAllUrl">点击查看</router-link>详情</label>
+                </div>
+                <div class="btn-footer" style="margin-top: 20px">
                     <el-input
                            type="textarea"
-  :autosize="{ minRows: 2, maxRows: 4}"
-  placeholder="请输入不通过理由"
-  v-model="auditForm.unPassMes">
-</el-input>
-
-                    <el-button class="btn-unpass" type="primary" @click="">不通过</el-button>
-                    <el-button class="btn-pass" type="primary" @click="">通过</el-button>
+                          :autosize="{ minRows: 2, maxRows: 4}"
+                          placeholder="如果审核不通过，请输入不通过理由。"
+                          v-model="auditForm.unPassMes">
+                    </el-input>
+                    <el-button class="btn-unpass" type="danger" @click="" icon="el-icon-close" circle></el-button>
+                    <el-button class="btn-pass" type="success" @click="" icon="el-icon-check" circle></el-button>
                 </div>
             </el-dialog>
 
@@ -117,6 +177,7 @@
     </section>
 </template>
 <script>
+    import AuditApi from '../api/api_audit.js';
 export default {
     data() {
         return {
@@ -124,155 +185,136 @@ export default {
                 type: '',
                 typeOption: [
                     {
-                        value: 0,
+                        value: '',
                         label: '全部'
                     },
                     {
-                        value: 1,
+                        value: '1',
                         label: '特殊房源'
                     },
                     {
-                        value: 2,
+                        value: '2',
+                        label: '优质房源'
+                    },
+                    {
+                        value: '3',
                         label: '无效房源'
                     },
                     {
-                        value: 3,
+                        value: '4',
+                        label: '实勘图片'
+                    },
+                    {
+                        value: '5',
                         label: '无效客源'
+                    },
+                    {
+                        value: '6',
+                        label: '取消特殊房源'
+                    },
+                    {
+                        value: '7',
+                        label: '取消优质房源'
+                    },
+                    {
+                        value: '8',
+                        label: '取消无效房源'
+                    },
+                    {
+                        value: '9',
+                        label: '取消无效客源'
+                    },
+                    {
+                        value: '10',
+                        label: '成交业绩审核'
                     },
                 ],
                 status: '',
                 statusOption: [
                     {
-                        value: 0,
+                        value: '',
                         label: '全部'
                     },
                     {
-                        value: 1,
+                        value: '0',
                         label: '未审核'
                     },
                     {
-                        value: 2,
+                        value: '1',
                         label: '已审核'
                     }
                 ],
                 result: '',
                 resultOption: [
                     {
-                        value: 0,
+                        value: '',
                         label: '全部'
                     },
                     {
-                        value: 1,
-                        label: '已通过'
+                        value: '0',
+                        label: '未通过'
                     },
                     {
-                        value: 2,
-                        label: '未通过'
-                    }
+                        value: '1',
+                        label: '已通过'
+                    },
                 ],
             },
 
             tableForm: {
-                tableData: [
+                list: [
                     {
                         id: 0,
-                        date: '2016-05-02',
-                        name: '王小虎',
-                        type: 1,
-                        status: 1,
-                        result: 2
-                    },
-                    {
-                        id: 1,
-                        date: '2016-05-02',
-                        name: '王大虎',
-                        type: 1,
-                        status: 2,
-                        result: 2
-                    },
-                    {
-                        id: 2,
-                        date: '2016-05-02',
-                        name: '王小龙',
-                        type: 1,
-                        status: 1,
-                        result: 2
+                        createTime: '',
+                        userRelName: '',
+                        type: '1',
+                        state: '1',
+                        result: '1',
+                        content: '',
+                        houseId:'',
+                        guestId:'',
+                        shiImglist:[],
+                        tingImglist:[],
+                        weiImglist:[],
+                        chuImglist:[],
+                        huxingImglist:[],
+                        otherImglist:[],
                     }
                 ],
                 pageSize: 10,
                 total: 0,
-                pageCurrent: 1,
-
+                pageNum: 1,
             },
 
             auditForm:{
                 aduitStatus: '',
                 auditVisible: false,
-                imgDataForm: {
-                    imgDataList:[
+                achshiImglist:[],
+                achtingImglist:[],
+                achweiImglist:[],
+                achchuImglist:[],
+                achhuxingImglist:[],
+                achotherImglist:[],
+                achAllText:'',
+                achAllId:'',
+                achAllUrl:'',
+                transactionId: '',
+                achDataForm: {
+                    list: [
                         {
-                            label: '室',
-                            list: [
-                                {
-                                    imgcode: '',
-                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
-                                },
-                                {
-                                    imgcode: '',
-                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
-                                },
-                            ]
-                        },
-                        {
-                            label: '厅',
-                            list: [
-                                {
-                                    imgcode: '',
-                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
-                                }
-                            ]
-                        },
-                        {
-                            label: '卫',
-                            list: [
-                                {
-                                    imgcode: '',
-                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
-                                }
-                            ]
-                        },
-                        {
-                            label: '厨',
-                            list: [
-                                {
-                                    imgcode: '',
-                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
-                                }
-                            ]
-                        },
-                        {
-                            label: '户型',
-                            list: [
-                                {
-                                    imgcode: '',
-                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
-                                }
-                            ]
-                        },
-                        {
-                            label: '其他',
-                            list: [
-                                {
-                                    imgcode: '',
-                                    imgUrl: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3403552752,277506668&fm=173&app=25&f=JPEG?w=218&h=146&s=7220DC4F1446354FA235811C03008043'
-                                }
-                            ]
-                        },
-
-                    ]
+                            userrelname: '',
+                            roleName: '',
+                            proportion: '',
+                            sumprice: '',
+                        }
+                    ],
+                    pageSize: 10,
+                    total: 0,
+                    pageNum: 1,
                 },
                 unPassMes: '',
             },
+
 
             unPassForm:{
                 submitId: '',
@@ -286,28 +328,80 @@ export default {
     },
     methods: {
         doSearch(){
+            var that = this;
             var postData = {
                 type: this.searchForm.type,
-                status: this.searchForm.status,
+                state: this.searchForm.status,
                 result: this.searchForm.result,
+                page: this.tableForm.pageNum,
+                size: this.tableForm.pageSize
             };
-            console.log(postData)
+            AuditApi.searchAudit(postData).then(function (result) {
+                console.log(result);
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.tableForm=result.data;
+            }).catch(error => {
+                console.log('searchAudit_error');
+            });
         },
         search(){
-            this.tableForm.pageCurrent = 1;
+            this.tableForm.pageNum = 1;
             this.doSearch();
         },  //搜索
 
         handleCurrentChangeSearch(val){
-            this.tableForm.pageCurrent = val;
+            this.tableForm.pageNum = val;
             this.doSearch();
         },
 
-        auditItem(item){
-            console.log(item);
-            this.auditForm.aduitStatus = item.status;
-            this.auditForm.auditVisible = true;
+        doSearchAudit(){
+            var that = this;
+            var postData = {
+                transactionId: this.auditForm.transactionId,
+                page: this.auditForm.achDataForm.pageNum,
+                size: this.auditForm.achDataForm.pageSize
+            };
+            AuditApi.searchAchList(postData).then(function (result) {
+                console.log(result);
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.auditForm.achDataForm=result.data;
+            }).catch(error => {
+                console.log('searchAchList_error');
+            });
+        },
+        handleAuditChangeSearch(val){
+            this.auditForm.achDataForm.pageNum = val;
+            this.doSearchAudit();
+        },
 
+        auditItem(item){
+            var stt = item.type;
+            var transactionId =item.transactionId;
+            this.auditForm.aduitStatus = stt;
+            this.auditForm.transactionId = transactionId;
+            this.auditForm.achshiImglist = item.shiImglist;
+            this.auditForm.achtingImglist = item.tingImglist;
+            this.auditForm.achweiImglist = item.weiImglist;
+            this.auditForm.achchuImglist = item.chuImglist;
+            this.auditForm.achhuxingImglist = item.huxingImglist;
+            this.auditForm.achotherImglist = item.otherImglist;
+            this.auditForm.achAllId = item.houseId;
+            var txt = this.typeFormatterFuc(stt);
+            if(stt=='1' || stt=='2' ||stt=='3' ||stt=='6' ||stt=='7' ||stt=='8' ){
+                this.auditForm.achAllId = item.houseId;
+                this.auditForm.achAllUrl = '/admin/houseDetails/'+item.houseId;
+                this.auditForm.achAllText = txt;
+            }else if(stt=='5' || stt=='9' ){
+                this.auditForm.achAllId = item.guestId;
+                this.auditForm.achAllUrl = '/admin/passengerDetails/'+item.guestId;
+                this.auditForm.achAllText = txt;
+            }
+
+            if(stt=='10'){
+                this.auditForm.achDataForm.pageNum = 1;
+                this.doSearchAudit();
+            }
+            this.auditForm.auditVisible = true;
         },
 
         unPassHandel(item){
@@ -335,6 +429,56 @@ export default {
             console.log(postData);
             this.$message({type: 'success', message: '通过成功!'});
         },
+
+        typeFormatter(row){
+            var val = row.type;
+            if(val=='1'){
+                return '特殊房源';
+            }else if(val=='2'){
+                return '优质房源';
+            }else if(val=='3'){
+                return '无效房源';
+            }else if(val=='4'){
+                return '实勘图片';
+            }else if(val=='5'){
+                return '无效客源';
+            }else if(val=='6'){
+                return '取消特殊房源';
+            }else if(val=='7'){
+                return '取消优质房源';
+            }else if(val=='8'){
+                return '取消无效房源';
+            }else if(val=='9'){
+                return '取消无效客源';
+            }else if(val=='10'){
+                return '成交业绩审核';
+            }
+        },
+
+        typeFormatterFuc(val){
+            if(val=='1'){
+                return '特殊房源审核申请';
+            }else if(val=='2'){
+                return '优质房源审核申请';
+            }else if(val=='3'){
+                return '无效房源审核申请';
+            }else if(val=='4'){
+                return '实勘图片审核申请';
+            }else if(val=='5'){
+                return '无效客源审核申请';
+            }else if(val=='6'){
+                return '取消特殊房源审核申请';
+            }else if(val=='7'){
+                return '取消优质房源审核申请';
+            }else if(val=='8'){
+                return '取消无效房源审核申请';
+            }else if(val=='9'){
+                return '取消无效客源审核申请';
+            }else if(val=='10'){
+                return '成交业绩审核审核申请';
+            }
+        },
+
 
     }
 };
@@ -372,7 +516,15 @@ export default {
                 text-align: right;
             }
         }
-
+        .table-template1{
+            margin: 20px;
+            /*box-shadow: 0px 0px 10px #e3e3e3;*/
+            min-height: 100px;
+        }
+        .table-pagination1{
+            padding: 0 20px 20px;
+            text-align: right;
+        }
         .el-dialog{
 
             .audit-dialog-template{
