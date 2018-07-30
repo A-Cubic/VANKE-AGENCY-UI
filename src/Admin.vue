@@ -24,6 +24,7 @@
                     <el-menu-item index="/admin/achievements">业绩</el-menu-item>
                     <el-menu-item index="/admin/personal">个人</el-menu-item>
                     <el-menu-item index="/admin/audit">审核</el-menu-item>
+                    <el-menu-item index="/admin/register">注册</el-menu-item>
                    <!-- <el-submenu index="1">
                         <template slot="title">
                             <i class="el-icon-message"></i>

@@ -1,7 +1,8 @@
 <template>
     <section class="house-details">
         <div class="house-template">
-            {{houseDataForm.number}}
+            <el-tag type="success" >房源编号：{{houseDataForm.number}}</el-tag>
+            
             <el-row :gutter="25">
                 <el-col :span="15">
                     <ul class="mes-concent">
@@ -35,9 +36,17 @@
                                 </el-carousel>
                             </div>
                             <div class="mes-wrap">
-                                <div class="house-price">{{ houseDataForm.xiaoquName }}</div>
-                                <div class="house-price">{{ houseDataForm.priceText }}</div>
-                                <div class="house-price">{{ houseDataForm.priceOneText }}</div>
+                                <div class="house-location">
+                                    <span>{{ houseDataForm.xiaoquName }}</span>
+                                    <span class="icon-love">
+                                        <i :class="houseDataForm.likeType=='0'?'iconfont icon-love-b1':'iconfont icon-love-b'" @click="likeIt"></i>
+                                    </span>
+                                </div>
+                                <div class="house-price">
+                                    <span class="span1"> {{ houseDataForm.priceText }}</span>
+                                    <span class="span2">{{ houseDataForm.priceOneText }}</span>
+                                </div>
+                                <!-- <div class="house-price"></div> -->
                                 <div class="house-basis-mes">
                                     <div class="basis-mes">
                                         <div>户型</div>
@@ -72,46 +81,45 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <i :class="houseDataForm.likeType=='0'?'iconfont icon-love-b1':'iconfont icon-love-b'" @click="likeIt"></i>
-                                </div>
+                                
                             </div>
                         </li>
                         <li>
                             <div class="radius-wrap">
                                 <div class="radius-block">
-                                    <div><i class="el-icon-edit"></i></div>
+                                    <div><i class="iconfont icon-luru"></i></div>
                                     <div>录入</div>
                                     <div class="radius-data">{{ radiusForm.createrelName==''|| radiusForm.createrelName==null?"暂无":radiusForm.createrelName }}</div>
                                 </div>
                                 <div class="radius-block">
-                                    <div><i class="el-icon-edit"></i></div>
+                                    <div><i class="iconfont icon-maintain"></i></div>
                                     <div>维护</div>
                                     <div class="radius-data">{{ radiusForm.recordrelName==''|| radiusForm.recordrelName==null?"暂无": radiusForm.recordrelName}}</div>
                                 </div>
-                                <div class="radius-block">
-                                    <div><i class="el-icon-edit"></i></div>
+                                <div :class="houseDataForm.examineState=='0' || houseDataForm.explorationTimeType=='1' || radiusForm.explorationrelName!='暂无'?'radius-block ':'radius-block radius-data-btn'">
+                                    <div><i class="iconfont icon-xiangji"></i></div>
                                     <div>实勘</div>
                                     <div class="radius-data">{{ radiusForm.explorationrelName=='' || radiusForm.explorationrelName==null?"暂无": radiusForm.explorationrelName}}</div>
                                     <el-button type="text"
                                                size="small"
                                                icon="el-icon-plus"
+
                                                v-show="houseDataForm.examineState=='0' || houseDataForm.explorationTimeType=='1' || radiusForm.explorationrelName!='暂无'?false:true"
                                                @click="examineHandel">
                                     </el-button>
                                 </div>
-                                <div class="radius-block">
-                                    <div><i class="el-icon-edit"></i></div>
+                                <div class="radius-block radius-data-btn" >
+                                    <div><i class="iconfont icon-method-draw-image"></i></div>
                                     <div>钥匙</div>
                                     <div class="radius-data">{{ radiusForm.keyrelName==''|| radiusForm.keyrelName==null?"暂无": radiusForm.keyrelName}}</div>
-                                    <el-button type="text"
+                                    <el-button type="text" 
                                                size="small"
                                                icon="el-icon-plus"
                                                @click="keyHandel">
                                     </el-button>
                                 </div>
                                 <div class="radius-block">
-                                    <div><i class="el-icon-edit"></i></div>
+                                    <div><i class="iconfont icon-v"></i></div>
                                     <div>独家</div>
                                     <div class="radius-data">{{ radiusForm.exclusiverelName==''|| radiusForm.exclusiverelName==null?"暂无":radiusForm.exclusiverelName }}</div>
                                 </div>
@@ -290,21 +298,38 @@
                     </div>
                 </el-col>
 
-                <el-dialog :title="'房主信息 '+'( 已看'+ownerForm.clickcount+'/20 )'" :visible.sync="ownerVisible" width="40%">
-                    <el-form :model="ownerForm" ref="ownerForm" label-width="60px" class="demo-ruleForm">
-                        <el-form-item label="姓名:">{{ ownerForm.owner }}</el-form-item>
-                        <el-form-item label="电话:">{{ ownerForm.phone }}</el-form-item>
-                        <el-form-item label="姓名:">{{ ownerForm.owner1 }}</el-form-item>
-                        <el-form-item label="电话:">{{ ownerForm.phone1 }}</el-form-item>
+                <el-dialog :title="'房主信息 '+'( 已看 '+ownerForm.clickcount+' / 20 )'" :visible.sync="ownerVisible" width="40%">
+                    <el-form :model="ownerForm" ref="ownerForm" label-width="60px" class="ownerForm">
+                        <div class="row">
+                            <span>姓名：</span>
+                            <span>{{ ownerForm.owner }}</span>
+                        </div>
+                        <div class="row">
+                            <span>电话：</span>
+                            <span>{{ ownerForm.phone }}</span>
+                        </div>
+                        <div class="row">
+                            <span>姓名：</span>
+                            <span>{{ ownerForm.owner1 }}</span>
+                        </div>
+                        <div class="row">
+                            <span>姓名：</span>
+                            <span>{{ ownerForm.phone1 }}</span>
+                        </div>
+                        
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="ownerVisible = false">退 出</el-button>
                     </span>
                 </el-dialog>
-                <el-dialog :title="'地址信息 '+'( 已看'+placeForm.clickcount+'/20 )'" :visible.sync="placeVisible" width="40%">
-                    <el-form :model="placeForm" ref="placeForm" label-width="60px" class="demo-ruleForm">
-                        <el-form-item label="地址:">{{ placeForm.addressText }}</el-form-item>
+                <el-dialog :title="'地址信息 '+'( 已看 '+placeForm.clickcount+' / 20 )'" :visible.sync="placeVisible" width="40%">
+                    <el-form :model="placeForm" ref="placeForm" label-width="60px" class="ownerForm">
+                       <div class="row">
+                            <span>地址：</span>
+                            <span>{{ placeForm.addressText }}</span>
+                        </div>
                     </el-form>
+
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="placeVisible = false">退 出</el-button>
                     </span>
@@ -1410,10 +1435,29 @@
                             padding: 10px 10px 10px 0;
                             width: 55%;
                             float: left;
-                            .house-price{
+                            .house-price,.house-location{
                                 padding: 10px 0;
                                 border-bottom: 1px solid #d7d7d7;
-                                font-size: 28px;
+                                font-size: 25px;
+                            }
+                            .house-location{
+                                span{
+                                    font-size: 25px;
+                                }
+                                .icon-love{
+                                    float:right;
+                                    margin-right: 20px;
+                                }
+                            }
+                            .house-price{
+                                .span1{
+                                    font-size:25px;
+                                }
+                                .span2{
+                                    font-size: 20px;
+                                    color: #666;
+                                    margin-left: 20px;
+                                }
                             }
                             .house-basis-mes{
                                 padding: 5px 0;
@@ -1434,7 +1478,7 @@
                                 }
                             }
                             .house-other-mes{
-                                padding: 10px 0;
+                                padding: 30px 0;
                                 overflow: hidden;
                                 .other-mes{
                                     div{
@@ -1460,17 +1504,26 @@
                             /*overflow: hidden;*/
                             text-align: center;
                             .radius-block{
+                                .radius-data{
+                                    color:#666;
+                                }
                                 width: 8vw;
                                 height: 8vw;
+                                min-width: 80px;
+                                min-height: 80px;
                                 margin: 1vw;
                                 display: inline-block;
                                 box-shadow: 0px 0px 10px #e3e3e3;
                                 border-radius: 100px;
                                 position: relative;
+
                                 .el-button{
                                     position: absolute;
                                     bottom: 0;
-                                    left: 3.5vw;
+                                    left: 3.1vw;
+                                    i{
+                                        font-size:1.6vw
+                                    }
                                 }
                                 div{
                                     margin-top: 2px;
@@ -1478,6 +1531,9 @@
                                         font-size: 16px;
                                     }
                                 }
+                            }
+                            .radius-data-btn{
+                                box-shadow: 0px 0px 10px #c51010;
                             }
                         }
                     }
@@ -1527,6 +1583,12 @@
                         img{
                             height: 11vw;
                         }
+                    }
+                }
+                .ownerForm{
+                    .row{
+                        margin-bottom:10px;
+                        font-size:18px;
                     }
                 }
                 /*.el-dialog{*/

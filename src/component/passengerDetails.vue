@@ -1,7 +1,7 @@
 <template>
     <section class="passengerDetails">
         <div class="detail-template">
-            这条信息的id是{{id}}
+            <!-- 这条信息的id是{{id}} -->
 
             <el-row :gutter="25">
                 <el-col :span="24">
@@ -14,6 +14,7 @@
                             <div class="user-level">
                                 <el-rate
                                         v-model="formUser.userLevel"
+                                        :max="3"
                                         disabled
                                         show-score
                                         text-color="#ff9900"
@@ -45,20 +46,36 @@
                     <div class="tab-content">
                         <el-tabs>
                             <el-tab-pane label="需求">
-
-                                <el-alert title="意向小区" type="info"></el-alert>
+                                <div class='needForm'>{{needForm}}</div>
+                                <!-- <el-alert title="意向小区" type="info"></el-alert> -->
+                                
 
                             </el-tab-pane>
                             <el-tab-pane label="带看">
-                                <el-button size="medium"
+                                <!-- <el-button size="medium"
                                            type="primary"
                                            icon="el-icon-plus"
                                            @click="dialogShow"></el-button>
                                 <el-card v-for="(item, index) in takeLookList" :key="index" class="box-card" v-show="takeLookList.length > 0" shadow="always">
                                     {{'编号: ' + item.serialNumber }}
-                                </el-card>
+                                </el-card> -->
+                                <el-table :data="takeLookForm.takeLookList" 
+                                        size="mini"
+                                        :show-header="false"
+                                        max-height="320"
+                                        style="width: 100%">
+                                        <el-table-column prop="message" label="内容"></el-table-column>
+                                </el-table>
                             </el-tab-pane>
-                            <el-tab-pane label="备注">备注</el-tab-pane>
+                            <el-tab-pane label="备注">
+                                <el-table :data="remarkForm.remarkList" 
+                                        size="mini"
+                                        :show-header="false"
+                                        max-height="320"
+                                        style="width: 100%">
+                                        <el-table-column prop="message" label="内容"></el-table-column>
+                                </el-table>
+                            </el-tab-pane>
                         </el-tabs>
                     </div>
                 </el-col>
@@ -80,12 +97,12 @@
                             <div class="maintain-content-header">维护</div>
                             <div class="maintain-content-mes" @click="remarkVisible = true">写备注</div>
                             <div class="maintain-content-mes" @click="lookVisible = true">录带看</div>
-                            <div class="maintain-content-mes">发起合作</div>
+                            <!-- <div class="maintain-content-mes">发起合作</div> -->
                         </li>
-                        <li>
+                        <!-- <li>
                             <div class="maintain-content-header">管理</div>
                             <div class="maintain-content-mes"></div>
-                        </li>
+                        </li> -->
                     </ul>
                 </el-col>
             </el-row>
@@ -213,6 +230,34 @@
                     userTags: [
                         {id: 0, tagName: '链家App'},
                         {id: 1, tagName: '健康客户'},
+                    ],
+                },
+                needForm:'这里是需求内容',
+                remarkForm:{
+                    remarkList:[
+                        {
+                            message: '备注1'
+                        },
+                        {
+                            message: '备注2'
+                        },
+                        {
+                            message: '备注3'
+                        }
+                    ]
+                },
+
+                takeLookForm:{
+                    takeLookList:[
+                        {
+                            message: '带看记录1'
+                        },
+                        {
+                            message: '带看记录2'
+                        },
+                        {
+                            message: '带看记录3'
+                        }
                     ],
                 },
 
@@ -429,6 +474,10 @@
                     .el-tabs{
                         padding: 20px;
                         min-height: 300px;
+                    }
+                    .needForm{
+                        background: #f8f8f8;
+                        min-height: 280px;
                     }
                 }
 
