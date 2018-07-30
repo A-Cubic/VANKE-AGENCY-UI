@@ -59,7 +59,7 @@
                                 <div class="house-other-mes">
                                     <div class="other-mes">
                                         <div>挂牌时间: <span>{{ houseDataForm.createTime }}</span></div>
-                                        <!-- <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div> -->
+                                         <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div>
                                         <div>房主信息:
                                             <span class="span" @click="ownerHandle">查看</span>
                                         </div>
@@ -73,7 +73,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <i :class="houseDataForm.likeVisible==false?'iconfont icon-love-b1':'iconfont icon-love-b'" @click="likeIt"></i>
+                                    <i :class="houseDataForm.likeType=='0'?'iconfont icon-love-b1':'iconfont icon-love-b'" @click="likeIt"></i>
                                 </div>
                             </div>
                         </li>
@@ -121,8 +121,8 @@
                 </el-col>
                 <el-col :span="9">
                     <div class="tab-content">
-                        <el-tabs type="border-card">
-                            <el-tab-pane label="跟进">
+                        <el-tabs v-model="editableTabsValue" type="border-card" >
+                            <el-tab-pane label="跟进" name="1">
                                 <el-table :data="traceForm.list" :show-header="false" style="width: 100%">
                                     <el-table-column prop="createTime" label="日期"></el-table-column>
                                     <el-table-column prop="userRelName" label="维护人"></el-table-column>
@@ -147,7 +147,7 @@
                                     <el-button type="primary" size="mini" @click="submitTrace">提交</el-button>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane label="带看">
+                            <el-tab-pane label="带看" name="2">
                                 <el-table :data="lookForm.list" :show-header="false" style="width: 100%">
                                     <el-table-column prop="createTime" label="日期"></el-table-column>
                                     <el-table-column prop="userRelName" label="维护人"></el-table-column>
@@ -162,7 +162,7 @@
                                     </el-pagination>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane label="修改">
+                            <el-tab-pane :disabled = "houseDataForm.user_type=='0'?true:false" label="修改" name="3" >
                                 <el-form :model="editForm" ref="editForm" label-width="45px" class="demo-ruleForm">
                                     <el-form-item label="价格:">
                                         <el-input placeholder="请输入" v-model="editForm.price"></el-input>
@@ -218,7 +218,7 @@
                                         <!-- <el-input placeholder="请输入" v-model="editForm.chaoxiang"></el-input> -->
                                         <el-select v-model="editForm.chaoxiang" placeholder="请选择" style="width:100%">
                                             <el-option
-                                                v-for="item in editForm.chaoxiangList"
+                                                v-for="item in chaoxiangList"
                                                 :key="item.value"
                                                 :label="item.label"
                                                 :value="item.value">
@@ -233,13 +233,14 @@
                                     </div>
                                 </el-form>
                             </el-tab-pane>
-                            <el-tab-pane label="其他">
+                            <el-tab-pane :disabled = "houseDataForm.user_type=='0'?true:false" label="其他" name="4" >
                                 <el-form :model="otherForm"
                                          ref="otherForm"
                                          label-width="100px"
                                          class="demo-ruleForm"
                                          label-position="left">
                                     <el-form-item label="特殊房源:">
+<!-- <<<<<<< HEAD
                                         <el-switch disabled v-model="isspecialVisible"></el-switch>
                                         <span @click="applyIsspecial">申请特殊房源</span>
                                     </el-form-item>
@@ -251,10 +252,34 @@
                                     <el-form-item label="优质房源:">
                                         <el-switch v-model="otherForm.isfine==0 ||otherForm.isfine==null?false:true"></el-switch>
                                         <span @click="applyIsfine">申请优质房源</span>
+======= -->
+                                        <el-switch v-model="otherForm.isspecial==0 || otherForm.isspecial==2 || otherForm.isspecial==null?false:true"></el-switch>
+                                        <el-tag type="warning" v-show="otherForm.isspecial>1?true:false">等待审核中</el-tag>
+                                        <el-button type="text" size="mini"
+                                                   @click="isspecialHandel"
+                                                   v-show="otherForm.isspecial>1?false:true">审核
+                                        </el-button>
+                                    </el-form-item>
+                                    <el-form-item label="无效房源:">
+                                        <el-switch v-model="otherForm.state==0 || otherForm.state==2 || otherForm.state==null?false:true"></el-switch>
+                                        <el-tag type="warning" v-show="otherForm.state>1?true:false">等待审核中</el-tag>
+                                        <el-button type="text" size="mini"
+                                                   @click="stateHandel"
+                                                   v-show="otherForm.state>1?false:true">审核
+                                        </el-button>
+                                    </el-form-item>
+                                    <el-form-item label="优质房源:">
+                                        <el-switch v-model="otherForm.isfine==0 || otherForm.isfine==2 || otherForm.isfine==null?false:true"></el-switch>
+                                        <el-tag type="warning" v-show="otherForm.isfine>1?true:false">等待审核中</el-tag>
+                                        <el-button type="text" size="mini"
+                                                   @click="isfineHandel"
+                                                   v-show="otherForm.isfine>1?false:true">审核
+                                        </el-button>
+<!-- >>>>>>> 30dfeb11e29eb5ff9ae8cb1de4c6aba5c698c56c -->
                                     </el-form-item>
                                     <el-form-item label="房源转让:">
                                         <el-button type="text" size="mini"
-                                                   @click="transferHandel">点击转让
+                                                   @click="transferHandel">选择转让人
                                         </el-button>
                                     </el-form-item>
                                 </el-form>
@@ -289,98 +314,145 @@
                              class="demo-ruleForm examine-form">
                         <el-form-item label="室:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.bedroom"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-
-                                    :show-file-list="false"
+                                    action=""
                                     list-type="picture-card"
-                                    :headers="curToken"
-                                    :on-change='changeUpload'>
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    :limit="examineForm.shilimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg1"
+                                    :on-remove="handleRemove1"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
+                            <!--<el-upload-->
+                                    <!--v-for="(item, index) in examineForm.bedroom"-->
+                                    <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+                                    <!--:show-file-list="false"-->
+                                    <!--list-type="picture-card"-->
+                                    <!--:headers="curToken"-->
+                                    <!--:on-change='changeUpload'>-->
+                                <!--<img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">-->
+                                <!--<i v-else class="el-icon-plus"></i>-->
+                            <!--</el-upload>-->
                         </el-form-item>
                         <el-form-item label="厅:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.sittingRoom"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.tinglimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg2"
+                                    :on-remove="handleRemove2"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                         <el-form-item label="卫:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.toilet"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.weilimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg3"
+                                    :on-remove="handleRemove3"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                         <el-form-item label="厨:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.kitchen"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.chulimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg4"
+                                    :on-remove="handleRemove4"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                         <el-form-item label="户型图:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.houseTypeImg"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.huxinglimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg5"
+                                    :on-remove="handleRemove5"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                         <el-form-item label="其他:">
                             <el-upload
-                                    v-for="(item, index) in examineForm.other"
-                                    action="https://jsonplaceholder.typicode.com/posts/"
-                                    :show-file-list="false"
-                                    list-type="picture-card">
-                                <img v-if="item.imgUrl != ''" :src="item.imgUrl" alt="">
-                                <i v-else class="el-icon-plus"></i>
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.otherlimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg6"
+                                    :on-remove="handleRemove6"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg">
+                                <i class="el-icon-plus"></i>
                             </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
                         </el-form-item>
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="examineVisible = false">退 出</el-button>
+                        <el-button type="primary" @click="uploadImg">提交审核</el-button>
                     </span>
                 </el-dialog>
 
-                <el-dialog title="房屋转让" :visible.sync="transferVisible" width="80%">
+                <el-dialog title="房源转让" :visible.sync="transferVisible" width="80%">
                     <div class="transfer-wrap">
                         <div class="transfer-wrap-header">
-                            <el-input placeholder="请输入人名" v-model="transferForm.name" clearable></el-input>
+                            <el-input placeholder="请输入编号后六位或全名" v-model="transferForm.usertext" clearable></el-input>
                             <el-button class="m-btn-addMenu" type="primary" @click="searchTransfer">查询</el-button>
                         </div>
                         <div class="transfer-wrap-table">
                             <el-table :data="transferForm.personList" style="width: 100%">
-                                <el-table-column prop="userCode" label="编号"></el-table-column>
-                                <el-table-column prop="userName" label="姓名"></el-table-column>
+                                <el-table-column prop="user_no" label="编号"></el-table-column>
+                                <el-table-column prop="relname" label="姓名"></el-table-column>
                                 <el-table-column label="操作">
+                                    <!--<template scope="scope">-->
+                                        <!--<el-checkbox v-model="scope.row.checked"-->
+                                                     <!--:disabled="scope.row.disabled"-->
+                                                     <!--@change="checkTransfer(scope.row)">选择-->
+                                        <!--</el-checkbox>-->
+                                    <!--</template>-->
                                     <template scope="scope">
-                                        <el-checkbox v-model="scope.row.checked"
-                                                     :disabled="scope.row.disabled"
-                                                     @change="checkTransfer(scope.row)">选择
-                                        </el-checkbox>
+                                        <el-button size="mini" type="text" @click="submitTransfer(scope.row)">转让</el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
                         </div>
                     </div>
-                    <span slot="footer" class="dialog-footer">
-                        <el-button @click="transferVisible = false">退 出</el-button>
-                        <el-button type="primary" @click="finishTransfer">确 定</el-button>
-                    </span>
+                    <!--<span slot="footer" class="dialog-footer">-->
+                        <!--<el-button @click="transferVisible = false">退 出</el-button>-->
+                        <!--<el-button type="primary" @click="finishTransfer">确 定</el-button>-->
+                    <!--</span>-->
                 </el-dialog>
 
             </el-row>
@@ -400,6 +472,7 @@
         props: ['id'],
         data() {
             return {
+                editableTabsValue:'1',
                 houseDataForm: {
                     number:'',
                     imgurl:[],
@@ -416,7 +489,8 @@
                     recordrelName: '',
                     grade: '',
                     isshare:'',
-                    likeVisible: false,
+                    likeType:'',
+                    user_type:'',
                 },  //左侧头部数据
 
                 ownerVisible: false, //房主信息dialog
@@ -429,7 +503,7 @@
                 },
                 placeVisible: false, //地址信息dialog
                 placeForm: {
-                    addressText: '辽宁省大连市甘井子区',
+                    addressText: '',
                     clickcount:0
                 },
                 uploadData:{},  //提交postData
@@ -457,46 +531,20 @@
 
                 examineVisible: false, //实勘dialog
                 examineForm:{
-                    bedroom: [
-                        {
-                            imgId: 0,
-                            imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg'
-                        },
-                        {
-                            imgId: 1,
-                            imgUrl: ''
-                        },
-                    ],
-                    sittingRoom: [
-                        {
-                            imgId: 1,
-                            imgUrl: ''
-                        },
-                    ],
-                    toilet: [
-                        {
-                            imgId: 0,
-                            imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg'
-                        }
-                    ],
-                    kitchen: [
-                        {
-                            imgId: 1,
-                            imgUrl: ''
-                        },
-                    ],
-                    houseTypeImg: [
-                        {
-                            imgId: 0,
-                            imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg'
-                        }
-                    ],
-                    other: [
-                        {
-                            imgId: 1,
-                            imgUrl: ''
-                        },
-                    ],
+                    dialogImageUrl: '',
+                    dialogVisible: false,
+                    shilimit:1,
+                    tinglimit:1,
+                    weilimit:1,
+                    chulimit:1,
+                    huxinglimit:1,
+                    otherlimit:1,
+                    bedroom: [],
+                    sittingRoom: [ ],
+                    toilet: [],
+                    kitchen: [],
+                    houseTypeImg: [],
+                    other: [],
                 },
 
                 traceForm: {
@@ -525,48 +573,50 @@
                 },  //带看
                 editForm:{
                     price: '',
-                    huxingshi: "3",  //需求几室
-                    huxingting: "2",  //需求几厅
-                    huxingwei: "1",  //需求几卫
-                    huxingchu: "1",  //需求几厨
+                    huxingshi: '',  //需求几室
+                    huxingting: '',  //需求几厅
+                    huxingwei: '',  //需求几卫
+                    huxingchu: '',  //需求几厨
                     areas: '',
-                    chaoxiang: 3,
-                    chaoxiangList: [
-                        {
-                            label: '正南',
-                            value: 1,
-                        },
-                        {
-                            label: '正北',
-                            value: 2,
-                        },
-                        {
-                            label: '正东',
-                            value: 3,
-                        },
-                        {
-                            label: '正西',
-                            value: 4,
-                        },
-                        {
-                            label: '东南',
-                            value: 5,
-                        },
-                        {
-                            label: '西南',
-                            value: 6,
-                        },
-                        {
-                            label: '东北',
-                            value: 7,
-                        },
-                        {
-                            label: '西北',
-                            value: 8,
-                        },
-                    ],
+                    chaoxiang: '',
+
                     floor: '',
-                },  //修改
+                },
+                chaoxiangList: [
+                    {
+                        label: '正南',
+                        value: '1',
+                    },
+                    {
+                        label: '正北',
+                        value: '2',
+                    },
+                    {
+                        label: '正东',
+                        value: '3',
+                    },
+                    {
+                        label: '正西',
+                        value: '4',
+                    },
+                    {
+                        label: '东南',
+                        value: '5',
+                    },
+                    {
+                        label: '西南',
+                        value: '6',
+                    },
+                    {
+                        label: '东北',
+                        value: '7',
+                    },
+                    {
+                        label: '西北',
+                        value: '8',
+                    },
+                ],
+                //修改
                 otherForm: {
                     // isspecial: 0,
                     // state: 0,
@@ -574,15 +624,19 @@
                 },
                 transferVisible: false,  //转让dialog
                 transferForm: {
-                    name:'',
-                    personList: [],
+                    usertext:'',
+                    personList: [
+                        {
+                            relname: '',
+                            user_no: '',
+                            username: ''
+                        }
+                    ],
                     chooseName: '',
                     chooseCode: '',
+                    chooseAcc: '',
                 },
                 checkTransferList: [],
-
-
-
             };
         },
         mounted:function(){
@@ -591,14 +645,24 @@
                 id: this.id
             };
             HouseApi.housedetail(postData).then(function (result) {
-                console.log(result)
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.houseDataForm=result.data;
                 that.otherForm=result.data;
                 that.radiusForm=result.data;
                 that.editForm = result.data;
+
+                that.examineForm.bedroom=[];
+                that.examineForm.sittingRoom=[];
+                that.examineForm.toilet=[];
+                that.examineForm.kitchen=[];
+                that.examineForm.houseTypeImg=[];
+                that.examineForm.other=[];
+                that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
             }).catch(error => {
-                console.log('housedetail_error');
+                console.log('housedetail_error'+error);
             });
 
             var postData1 = {
@@ -635,26 +699,55 @@
         filter:{
         },
         methods: {
-            handleSuccess(response, file, fileList) {
-                console.log(response, file, fileList);
-            },
-            handleError(err, file, fileList) {
-                console.log(err, file, fileList);
-            },
+            // handleSuccess(response, file, fileList) {
+            //     console.log(response, file, fileList);
+            // },
+            // handleError(err, file, fileList) {
+            //     console.log(err, file, fileList);
+            // },
 
             coverHandel(index){
-                // console.log(index);
                 this.coverUrl = this.houseDataForm.imgurl[index];
             },  //走马灯切换
+
             likeIt(){
-                this.houseDataForm.likeVisible = !this.houseDataForm.likeVisible;
-                if(this.houseDataForm.likeVisible == true){
-                    Message.success("已关注！");
+// <<<<<<< HEAD
+//                 this.houseDataForm.likeVisible = !this.houseDataForm.likeVisible;
+//                 if(this.houseDataForm.likeVisible == true){
+//                     Message.success("已关注！");
+//                 }else{
+//                     Message.success("已取消关注！");
+// =======
+                var that = this;
+                var isLike = this.houseDataForm.likeType;
+                var postData = {
+                    houseId: this.id
+                };
+                if(isLike == '0'){
+                    HouseApi.likeInsert(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.houseDataForm.likeType = '1';
+                        Message({
+                            type: 'success',
+                            message: '关注成功!'
+                        });
+                    }).catch(error => {
+                        console.log('likeInsert_error'+error);
+                    });
                 }else{
-                    Message.success("已取消关注！");
+                    HouseApi.likeDelete(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.houseDataForm.likeType = '0';
+                        Message({
+                            type: 'success',
+                            message: '取消关注!'
+                        });
+                    }).catch(error => {
+                        console.log('likeDelete_error'+error);
+                    });
+// >>>>>>> 30dfeb11e29eb5ff9ae8cb1de4c6aba5c698c56c
                 }
             },  //点赞
-
 
             ownerHandle(){
                 var that = this;
@@ -678,8 +771,10 @@
                 }
 
             },  //查看房主信息
+
             placeHandle(){
                 var that = this;
+
                 if(this.houseDataForm.isshare==1){
                     Message.error("房源为共享池房源，无法查看地址信息！");
                 }else{
@@ -700,9 +795,11 @@
                 }
 
             },  //查看地址信息
+
             examineHandel(){
                 this.examineVisible = true;
             },  //实勘填图
+
             keyHandel(){
                 this.$confirm('此操作将钥匙所有人更改为当前用户, 是否继续?', '提示', {
                     confirmButtonText: '确定',
@@ -739,7 +836,10 @@
                 var postData = {
                     id: hid,
                     price:this.editForm.price,
-                    huxing: this.editForm.huxing,
+                    huxingshi: this.editForm.huxingshi,
+                    huxingting: this.editForm.huxingting,
+                    huxingchu: this.editForm.huxingchu,
+                    huxingwei: this.editForm.huxingwei,
                     areas: this.editForm.areas,
                     chaoxiang: this.editForm.chaoxiang,
                     floor: this.editForm.floor
@@ -756,6 +856,10 @@
                             that.otherForm=result.data;
                             that.radiusForm=result.data;
                             that.editForm = result.data;
+                            that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                            that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                            that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                            that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
                         }).catch(error => {
                             console.log('housedetail_error');
                         });
@@ -771,47 +875,189 @@
                 });
 
             },  //修改提交
+
             transferHandel(){
-                this.transferForm.name = '';
+                this.transferForm.usertext = '';
                 this.transferForm.personList = [];
                 this.transferForm.chooseName = '';
                 this.transferForm.chooseCode = '';
+                this.transferForm.chooseAcc = '';
                 this.transferVisible = true;
             },  //点击转让
+
+            isspecialHandel(){
+                var that = this;
+                var isData = this.otherForm.isspecial;
+                var isData1 ;
+                var text = '申请审核此房源为特殊房源, 是否继续?';
+                if(isData=='0'){
+                    isData1='1';
+                }else if(isData=='1'){
+                    isData1='0';
+                    text = '申请审核取消特殊房源, 是否继续?';
+                }
+                this.$confirm(text, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var postData = {
+                        id: this.id,
+                        isspecial:isData1
+                    };
+                    HouseApi.updateSpecial(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.otherForm.isspecial = result.data;
+                        Message({
+                            type: 'success',
+                            message: '更改成功!'
+                        });
+                    }).catch(error => {
+                        console.log('updateSpecialy_error'+error);
+                    });
+
+                }).catch(() => {
+                    Message({
+                        type: 'info',
+                        message: '已取消更改!'
+                    });
+                });
+            },
+
+            stateHandel(){
+                var that = this;
+                var isData = this.otherForm.state;
+                var isData1 ;
+                var text = '申请审核此房源为无效房源, 是否继续?';
+                if(isData=='0'){
+                    isData1='1';
+                }else if(isData=='1'){
+                    isData1='0';
+                    text = '申请审核取消无效房源, 是否继续?';
+                }
+                this.$confirm(text, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var postData = {
+                        id: this.id,
+                        state:isData1
+                    };
+                    HouseApi.updateState(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.otherForm.state = result.data;
+                        Message({
+                            type: 'success',
+                            message: '更改成功!'
+                        });
+                    }).catch(error => {
+                        console.log('updateState_error'+error);
+                    });
+
+                }).catch(() => {
+                    Message({
+                        type: 'info',
+                        message: '已取消更改!'
+                    });
+                });
+            },
+            isfineHandel(){
+                var that = this;
+                var isData = this.otherForm.isfine;
+                var isData1 ;
+                var text = '申请审核此房源为优质房源, 是否继续?';
+                if(isData=='0'){
+                    isData1='1';
+                }else if(isData=='1'){
+                    isData1='0';
+                    text = '申请审核取消优质房源, 是否继续?';
+                }
+                this.$confirm(text, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var postData = {
+                        id: this.id,
+                        isfine:isData1
+                    };
+                    HouseApi.updateFine(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.otherForm.isfine = result.data;
+                        Message({
+                            type: 'success',
+                            message: '更改成功!'
+                        });
+                    }).catch(error => {
+                        console.log('updateFine_error'+error);
+                    });
+
+                }).catch(() => {
+                    Message({
+                        type: 'info',
+                        message: '已取消更改!'
+                    });
+                });
+            },
             searchTransfer(){
                 var that = this;
                 var postData = {
-                    user_name: this.transferForm.name
+                    usertext: this.transferForm.usertext
                 };
-                that.transferForm.personList = [];
-                that.transferForm.personList.push({
-                    id: 0,
-                    userName: '李明',
-                    userCode: '12345',
-                    checked: false,
-                    disabled: false,
+                HouseApi.searchUser(postData).then(function (result) {
+                    console.log(result);
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.transferForm.personList=result.data;
+                }).catch(error => {
+                    console.log('searchUser_error');
                 });
             },  //查找用户
-            checkTransfer(item){
-                this.transferForm.chooseName = item.userName;
-                this.transferForm.chooseCode = item.userCode;
-            },  //选择用户
-            finishTransfer(){
+            // checkTransfer(item){
+            //     var that = this;
+            //     that.transferForm.chooseName = item.relname;
+            //     that.transferForm.chooseCode = item.user_no;
+            //     that.transferForm.chooseAcc = item.username;
+            //     console.log(item.username);
+            // },  //选择用户
+            submitTransfer(item){
+                var that = this;
+                var hid = this.id;
                 var postData = {
-                    id: this.transferForm.chooseCode,
-                    recordUserName: this.transferForm.chooseName
+                    id: hid,
+                    recordUserName: item.username
                 };
-                console.log(postData);
-                var url = '/vanke/house/updateRecordUserr';
-                this.transferVisible = false;
-                this.$message({
-                    message: '转让成功!',
-                    type: 'success'
+                HouseApi.updateRecordUser(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.transferVisible = false;
+                    Message({
+                        message: '转让成功!',
+                        type: 'success'
+                    });
+                    that.editableTabsValue = '1';
+                    var postData1 = {
+                        id: hid
+                    };
+                    HouseApi.housedetail(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.houseDataForm=result.data;
+                        that.otherForm=result.data;
+                        that.radiusForm=result.data;
+                        that.editForm = result.data;
+                    }).catch(error => {
+                        console.log('housedetail_error');
+                    });
+                }).catch(error => {
+                    Message.error('转让失败!')
                 });
+
+
             },  //确定选择
-            changeUpload(file, fileList) {
-                console.log(fileList)
-            },  //上传
+//            changeUpload(file, fileList) {
+//                var that = this;
+////                that.examineForm.bedroom[0].imgUrl = file.url;
+////                console.log(fileList)
+//            },  //上传
 
             handleCurrentChangeSearch(val){
                 var that = this;
@@ -872,25 +1118,227 @@
                     console.log('insertRecord'+error);
                 });
             },
+// <<<<<<< HEAD
 
-            // 申请优质房源
-            applyIsspecial(){
-                console.log(this.otherForm.isspecial);
-                // if(this.otherForm.isspecial == 0||this.otherForm.isspecial == null){
-                //     this.otherForm.isspecial = 1;
-                // }else{
-                //     this.otherForm.isspecial = 0;
-                // }
+//             // 申请优质房源
+//             applyIsspecial(){
+//                 console.log(this.otherForm.isspecial);
+//                 // if(this.otherForm.isspecial == 0||this.otherForm.isspecial == null){
+//                 //     this.otherForm.isspecial = 1;
+//                 // }else{
+//                 //     this.otherForm.isspecial = 0;
+//                 // }
                 
+//             },
+//             applyState(){
+//                 this.otherForm.state = this.otherForm.state == 0 ? 1 : 0;
+//             },
+//             applyIsfine(){
+//                 this.otherForm.isfine = this.otherForm.isfine == 0 ? 1 : 0;
+// =======
+            handleRemove1(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.bedroom.length;i++){
+                    if(this.examineForm.bedroom[i].uid==fileUid){
+                        that.examineForm.bedroom.splice(i,1);
+                        break;
+                    }
+                }
             },
-            applyState(){
-                this.otherForm.state = this.otherForm.state == 0 ? 1 : 0;
+            handleRemove2(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.sittingRoom.length;i++){
+                    if(this.examineForm.sittingRoom[i].uid==fileUid){
+                        that.examineForm.sittingRoom.splice(i,1);
+                        break;
+                    }
+                }
             },
-            applyIsfine(){
-                this.otherForm.isfine = this.otherForm.isfine == 0 ? 1 : 0;
+            handleRemove3(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.toilet.length;i++){
+                    if(this.examineForm.toilet[i].uid==fileUid){
+                        that.examineForm.toilet.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleRemove4(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.kitchen.length;i++){
+                    if(this.examineForm.kitchen[i].uid==fileUid){
+                        that.examineForm.kitchen.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleRemove5(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.houseTypeImg.length;i++){
+                    if(this.examineForm.houseTypeImg[i].uid==fileUid){
+                        that.examineForm.houseTypeImg.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleRemove6(file, fileList) {
+                var that = this;
+                var fileUid = file.uid;
+                for(let i=0;i<this.examineForm.other.length;i++){
+                    if(this.examineForm.other[i].uid==fileUid){
+                        that.examineForm.other.splice(i,1);
+                        break;
+                    }
+                }
+            },
+            handleExceed(file, fileList) {
+                Message.error("超出上传范围！");
+            },
+
+            handlePictureCardPreview(file) {
+                var that = this;
+                that.examineForm.dialogImageUrl = file.url;
+                that.examineForm.dialogVisible = true;
             },
 
 
+            handleChangeImg1(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.bedroom.push(bean);
+                };
+            },
+            handleChangeImg2(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.sittingRoom.push(bean);
+                };
+            },
+            handleChangeImg3(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.toilet.push(bean);
+                };
+            },
+            handleChangeImg4(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.kitchen.push(bean);
+                };
+            },
+            handleChangeImg5(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.houseTypeImg.push(bean);
+                };
+            },
+            handleChangeImg6(file, fileList) {
+                var that = this;
+                var reader = new FileReader();
+                var fileUid = file.uid;
+                reader.readAsDataURL(file.raw);
+                reader.onloadend = function(e){
+                    var img64 = this.result;
+                    var bean = {uid:fileUid,base64:img64};
+                    that.examineForm.other.push(bean);
+                };
+// >>>>>>> 30dfeb11e29eb5ff9ae8cb1de4c6aba5c698c56c
+            },
+
+            uploadImg:function(param){
+                var that = this;
+                var hid = this.id;
+                var count = this.examineForm.shilimit
+                    +this.examineForm.tinglimit
+                    +this.examineForm.weilimit
+                    +this.examineForm.chulimit
+                    +this.examineForm.huxinglimit
+                    +this.examineForm.otherlimit;
+                var pcount = this.examineForm.bedroom.length
+                    +this.examineForm.sittingRoom.length
+                    +this.examineForm.toilet.length
+                    +this.examineForm.kitchen.length
+                    +this.examineForm.houseTypeImg.length
+                    +this.examineForm.other.length
+                if(pcount<count){
+                    Message.error("请上传完整数量的实勘图后，再提交审核。");
+                }else{
+                    this.$confirm('此操作将提交实勘审核, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        var shiImgList=[],tingImgList=[],weiImgList=[],chuImgList=[],huxingImgList=[],otherImgList=[];
+
+                        for(let i=0;i<that.examineForm.bedroom.length;i++){
+                            shiImgList.push(that.examineForm.bedroom[i].base64);
+                        }
+                        for(let i=0;i<that.examineForm.sittingRoom.length;i++){
+                            tingImgList.push(that.examineForm.sittingRoom[i].base64);
+                        }
+                        for(let i=0;i<that.examineForm.toilet.length;i++){
+                            weiImgList.push(that.examineForm.toilet[i].base64);
+                        }
+                        for(let i=0;i<that.examineForm.kitchen.length;i++){
+                            chuImgList.push(that.examineForm.kitchen[i].base64);
+                        }
+                        huxingImgList.push(that.examineForm.houseTypeImg[0].base64);
+                        otherImgList.push(that.examineForm.other[0].base64);
+                        var postData = {
+                            id:hid,
+                            shiImgList: shiImgList,
+                            tingImgList: tingImgList,
+                            weiImgList: weiImgList,
+                            chuImgList: chuImgList,
+                            huxingImgList: huxingImgList,
+                            otherImgList: otherImgList,
+                        };
+                        HouseApi.updateImg(postData).then(function (result) {
+                            console.log(result);
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            that.examineVisible = false;
+                            Message({
+                                message: '提交成功，请等待审核',
+                                type: 'success'
+                            });
+                        }).catch(error => {
+                            console.log('updateImg_error');
+                        });
+                    }).catch((error) => {
+                        console.log(error);
+                    });
+                }
+            },
         }
     };
 </script>
@@ -1078,31 +1526,31 @@
                         }
                     }
                 }
-                .el-dialog{
-                    .examine-form{
-                        .el-form-item{
-                            overflow: hidden;
-                            .el-upload{
-                                width: 100px;
-                                height: 100px;
-                                line-height: 106px;
-                                margin-left: 20px;
-                                cursor: pointer;
-                                float: left;
-                                img{
-                                    width: 100%;
-                                    height: 100%;
-                                }
-                            }
-                            .el-upload:hover {
-                                border-color: #409EFF;
-                            }
+                /*.el-dialog{*/
+                    /*.examine-form{*/
+                        /*.el-form-item{*/
+                            /*overflow: hidden;*/
+                            /*.el-upload{*/
+                                /*width: 100px;*/
+                                /*height: 100px;*/
+                                /*line-height: 106px;*/
+                                /*margin-left: 20px;*/
+                                /*cursor: pointer;*/
+                                /*float: left;*/
+                                /*img{*/
+                                    /*width: 100%;*/
+                                    /*height: 100%;*/
+                                /*}*/
+                            /*}*/
+                            /*.el-upload:hover {*/
+                                /*border-color: #409EFF;*/
+                            /*}*/
 
 
-                        }
+                        /*}*/
 
-                    }
-                }
+                    /*}*/
+                /*}*/
             }
         }
     }
