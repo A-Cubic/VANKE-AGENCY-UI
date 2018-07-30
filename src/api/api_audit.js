@@ -15,4 +15,9 @@ export default {
         return API.POST('achievement/examineAchievement', params)
     },
 
+    //审核结果
+    updateResult: params => {
+        return API.POST('examine/updateResult', params)
+    },
+
 }

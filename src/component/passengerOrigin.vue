@@ -46,23 +46,31 @@
             </div>
 
             <div class="passenger_table">
-
-                <el-table :data="tableData" size="medium" style="width: 100%" @row-click="examineById">
+                <el-table :data="tableData.list" size="medium" style="width: 100%" @row-click="examineById">
                     <el-table-column fixed label="姓名" width="180">
                         <template scope="scope">
                             <div>
-                                {{scope.row.name}}
+                                {{scope.row.guestname}}
                             </div>
                             <div>
-                                <i v-for="it in scope.row.level" class="el-icon-star-on"></i>
+                                {{scope.row.guestgrade}}
+                                <!--<i v-for="it in scope.row.guestgrade" class="el-icon-star-on"></i>-->
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="need" label="需求" width="180"></el-table-column>
-                    <el-table-column prop="entrust_time" label="委托时间"></el-table-column>
-                    <el-table-column prop="maintain_time" label="上次维护时间"></el-table-column>
+                    <el-table-column prop="remarks" label="需求" width="180"></el-table-column>
+                    <el-table-column prop="createTime" label="委托时间"></el-table-column>
+                    <el-table-column prop="recordTime" label="上次维护时间"></el-table-column>
                 </el-table>
-
+                <div class="table-pagination">
+                    <el-pagination
+                            layout="prev, pager, next, jumper, total"
+                            :page-size="tableData.pageSize"
+                            :current-page.sync="tableData.pageNum"
+                            :total ="tableData.total"
+                            @current-change="handleCurrentChangeSearch">
+                    </el-pagination>
+                </div>
             </div>
 
         </div>
@@ -73,8 +81,8 @@
           >
           <div >
 
-            <el-form :model="alertAdd.ruleForm" 
-                     :rules="alertAdd.rules" 
+            <el-form :model="alertAdd.ruleForm"
+                     :rules="alertAdd.rules"
                      label-position="left"
                      ref="ruleForm" label-width="100px" class="demo-ruleForm">
                 <el-row type="flex" class="row-bg" :gutter="20">
@@ -180,7 +188,7 @@
                                 placeholder="请选择地市街道"
                                 :options="alertAdd.ruleForm.addressOptions"
                                 v-model="alertAdd.ruleForm.addressSelectedOptions"
-                                @change="handleChange"
+                                @change=""
                                 filterable>
                             </el-cascader>
                         </el-form-item>
@@ -191,9 +199,8 @@
                                 style="width: 100%;"
                                 class="inline-input"
                                 v-model="alertAdd.ruleForm.xiaoquName"
-                                :fetch-suggestions="querySearch"
                                 placeholder="请输入小区名字"
-                                @select="handleSelect"></el-autocomplete>
+                                @select=""></el-autocomplete>
                         </el-form-item>
                     </el-col>
                     <el-col :span="3"></el-col>
@@ -230,10 +237,16 @@
     </section>
 </template>
 <script>
+    import GuestApi from '../api/api_guest.js';
+    import Vue from 'vue';
+    import { Message } from 'element-ui';
     export default {
+        install(Vue) {
+            Vue.prototype.$message = Message
+        },
         data() {
             return {
-                
+
                 formData :{
                     searchText: '',
                     isShare:0,
@@ -260,45 +273,61 @@
                             choosed: false,
                         },
                     ],
-                    guestgrade:0,
+                    guestgrade:'',
                     guestgradeList:[
                         {
                             name: '不限',
-                            id: 0,
+                            id: '',
                             choosed: true,
                         },{
                             name: '一星',
-                            id: 1,
+                            id: 'A',
                             choosed: false,
                         },{
                             name: '二星',
-                            id: 2,
+                            id: 'B',
                             choosed: false,
                         },{
                             name: '三星',
-                            id: 3,
+                            id: 'C',
                             choosed: false,
                         },
                     ],
                 },
-                tableData: [
-                    {
-                        id: 0,
-                        name: '李狗剩',
-                        level: 2,
-                        need: '南北通透, 高层, 有电梯',
-                        entrust_time: '无',
-                        maintain_time: '20分钟前'
-                    },
-                    {
-                        id: 1,
-                        name: '刘翠花',
-                        level: 3,
-                        need: '南向, 高层, 有电梯, 公共面积少',
-                        entrust_time: '2018-07-20',
-                        maintain_time: '一个小时前'
-                    }
-                ],
+                tableData: {
+                    pageSize: 10,
+                    pageNum: 1,
+                    total: 0,
+                    list: [
+                        {
+                            id: '',
+                            number: '',
+                            casetype: '',
+                            collaboratorType: '',
+                            type: '',
+                            heartprice: '',
+                            guestname: '',
+                            phone: '',
+                            guestgrade: '',
+                            remarks: '',
+                            areas: '',
+                            huxing: '',
+                            huxingshi: '',
+                            huxingting: '',
+                            huxingwei: '',
+                            huxingchu: '',
+                            position: '',
+                            purpose: '',
+                            label: '',
+                            iskey: '',
+                            isshare: '',
+                            recordRelName: '',
+                            createRelName: '',
+                            createTime: '',
+                            recordTime: '',
+                        }
+                    ]
+                },
                 alertAdd:{
                     visible:false,
                     ruleForm: {
@@ -385,12 +414,38 @@
 
             };
         },
-
-        computed: {
+        created(){
+            this.doSearch();
         },
 
-
         methods: {
+            doSearch(){
+                var that = this;
+                var postData = {
+                    isShare: this.formData.isShare,
+                    guestname: this.formData.searchText,
+                    guestgrade: this.formData.guestgrade,
+                    type: this.formData.type,
+                    page: 1,
+                    size: 10
+                };
+                GuestApi.searchGuest(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.tableForm=result.data;
+                    console.log(that.tableForm.list);
+                }).catch(error => {
+                    console.log('searchGuest_error');
+                });
+            },
+            search(){
+                this.tableForm.pageNum = 1;
+                this.doSearch();
+            },  //搜索
+
+            handleCurrentChangeSearch(val){
+                this.tableForm.pageNum = val;
+                this.doSearch();
+            },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
@@ -429,17 +484,8 @@
                   }
               });
             },
-            search(){
-                var postData = {
-                    searchText: this.formData.searchText, 
-                    isShare: this.formData.isShare,
-                    type: this.formData.type,
-                    guestgrade: this.formData.guestgrade,
-                }
-                console.log(postData);
-            },
             getId(index, list){
-                var id = 0;
+                var id;
                 list.forEach((item) => {
                     item.choosed = false;
                 });
@@ -471,7 +517,8 @@
             examineById(row){
                 console.log(row.id);
                 this.$router.push({path: '/admin/passengerDetails/'+row.id})
-            }
+            },
+
         }
     };
 </script>
@@ -524,7 +571,11 @@
                 // border: 1px solid #d7d7d7;
                 .el-table{
                     /*border: 1px solid #d7d7d7;*/
-                    
+
+                }
+                .table-pagination{
+                    margin-top: 20px;
+                    text-align: right;
                 }
             }
         }

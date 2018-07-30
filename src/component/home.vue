@@ -84,7 +84,7 @@
                         <el-card class="box-card" shadow="always">
                             <div slot="header" class="clearfix">优质房源</div>
                             <div v-for="(item, index) in goodHouseList" :key="index" class="text item">
-                                {{ item.xiaoquName }}
+                                <router-link tag="a" target="_blank" :to="'/admin/houseDetails/'+item.id">{{ item.xiaoquName }}</router-link>
                             </div>
                         </el-card>
                         <el-card class="box-card" shadow="always">

@@ -155,10 +155,10 @@
                            type="textarea"
                           :autosize="{ minRows: 2, maxRows: 4}"
                           placeholder="如果审核不通过，请输入不通过理由。"
-                          v-model="auditForm.unPassMes">
+                          v-model.trim="auditForm.unPassMes">
                     </el-input>
-                    <el-button class="btn-unpass" type="danger" @click="" icon="el-icon-close" circle></el-button>
-                    <el-button class="btn-pass" type="success" @click="" icon="el-icon-check" circle></el-button>
+                    <el-button class="btn-unpass" type="danger" @click="doUnPass" icon="el-icon-close" circle></el-button>
+                    <el-button class="btn-pass" type="success" @click="doPass" icon="el-icon-check" circle></el-button>
                 </div>
             </el-dialog>
 
@@ -178,7 +178,12 @@
 </template>
 <script>
     import AuditApi from '../api/api_audit.js';
+    import Vue from 'vue';
+    import { Message } from 'element-ui';
 export default {
+    install(Vue) {
+        Vue.prototype.$message = Message
+    },
     data() {
         return {
             searchForm: {
@@ -287,6 +292,9 @@ export default {
             },
 
             auditForm:{
+                id: '',
+                result: '',
+                unPassMes: '',
                 aduitStatus: '',
                 auditVisible: false,
                 achshiImglist:[],
@@ -312,15 +320,8 @@ export default {
                     total: 0,
                     pageNum: 1,
                 },
-                unPassMes: '',
+
             },
-
-
-            unPassForm:{
-                submitId: '',
-                unPassVisible: false,
-                unPassResult: '',
-            }
         };
     },
     created(){
@@ -337,7 +338,6 @@ export default {
                 size: this.tableForm.pageSize
             };
             AuditApi.searchAudit(postData).then(function (result) {
-                console.log(result);
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.tableForm=result.data;
             }).catch(error => {
@@ -362,7 +362,6 @@ export default {
                 size: this.auditForm.achDataForm.pageSize
             };
             AuditApi.searchAchList(postData).then(function (result) {
-                console.log(result);
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.auditForm.achDataForm=result.data;
             }).catch(error => {
@@ -378,6 +377,7 @@ export default {
             var stt = item.type;
             var transactionId =item.transactionId;
             this.auditForm.aduitStatus = stt;
+            this.auditForm.id = item.id;
             this.auditForm.transactionId = transactionId;
             this.auditForm.achshiImglist = item.shiImglist;
             this.auditForm.achtingImglist = item.tingImglist;
@@ -404,30 +404,60 @@ export default {
             this.auditForm.auditVisible = true;
         },
 
-        unPassHandel(item){
-            this.unPassForm.submitId = item.id;
-            this.unPassForm.unPassResult = '';
-            this.unPassForm.unPassVisible = true;
-        },  //不通过原因
-        putUnPass(){
-            if(this.unPassForm.unPassResult == ''){
-                this.$message({type: 'error', message: '请填写完毕后再提交!'});
-                return;
-            }
-            var postData = {
-                id: this.unPassForm.submitId,
-                res: this.unPassForm.unPassResult
-            };
-            console.log(postData);
-            this.unPassForm.unPassVisible = false;
+//        unPassHandel(item){
+//            this.unPassForm.submitId = item.id;
+//            this.unPassForm.unPassResult = '';
+//            this.unPassForm.unPassVisible = true;
+//        },  //不通过原因
 
-        },  //提交未通过原因
-        putPass(item){
+        doIsPassFuc(){
+            var that = this;
             var postData = {
-                id: item.id,
+                id: this.auditForm.id,
+                content:this.auditForm.unPassMes,
+                result:this.auditForm.result,
             };
-            console.log(postData);
-            this.$message({type: 'success', message: '通过成功!'});
+            AuditApi.updateResult(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                if(result.data=='已经有人审核过了'){
+                    Message.error("已经有人抢先审核了此申请");
+                }else{
+                    Message({
+                        type: 'success',
+                        message: '审核成功!'
+                    });
+                    that.auditForm.auditVisible=false;
+                    that.auditForm.unPassMes='';
+                    var postData = {
+                        type: that.searchForm.type,
+                        state: that.searchForm.status,
+                        result: that.searchForm.result,
+                        page: that.tableForm.pageNum,
+                        size: that.tableForm.pageSize
+                    };
+                    AuditApi.searchAudit(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.tableForm=result.data;
+                    }).catch(error => {
+                        console.log('searchAudit_error');
+                    });
+                }
+            }).catch(error => {
+                console.log('updateResult_error');
+            });
+        },
+        doPass(){
+            this.auditForm.result='1';
+            this.doIsPassFuc();
+        },
+        doUnPass(){
+            if(this.auditForm.unPassMes==''){
+                Message.error("请填写未通过审核原因");
+            }else{
+                this.auditForm.result='0';
+                this.doIsPassFuc();
+            }
+
         },
 
         typeFormatter(row){
