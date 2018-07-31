@@ -19,7 +19,7 @@
                                         <!--:on-error="handleError">-->
                                     <!--<i class="el-icon-plus uploader-icon"></i>-->
                                 <!--</el-upload>-->
-                                <div v-show="houseDataForm.imgurl ==null || houseDataForm.imgurl.length == 0" class="blockCover">暂无图片</div>
+                                <div v-show="houseDataForm.imgurl ==null || houseDataForm.imgurl.length == 0" class="blockCover" >暂无图片</div>
                                 <div v-show="houseDataForm.imgurl !=null || houseDataForm.imgurl.length > 0" class="imgCover">
                                     <img :src="coverUrl" alt="暂无图片">
                                 </div>
@@ -29,9 +29,10 @@
                                              :interval="5000"
                                              type="card"
                                              height="110px"
-                                             @change="coverHandel">
+                                             @change="coverHandel"
+                                             >
                                     <el-carousel-item v-for="(item, index) in houseDataForm.imgurl" :key="index">
-                                        <img :src="item" alt="">
+                                        <img @click="carouselClick" :src="item" alt="" >
                                     </el-carousel-item>
                                 </el-carousel>
                             </div>
@@ -249,19 +250,6 @@
                                          class="demo-ruleForm"
                                          label-position="left">
                                     <el-form-item label="特殊房源:">
-<!-- <<<<<<< HEAD
-                                        <el-switch disabled v-model="isspecialVisible"></el-switch>
-                                        <span @click="applyIsspecial">申请特殊房源</span>
-                                    </el-form-item>
-                                    <el-form-item label="无效房源:">
-                                        <el-switch v-model="otherForm.state==0 ||otherForm.state==null?false:true"></el-switch>
-                                        <span @click="applyState">申请无效房源</span>
-                                    </el-form-item>
-                                    </el-form-item>
-                                    <el-form-item label="优质房源:">
-                                        <el-switch v-model="otherForm.isfine==0 ||otherForm.isfine==null?false:true"></el-switch>
-                                        <span @click="applyIsfine">申请优质房源</span>
-======= -->
                                         <el-switch v-model="otherForm.isspecial==0 || otherForm.isspecial==2 || otherForm.isspecial==null?false:true"></el-switch>
                                         <el-tag type="warning" v-show="otherForm.isspecial>1?true:false">等待审核中</el-tag>
                                         <el-button type="text" size="mini"
@@ -284,7 +272,6 @@
                                                    @click="isfineHandel"
                                                    v-show="otherForm.isfine>1?false:true">审核
                                         </el-button>
-<!-- >>>>>>> 30dfeb11e29eb5ff9ae8cb1de4c6aba5c698c56c -->
                                     </el-form-item>
                                     <el-form-item label="房源转让:">
                                         <el-button type="text" size="mini"
@@ -481,6 +468,15 @@
                     <!--</span>-->
                 </el-dialog>
 
+
+                <el-dialog :visible.sync="bigImgVisble" width="100%">
+                    <el-carousel autoplay="false" arrow="always"
+                                 @change="coverHandel1">
+                        <el-carousel-item v-for="(item, index) in houseDataForm.imgurl" :key="index">
+                            <img :src="item" alt="">
+                        </el-carousel-item>
+                    </el-carousel>
+                </el-dialog>
             </el-row>
         </div>
     </section>
@@ -499,6 +495,7 @@
         data() {
             return {
                 editableTabsValue:'1',
+                bigImgVisble:false,
                 houseDataForm: {
                     number:'',
                     imgurl:[],
@@ -727,25 +724,16 @@
         filter:{
         },
         methods: {
-            // handleSuccess(response, file, fileList) {
-            //     console.log(response, file, fileList);
-            // },
-            // handleError(err, file, fileList) {
-            //     console.log(err, file, fileList);
-            // },
-
             coverHandel(index){
                 this.coverUrl = this.houseDataForm.imgurl[index];
             },  //走马灯切换
-
+            carouselClick(index){
+              console.log(index);
+            },
+            coverHandel1(index){
+                this.coverUrl = this.houseDataForm.imgurl[index];
+            },  //走马灯切换
             likeIt(){
-// <<<<<<< HEAD
-//                 this.houseDataForm.likeVisible = !this.houseDataForm.likeVisible;
-//                 if(this.houseDataForm.likeVisible == true){
-//                     Message.success("已关注！");
-//                 }else{
-//                     Message.success("已取消关注！");
-// =======
                 var that = this;
                 var isLike = this.houseDataForm.likeType;
                 var postData = {
@@ -773,7 +761,7 @@
                     }).catch(error => {
                         console.log('likeDelete_error'+error);
                     });
-// >>>>>>> 30dfeb11e29eb5ff9ae8cb1de4c6aba5c698c56c
+
                 }
             },  //点赞
 
@@ -938,17 +926,17 @@
                         that.otherForm.isspecial = result.data;
                         Message({
                             type: 'success',
-                            message: '更改成功!'
+                            message: '申请成功，请等待审核!'
                         });
                     }).catch(error => {
                         console.log('updateSpecialy_error'+error);
                     });
 
                 }).catch(() => {
-                    Message({
-                        type: 'info',
-                        message: '已取消更改!'
-                    });
+                    // Message({
+                    //     type: 'info',
+                    //     message: '已取消更改!'
+                    // });
                 });
             },
 
@@ -977,17 +965,17 @@
                         that.otherForm.state = result.data;
                         Message({
                             type: 'success',
-                            message: '更改成功!'
+                            message: '申请成功，请等待审核!'
                         });
                     }).catch(error => {
                         console.log('updateState_error'+error);
                     });
 
                 }).catch(() => {
-                    Message({
-                        type: 'info',
-                        message: '已取消更改!'
-                    });
+                    // Message({
+                    //     type: 'info',
+                    //     message: '已取消更改!'
+                    // });
                 });
             },
             isfineHandel(){
@@ -1015,17 +1003,17 @@
                         that.otherForm.isfine = result.data;
                         Message({
                             type: 'success',
-                            message: '更改成功!'
+                            message: '申请成功，请等待审核!'
                         });
                     }).catch(error => {
                         console.log('updateFine_error'+error);
                     });
 
                 }).catch(() => {
-                    Message({
-                        type: 'info',
-                        message: '已取消更改!'
-                    });
+                    // Message({
+                    //     type: 'info',
+                    //     message: '已取消更改!'
+                    // });
                 });
             },
             searchTransfer(){
@@ -1034,7 +1022,6 @@
                     usertext: this.transferForm.usertext
                 };
                 HouseApi.searchUser(postData).then(function (result) {
-                    console.log(result);
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     that.transferForm.personList=result.data;
                 }).catch(error => {
@@ -1146,24 +1133,7 @@
                     console.log('insertRecord'+error);
                 });
             },
-// <<<<<<< HEAD
 
-//             // 申请优质房源
-//             applyIsspecial(){
-//                 console.log(this.otherForm.isspecial);
-//                 // if(this.otherForm.isspecial == 0||this.otherForm.isspecial == null){
-//                 //     this.otherForm.isspecial = 1;
-//                 // }else{
-//                 //     this.otherForm.isspecial = 0;
-//                 // }
-
-//             },
-//             applyState(){
-//                 this.otherForm.state = this.otherForm.state == 0 ? 1 : 0;
-//             },
-//             applyIsfine(){
-//                 this.otherForm.isfine = this.otherForm.isfine == 0 ? 1 : 0;
-// =======
             handleRemove1(file, fileList) {
                 var that = this;
                 var fileUid = file.uid;

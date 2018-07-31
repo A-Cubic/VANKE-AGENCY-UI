@@ -1027,7 +1027,6 @@ export default {
         });
 
         HouseApi.regionslist().then(function (result) {
-            console.log(result)
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.alertAdd.ruleForm.addressOptions=result.data;
         }).catch(error => {
@@ -1074,33 +1073,52 @@ export default {
         	if(this.alertAdd.active == 0){
         		  this.$refs[ruleForm].validate((valid) => {
                   if (valid) {
-                      console.log('submit!!');
                         this.$confirm('确定新增该房源?', '提示', {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',
                           type: 'warning'
                         }).then(() => {
                             HouseApi.addhouse(this.alertAdd.ruleForm).then(function (result) {
-                                console.log(result);
                                 if(typeof(result) != "object"){result = JSON.parse(result)}
-
                                 Message({
                                     message: "新增房源成功",
                                     type: 'success'
                                 });
                                 that.alertAdd.visible=false;
-                                resetForm(ruleForm);
+                                that.resetForm(ruleForm);
+
+                                var that = this;
+                                var postData = {
+                                    priceUp: this.formData.priceUp,
+                                    priceDown: this.formData.priceDown,
+                                    searchText: this.formData.searchText,
+                                    rangeType: this.formData.rangeType,
+                                    type: this.formData.type,
+                                    positionType: this.formData.positionType,
+                                    priceType: this.formData.priceType,
+                                    areaType: this.formData.areaType,
+                                    huxingType: this.formData.huxingType,
+                                    chaoxiangType: this.formData.chaoxiangType,
+                                    floorType: this.formData.floorType,
+                                    page: this.tableData.pageNum,
+                                    size: 10
+                                }
+                                HouseApi.houselist(postData).then(function (result) {
+                                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                                    that.tableData=result.data;
+                                }).catch(error => {
+                                    console.log('houselist_error');
+                                });
                             }).catch(error => {
                                 console.log('addhouse_error');
                             });
                         }).catch(() => {
-                          this.$message({
-                            type: 'info',
-                            message: '已取消保存'
-                          });
+                          // Message({
+                          //   type: 'info',
+                          //   message: '已取消保存'
+                          // });
                         });
                   } else {
-                      console.log('error submit!!');
                       // alert('请填写完成!');
                       return false;
                   }
@@ -1126,7 +1144,6 @@ export default {
                 size: 10
             }
             HouseApi.houselist(postData).then(function (result) {
-                console.log(result)
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.tableData=result.data;
             }).catch(error => {
@@ -1265,7 +1282,6 @@ export default {
                 size: 10
             }
             HouseApi.houselist(postData).then(function (result) {
-                console.log(result)
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.tableData=result.data;
             }).catch(error => {
@@ -1274,13 +1290,10 @@ export default {
         },
 
         examineById(row){
-            console.log(row.id);
-            this.$router.push({path: '/admin/houseDetails/'+row.id})
+            let routeData = this.$router.resolve({ path: '/admin/houseDetails/'+row.id});
+            window.open(routeData.href, '_blank');
         },
 
-        changeUpload(){
-
-        }, //上传Change
     }
 };
 </script>

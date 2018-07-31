@@ -53,8 +53,7 @@
                                 {{scope.row.guestname}}
                             </div>
                             <div>
-                                {{scope.row.guestgrade}}
-                                <!--<i v-for="it in scope.row.guestgrade" class="el-icon-star-on"></i>-->
+                                <i v-for="it in (scope.row.guestgrade=='A'?3:scope.row.guestgrade=='B'?2:1)" class="el-icon-star-on"></i>
                             </div>
                         </template>
                     </el-table-column>
@@ -77,155 +76,170 @@
         <el-dialog
           title="新增客源"
           :visible.sync="alertAdd.visible"
-          width="80%"
-          >
-          <div >
+          width="80%">
 
             <el-form :model="alertAdd.ruleForm"
                      :rules="alertAdd.rules"
                      label-position="left"
                      ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                <el-row type="flex" class="row-bg" :gutter="20">
-                    <el-col :span="1"></el-col>
-                    <el-col :span="10">
-                        <el-form-item label="姓名" prop="guestname">
-                            <el-input v-model="alertAdd.ruleForm.guestname"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="性别" prop="sex">
-                            <el-input v-model="alertAdd.ruleForm.sex"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3"></el-col>
-                </el-row>
-                <el-row type="flex" class="row-bg" :gutter="20">
-                    <el-col :span="1"></el-col>
-                    <el-col :span="10">
-                        <el-form-item label="星级" prop="guestgrade">
-                            <el-select v-model="alertAdd.ruleForm.guestgrade" style="width: 100%;" placeholder="请选择星级">
-                                <el-option label="A" value="A"></el-option>
-                                <el-option label="B" value="B"></el-option>
-                                <el-option label="C" value="C"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="类型" prop="type">
-                            <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择类型">
-                                <el-option label="买" value="0"></el-option>
-                                <el-option label="租" value="1"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3"></el-col>
-                </el-row>
-                <el-row type="flex" class="row-bg" :gutter="20">
-                    <el-col :span="1"></el-col>
-                    <el-col :span="10">
-                        <el-form-item label="价位" prop="heartprice">
-                            <el-input v-model="alertAdd.ruleForm.heartprice"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="联系电话" prop="phone">
-                            <el-input v-model="alertAdd.ruleForm.phone"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3"></el-col>
-                </el-row>
-                <el-row type="flex" class="row-bg" :gutter="20">
-                    <el-col :span="1"></el-col>
-                    <el-col :span="10">
-                        <el-form-item label="备注" prop="remarks">
-                            <el-input v-model="alertAdd.ruleForm.remarks"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="面积" prop="areas">
-                            <el-input v-model="alertAdd.ruleForm.areas"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3"></el-col>
-                </el-row>
+                <el-card class="box-card">
+                    <div slot="header" class="clearfix">
+                        <span style="font-size: 18px;">基本信息</span>
+                    </div>
+                    <div class="text item">
+                        <el-row type="flex" class="row-bg" :gutter="20">
+                            <el-col :span="1"></el-col>
+                            <el-col :span="10">
+                                <el-form-item label="姓名" prop="guestname">
+                                    <el-input v-model="alertAdd.ruleForm.guestname" placeholder="客户姓名"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-form-item label="性别" prop="sex">
+                                    <el-select v-model="alertAdd.ruleForm.sex" style="width: 100%;" placeholder="请选择性别">
+                                        <el-option label="男" value="男"></el-option>
+                                        <el-option label="女" value="女"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"></el-col>
+                        </el-row>
+                        <el-row type="flex" class="row-bg" :gutter="20">
+                            <el-col :span="1"></el-col>
+                            <el-col :span="10">
+                                <el-form-item label="联系电话" prop="phone">
+                                    <el-input v-model="alertAdd.ruleForm.phone" placeholder="联系电话"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-form-item label="备用电话" prop="phonetow">
+                                    <el-input v-model="alertAdd.ruleForm.phonetow" placeholder="备用电话"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"></el-col>
+                        </el-row>
+                        <el-row type="flex" class="row-bg" :gutter="20">
+                            <el-col :span="1"></el-col>
+                            <el-col :span="10">
+                                <el-form-item label="星级" prop="guestgrade">
+                                    <el-select v-model="alertAdd.ruleForm.guestgrade" style="width: 100%;" placeholder="请选择星级">
+                                        <el-option label="A" value="A"></el-option>
+                                        <el-option label="B" value="B"></el-option>
+                                        <el-option label="C" value="C"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-form-item label="用户标签" prop="label">
+                                    <el-input v-model="alertAdd.ruleForm.label" placeholder="自定义用户标签"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"></el-col>
+                        </el-row>
+                    </div>
+                </el-card>
+                <el-card class="box-card" style="margin-top: 30px">
+                    <div slot="header" class="clearfix" >
+                        <span style="font-size: 18px;">需求意向</span>
+                    </div>
+                    <div  class="text item">
+                        <el-row type="flex" class="row-bg" :gutter="20">
+                            <el-col :span="1"></el-col>
+                            <el-col :span="10">
+                                <el-form-item label="房屋类型" prop="type">
+                                    <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择类型">
+                                        <el-option label="买卖" value="0"></el-option>
+                                        <el-option label="租赁" value="1"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-form-item label="心里价位" prop="heartprice" >
+                                    <el-input v-model="alertAdd.ruleForm.heartprice" placeholder="心里价位"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"></el-col>
+                        </el-row>
+                        <el-row type="flex" class="row-bg" :gutter="20">
+                            <el-col :span="1"></el-col>
+                            <el-col :span="10">
+                                <el-form-item label="目的用途" prop="purpose">
+                                    <el-input v-model="alertAdd.ruleForm.purpose" placeholder="自己住或门头店面等"></el-input>
+                                </el-form-item>
+                            </el-col>
 
-                <el-row type="flex" class="row-bg" :gutter="20">
-                    <el-col :span="1" >
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="户型" prop="huxingshi">
-                            <el-input v-model="alertAdd.ruleForm.huxingshi" ></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="5">
-                        <el-form-item label="室" label-width="40px" prop="huxingting">
-                            <el-input v-model="alertAdd.ruleForm.huxingting"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="5">
-                        <el-form-item label="厅" label-width="40px" prop="huxingwei">
-                            <el-input v-model="alertAdd.ruleForm.huxingwei"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="5">
-                        <el-form-item label="卫" label-width="40px" prop="huxingchu">
-                            <el-input v-model="alertAdd.ruleForm.huxingchu"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="1" style="text-align: center; line-height: 40px">
-                        厨
-                    </el-col>
-                    <el-col :span="3" >
-                    </el-col>
-                </el-row>
+                            <el-col :span="10">
+                                <el-form-item label="面积" prop="areas">
+                                    <el-input v-model="alertAdd.ruleForm.areas" placeholder="面积"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"></el-col>
+                        </el-row>
 
-                <el-row type="flex" class="row-bg" :gutter="20">
-                    <el-col :span="1"></el-col>
-                    <el-col :span="10">
-                        <el-form-item label="大连市" prop="addressSelectedOptions">
-                            <el-cascader
-                                style="width: 100%;"
-                                placeholder="请选择地市街道"
-                                :options="alertAdd.ruleForm.addressOptions"
-                                v-model="alertAdd.ruleForm.addressSelectedOptions"
-                                @change=""
-                                filterable>
-                            </el-cascader>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10" >
-                        <el-form-item label="小区名称" prop="xiaoquName">
-                            <el-autocomplete
-                                style="width: 100%;"
-                                class="inline-input"
-                                v-model="alertAdd.ruleForm.xiaoquName"
-                                placeholder="请输入小区名字"
-                                @select=""></el-autocomplete>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3"></el-col>
-                </el-row>
+                        <el-row type="flex" class="row-bg" :gutter="20">
+                            <el-col :span="1" >
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="户型" prop="huxingshi">
+                                    <el-input v-model="alertAdd.ruleForm.huxingshi"  placeholder="几室"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="5">
+                                <el-form-item label="室" label-width="40px" prop="huxingting">
+                                    <el-input v-model="alertAdd.ruleForm.huxingting" placeholder="几厅"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="5">
+                                <el-form-item label="厅" label-width="40px" prop="huxingwei">
+                                    <el-input v-model="alertAdd.ruleForm.huxingwei"  placeholder="几卫"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="5">
+                                <el-form-item label="卫" label-width="40px" prop="huxingchu">
+                                    <el-input v-model="alertAdd.ruleForm.huxingchu" placeholder="几厨"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="1" style="text-align: center; line-height: 40px">
+                                厨
+                            </el-col>
+                            <el-col :span="3" >
+                            </el-col>
+                        </el-row>
 
-                <el-row type="flex" class="row-bg" :gutter="20">
-                    <el-col :span="1"></el-col>
-                    <el-col :span="10">
-                        <el-form-item label="目的用途" prop="purpose">
-                            <el-input v-model="alertAdd.ruleForm.purpose"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="自定义" prop="label">
-                            <el-input v-model="alertAdd.ruleForm.label"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3"></el-col>
-                </el-row>
+                        <el-row type="flex" class="row-bg" :gutter="20">
+                            <el-col :span="1"></el-col>
+                            <el-col :span="20">
+                                <el-form-item label="位置" prop="position">
+                                    <el-input v-model="alertAdd.ruleForm.position"  placeholder="房屋大致的区域位置"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"></el-col>
+                        </el-row>
+
+                        <el-row type="flex" class="row-bg" :gutter="20">
+                            <el-col :span="1"></el-col>
+                            <el-col :span="20">
+                                <el-form-item label="备注" prop="remarks">
+                                    <el-input
+                                            type="textarea"
+                                            :rows="8"
+                                            :autosize="{ minRows: 6, maxRows: 8}"
+                                            placeholder="备注信息"
+                                            v-model.trim="alertAdd.ruleForm.remarks">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"></el-col>
+                        </el-row>
+                    </div>
+                </el-card>
+
+
             </el-form>
             <!-- <el-row type="flex" class="row-bg" justify="space-around">
               <el-col :span="11">aaa</el-col>
               <el-col :span="11">ss</el-col>
             </el-row> -->
-          </div>
 
 
 
@@ -246,7 +260,6 @@
         },
         data() {
             return {
-
                 formData :{
                     searchText: '',
                     isShare:0,
@@ -331,31 +344,22 @@
                 alertAdd:{
                     visible:false,
                     ruleForm: {
-                        guestname: "李某某",  //客源姓名
-                        sex: "男",  //客源性别
-                        guestgrade: "A",  //客源星级(A,B,C)
-                        type: "0",  //客源类型(0:买,1:租)
-                        heartprice: "195万",  //心里价位
-                        phone: "1561684151",  //联系电话
-                        remarks: "装修好的",  //备注简介
-                        areas: "95",  //需求面积
-                        addressSelectedOptions:[],
-                        addressOptions:[{
-                            value: 'zhinan',
-                                  label: '中山区',
-                                  children: [{
-                                    value: 'shejiyuanze',
-                                    label: '人民街道'}]
-                        }],
-                        xiaoquOptions:[],
-                        xiaoquName: '',
-                        huxingshi: "3",  //需求几室
-                        huxingting: "2",  //需求几厅
-                        huxingwei: "1",  //需求几卫
-                        huxingchu: "1",  //需求几厨
-                        // position: "中山街街道",  //需求位置
-                        purpose: "住",  //目的用途
-                        label: "自定义",  //自定义标签
+                        guestname: "",  //客源姓名
+                        sex: "",  //客源性别
+                        guestgrade: "",  //客源星级(A,B,C)
+                        type: "",  //客源类型(0:买,1:租)
+                        heartprice: "",  //心里价位
+                        phone: "",  //联系电话
+                        phonetow: "",//备用电话
+                        remarks: "",  //备注简介
+                        areas: "",  //需求面积
+                        position: "",//位置
+                        huxingshi: "",  //需求几室
+                        huxingting: "",  //需求几厅
+                        huxingwei: "",  //需求几卫
+                        huxingchu: "",  //需求几厨
+                        purpose: "",  //目的用途
+                        label: "",  //自定义标签
                     },
                     rules: {
                         guestname: [
@@ -370,48 +374,11 @@
                         type: [
                           { required: true, message: '请选择客源类型', trigger: 'change' },
                         ],
-                        heartprice: [
-                          { required: true, message: '请输入心理价位', trigger: 'blur' },
-                        ],
                         phone: [
                           { required: true, message: '请输入客源电话', trigger: 'blur' },
                         ],
-                        remarks: [
-                          { required: true, message: '请输入备注信息', trigger: 'blur' },
-                        ],
-                        areas: [
-                          { required: true, message: '请输入需求面积', trigger: 'blur' },
-                        ],
-
-                        addressSelectedOptions: [
-                          { required: true, message: '请选择市区街道', trigger: 'change' },
-                        ],
-                        xiaoquName: [
-                          { required: true, message: '请输入小区', trigger: 'blur' },
-                        ],
-
-                        huxingshi: [
-                          { required: true, message: '请输入室数量', trigger: 'blur' },
-                        ],
-                        huxingting: [
-                          { required: true, message: '请输入厅数量', trigger: 'blur' },
-                        ],
-                        huxingwei: [
-                          { required: true, message: '请输入卫生间数量', trigger: 'blur' },
-                        ],
-                        huxingchu: [
-                          { required: true, message: '请输入厨房数量', trigger: 'blur' },
-                        ],
-
-                        purpose: [
-                          { required: true, message: '请输入目的用途', trigger: 'blur' },
-                        ],
-                        label: [
-                          { required: true, message: '请输入自定义标签', trigger: 'blur' },
-                        ],
                     },
                 }
-
             };
         },
         created(){
@@ -426,60 +393,55 @@
                     guestname: this.formData.searchText,
                     guestgrade: this.formData.guestgrade,
                     type: this.formData.type,
-                    page: 1,
+                    page: this.tableData.pageNum,
                     size: 10
                 };
                 GuestApi.searchGuest(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
-                    that.tableForm=result.data;
-                    console.log(that.tableForm.list);
+                    that.tableData=result.data;
+
                 }).catch(error => {
                     console.log('searchGuest_error');
                 });
             },
             search(){
-                this.tableForm.pageNum = 1;
+                this.tableData.pageNum = 1;
                 this.doSearch();
             },  //搜索
 
             handleCurrentChangeSearch(val){
-                this.tableForm.pageNum = val;
+                this.tableData.pageNum = val;
                 this.doSearch();
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
             submitAdd(ruleForm){
+                var that = this;
                 this.$refs[ruleForm].validate((valid) => {
                   if (valid) {
-                      console.log('submit!!');
-                        this.$confirm('确定新增该房源?', '提示', {
+                        this.$confirm('确定新增该客源?', '提示', {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',
                           type: 'warning'
                         }).then(() => {
-                            // HouseApi.addhouse(this.alertAdd.ruleForm).then(function (result) {
-                            //     console.log(result);
-                            //     if(typeof(result) != "object"){result = JSON.parse(result)}
-
-                            //     Message({
-                            //         message: "新增房源成功",
-                            //         type: 'success'
-                            //     });
-                            //     that.alertAdd.visible=false;
-                            //     resetForm(ruleForm);
-                            // }).catch(error => {
-                            //     console.log('addhouse_error');
-                            // });
+                            GuestApi.insertGuest(this.alertAdd.ruleForm).then(function (result) {
+                                console.log(result);
+                                if(typeof(result) != "object"){result = JSON.parse(result)}
+                                Message({
+                                    message: "新增客源成功",
+                                    type: 'success'
+                                });
+                                that.alertAdd.visible=false;
+                                that.resetForm(ruleForm);
+                                that.doSearch();
+                            }).catch(error => {
+                                console.log('insertGuest_error'+error);
+                            });
                         }).catch(() => {
-                          this.$message({
-                            type: 'info',
-                            message: '已取消保存'
-                          });
+
                         });
                   } else {
-                      console.log('error submit!!');
-                      // alert('请填写完成!');
                       return false;
                   }
               });
@@ -513,10 +475,9 @@
                 this.search();
             },
 
-
             examineById(row){
-                console.log(row.id);
-                this.$router.push({path: '/admin/passengerDetails/'+row.id})
+                let routeData = this.$router.resolve({ path: '/admin/passengerDetails/'+row.id});
+                window.open(routeData.href, '_blank');
             },
 
         }

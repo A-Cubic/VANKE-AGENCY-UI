@@ -1,6 +1,8 @@
 <template>
     <section class="passengerDetails">
-        <div class="detail-template">
+        <div v-show="pageVisbaleEmpty">你已无权查看此页</div>
+
+        <div v-show="pageVisbaleData" class="detail-template">
             <!-- 这条信息的id是{{id}} -->
 
             <el-row :gutter="25">
@@ -8,34 +10,37 @@
                     <ul class="user-content">
                         <li>
                             <div class="user-name">
-                                <span>{{formUser.userName}}</span>
-                                <span>( {{formUser.userGender}} )</span>
+                                <span>{{formUser.guestname}}</span>
+                                <span>( {{formUser.sex}} )</span>
                             </div>
                             <div class="user-level">
                                 <el-rate
-                                        v-model="formUser.userLevel"
+                                        v-model="formUser.guestgrade=='A'?3:formUser.guestgrade=='B'?2:1"
                                         :max="3"
                                         disabled
                                         show-score
                                         text-color="#ff9900"
-                                        score-template="{value}">
+                                        :score-template="formUser.guestgrade">
                                 </el-rate>
                             </div>
                         </li>
                         <li>
                             <span class="user-title">客源编号： </span>
-                            <span class="user-mes">{{formUser.userCode}}</span>
+                            <span class="user-mes">{{formUser.number}}</span>
                         </li>
                         <li>
                             <span class="user-title">上次维护： </span>
-                            <span class="user-mes">{{formUser.lastTime}}</span>
+                            <span class="user-mes">{{formUser.recordTime}}</span>
                             <span class="user-title">委托时间： </span>
-                            <span class="user-mes">{{formUser.entrustTime}}</span>
+                            <span class="user-mes">{{formUser.createTime}}</span>
                         </li>
                         <li>
                             <span class="user-title">标签：</span>
-                            <el-tag v-for="(item, index) in formUser.userTags" :key="index" type="success">
-                                {{ item.tagName }}
+                            <el-tag type="success">
+                                {{ formUser.label }}
+                            </el-tag>
+                            <el-tag v-show="formUser.iskey=='1'?true:false" type="danger">
+                                无效客源
                             </el-tag>
                         </li>
                     </ul>
@@ -46,8 +51,83 @@
                     <div class="tab-content">
                         <el-tabs>
                             <el-tab-pane label="需求">
-                                <div class='needForm'>{{needForm}}</div>
-                                <!-- <el-alert title="意向小区" type="info"></el-alert> -->
+
+                                <el-row type="flex" class="row-bg" :gutter="20">
+                                    <el-col :span="1"></el-col>
+                                    <el-col :span="10">
+                                            <span>类型： </span>
+                                            <span>{{needForm.type=='0'?'买卖':'租赁'}}</span>
+                                    </el-col>
+                                    <el-col :span="3"></el-col>
+                                </el-row>
+                                <el-row type="flex" class="row-bg" :gutter="20">
+                                    <el-col :span="1"></el-col>
+                                    <el-col :span="10">
+                                        <span>心里价位： </span>
+                                        <span>{{needForm.heartprice}}¥</span>
+                                    </el-col>
+                                    <el-col :span="3"></el-col>
+                                </el-row>
+                                <el-row type="flex" class="row-bg" :gutter="20">
+                                    <el-col :span="1"></el-col>
+                                    <el-col :span="10">
+                                        <span>面积： </span>
+                                        <span>{{needForm.areas}}m²</span>
+                                    </el-col>
+                                    <el-col :span="3"></el-col>
+                                </el-row>
+                                <el-row type="flex" class="row-bg" :gutter="20">
+                                    <el-col :span="1"></el-col>
+                                    <el-col :span="10">
+                                        <span>目的用途： </span>
+                                        <span>{{needForm.purpose}}</span>
+                                    </el-col>
+                                    <el-col :span="3"></el-col>
+                                </el-row>
+
+                                <el-row type="flex" class="row-bg" :gutter="20">
+                                    <el-col :span="1" >
+                                    </el-col>
+                                    <el-col :span="2">
+                                        <span>户型： </span>
+                                        <span>{{needForm.huxingshi}}</span>
+                                    </el-col>
+                                    <el-col :span="2">
+                                        <span>室 </span>
+                                        <span>{{needForm.huxingting}}</span>
+                                    </el-col>
+                                    <el-col :span="2">
+                                        <span>厅 </span>
+                                        <span>{{needForm.huxingwei}}</span>
+                                    </el-col>
+                                    <el-col :span="2">
+                                        <span>卫 </span>
+                                        <span>{{needForm.huxingchu}}</span>
+                                    </el-col>
+                                    <el-col :span="2" >
+                                        厨
+                                    </el-col>
+                                    <el-col :span="3" >
+                                    </el-col>
+                                </el-row>
+
+                                <el-row type="flex" class="row-bg" :gutter="20">
+                                    <el-col :span="1"></el-col>
+                                    <el-col :span="20">
+                                        <span>位置： </span>
+                                        <span>{{needForm.position}}</span>
+                                    </el-col>
+                                    <el-col :span="3"></el-col>
+                                </el-row>
+
+                                <el-row type="flex" class="row-bg" :gutter="20">
+                                    <el-col :span="1"></el-col>
+                                    <el-col :span="20">
+                                        <span>备注： </span>
+                                        <span>{{needForm.remarks}}</span>
+                                    </el-col>
+                                    <el-col :span="3"></el-col>
+                                </el-row>
 
 
                             </el-tab-pane>
@@ -59,22 +139,41 @@
                                 <el-card v-for="(item, index) in takeLookList" :key="index" class="box-card" v-show="takeLookList.length > 0" shadow="always">
                                     {{'编号: ' + item.serialNumber }}
                                 </el-card> -->
-                                <el-table :data="takeLookForm.takeLookList"
+                                <el-table :data="takeLookForm.list"
                                         size="mini"
-                                        :show-header="false"
                                         max-height="320"
-                                        style="width: 100%">
-                                        <el-table-column prop="message" label="内容"></el-table-column>
+                                        style="width: 100%;margin-top: 0px;padding: 20px;box-shadow: 0px 0px 10px #e3e3e3;">
+                                    <el-table-column prop="createTime" label="看房时间"></el-table-column>
+                                    <el-table-column prop="houseName" label="房屋位置"></el-table-column>
+                                    <el-table-column prop="feedback" label="反馈结果"></el-table-column>
                                 </el-table>
+                                <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
+                                    <el-pagination
+                                            layout="prev, pager, next, jumper, total"
+                                            :page-size="takeLookForm.pageSize"
+                                            :current-page.sync="takeLookForm.pageNum"
+                                            :total ="takeLookForm.total"
+                                            @current-change="handleTakeLookFormChangeSearch">
+                                    </el-pagination>
+                                </div>
                             </el-tab-pane>
-                            <el-tab-pane label="备注">
-                                <el-table :data="remarkForm.remarkList"
+                            <el-tab-pane label="跟进">
+                                <el-table :data="remarkForm.list"
                                         size="mini"
-                                        :show-header="false"
                                         max-height="320"
-                                        style="width: 100%">
-                                        <el-table-column prop="message" label="内容"></el-table-column>
+                                        style="width: 100%;margin-top: 0px;padding: 20px;box-shadow: 0px 0px 10px #e3e3e3;">
+                                    <el-table-column prop="createTime" label="跟进时间"></el-table-column>
+                                    <el-table-column prop="content" label="跟进内容"></el-table-column>
                                 </el-table>
+                                <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
+                                    <el-pagination
+                                            layout="prev, pager, next, jumper, total"
+                                            :page-size="remarkForm.pageSize"
+                                            :current-page.sync="remarkForm.pageNum"
+                                            :total ="remarkForm.total"
+                                            @current-change="handleRemarkFormChangeSearch">
+                                    </el-pagination>
+                                </div>
                             </el-tab-pane>
                         </el-tabs>
                     </div>
@@ -89,14 +188,16 @@
                                     title="联系电话"
                                     width="200"
                                     trigger="click"
-                                    content="13566778899。">
+                                    :content="formUser.phone">
                                 <div class="maintain-content-mes" slot="reference">查看电话</div>
                             </el-popover>
                         </li>
                         <li>
                             <div class="maintain-content-header">维护</div>
-                            <div class="maintain-content-mes" @click="remarkVisible = true">写备注</div>
+                            <div class="maintain-content-mes" @click="remarkVisible = true">录跟进</div>
                             <div class="maintain-content-mes" @click="lookVisible = true">录带看</div>
+                            <div class="maintain-content-mes" @click="stateHandel">{{formUser.iskey=='0'?'无效客源申请':formUser.iskey=='1'?'取消无效客源申请':formUser.iskey=='2'?'无效客源审核中':'取消无效客源审核中'}}</div>
+                            <div class="maintain-content-mes" @click="transferHandel">客源转让</div>
                             <!-- <div class="maintain-content-mes">发起合作</div> -->
                         </li>
                         <!-- <li>
@@ -107,11 +208,11 @@
                 </el-col>
             </el-row>
 
-            <el-dialog title="写备注" :visible.sync="remarkVisible" width="40%">
-                <el-input type="textarea" :rows="4" placeholder="请输入备注" v-model="remarkMes"></el-input>
+            <el-dialog title="写跟进" :visible.sync="remarkVisible" width="40%">
+                <el-input type="textarea" :rows="4" placeholder="请输入跟进内容" v-model="remarkMes"></el-input>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="remarkVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="remarkVisible = false">确 定</el-button>
+                    <el-button type="primary" @click="insertRemark">确 定</el-button>
                 </span>
             </el-dialog>
 
@@ -123,21 +224,38 @@
                              :key="index">
                         <div slot="header" class="clearfix">
                             <span>带看时间: </span>
-                            <el-date-picker v-model="item.startDate" type="date" placeholder="开始日期"></el-date-picker> -
-                            <el-date-picker v-model="item.endDate" type="date" placeholder="结束日期"></el-date-picker>
+                            <el-date-picker v-model="item.createTime" type="datetime" placeholder="开始日期"></el-date-picker> -
+                            <el-date-picker v-model="item.endtime" type="datetime" placeholder="结束日期"></el-date-picker>
                             <el-button type="text" icon="el-icon-close" @click="delLooked(item)"></el-button>
                         </div>
+                        <!--<el-card :body-style="{ padding: '0px' }">-->
+                            <!--<img :src="item.titleimg" class="image">-->
+                            <!--<div style="padding: 14px;float:left">-->
+                                <!--<span>{{item.xiaoquName}}</span>-->
+                                <!--<div class="bottom clearfix">-->
+                                    <!--<span>{{item.number}}</span>-->
+                                    <!--<span>{{item.price}}</span>-->
+                                <!--</div>-->
+                                <!--<div class="bottom clearfix">-->
+                                    <!--<span>{{item.huxing}}</span>-->
+                                    <!--<span>{{item.areas}}</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</el-card>-->
                         <ul class="look-data-template">
                             <li>
-                                <img :src="item.imgUrl" alt="无法查看">
+                                <img :src="item.titleimg" alt="无法查看">
                             </li>
-                            <li>{{item.houseName}}</li>
-                            <li>{{item.houseCode}}</li>
-                            <li>{{item.housePrice}}</li>
+                            <li>{{item.number}}</li>
+                            <li>{{item.xiaoquName}}</li>
+                            <li>{{item.price}}</li>
+                            <li>{{item.huxing}}</li>
+                            <li>{{item.areas}}</li>
+                            <li>{{item.floor}}</li>
                         </ul>
                         <el-form :model="item" ref="form" label-width="60px" class="demo-ruleForm">
-                            <el-form-item label="姓名:">
-                                <el-input type="textarea" :rows="4" placeholder="请输入反馈" v-model="item.feedBack"></el-input>
+                            <el-form-item label="反馈:">
+                                <el-input type="textarea" :rows="4" placeholder="请输入反馈" v-model="item.feedback"></el-input>
                             </el-form-item>
                         </el-form>
                         <div class="table-button"></div>
@@ -148,27 +266,29 @@
                 </div>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="lookVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="lookVisible = false">确 定</el-button>
+                    <el-button type="primary" @click="insertLookRecord">确 定</el-button>
                 </span>
             </el-dialog>
 
             <el-dialog title="添加带看房源" :visible.sync="lookDetailVisible" width="80%">
                 <div class="look-detail-wrap">
                     <div class="look-detail-wrap-header">
-                        <el-input placeholder="请输入小区名称" v-model="addLookForm.areaName" clearable></el-input> —
-                        <el-input placeholder="请输入房源编号" v-model="addLookForm.areaName" clearable></el-input>
-                        <el-button class="m-btn-addMenu" type="primary" @click="">查询</el-button>
+                        <el-input placeholder="请输入小区名称" v-model="addLookForm.xiaoquName" clearable></el-input>
+                        <el-input placeholder="请输入房源编号" v-model="addLookForm.number" clearable></el-input>
+                        <el-button class="m-btn-addMenu" type="primary" @click="searchHouseList">查询</el-button>
                     </div>
                     <div class="look-detail-wrap-table">
-                        <el-table :data="lookTableData" :show-header="false" style="width: 100%">
-                            <el-table-column label="图片">
+                        <el-table :data="lookTableData.list"  style="width: 100%">
+                            <el-table-column label="标题图">
                                 <template scope="scope">
-                                    <img :src="scope.row.imgUrl" alt="">
+                                    <img style="height: 100px;width: 150px;" :src="scope.row.titleimg" alt="">
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="houseCode" label="编号"></el-table-column>
-                            <el-table-column prop="houseName" label="小区"></el-table-column>
-                            <el-table-column prop="housePrice" label="价格"></el-table-column>
+                            <el-table-column prop="number" label="编号"></el-table-column>
+                            <el-table-column prop="xiaoquName" label="小区"></el-table-column>
+                            <el-table-column prop="areas" label="面积"></el-table-column>
+                            <el-table-column prop="floor" label="楼层"></el-table-column>
+                            <el-table-column prop="price" label="价格"></el-table-column>
                             <el-table-column label="操作">
                                 <template scope="scope">
                                     <el-checkbox v-model="scope.row.checked"
@@ -178,6 +298,15 @@
                                 </template>
                             </el-table-column>
                         </el-table>
+                        <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
+                            <el-pagination
+                                    layout="prev, pager, next, jumper, total"
+                                    :page-size="lookTableData.pageSize"
+                                    :current-page.sync="lookTableData.pageNum"
+                                    :total ="lookTableData.total"
+                                    @current-change="handlelookTableDataChangeSearch">
+                            </el-pagination>
+                        </div>
                     </div>
                 </div>
                 <span slot="footer" class="dialog-footer">
@@ -208,57 +337,110 @@
                     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
                 </span>
             </el-dialog>
+
+            <el-dialog title="客源转让" :visible.sync="transferVisible" width="80%">
+                <div class="transfer-wrap">
+                    <div class="transfer-wrap-header">
+                        <el-input placeholder="请输入编号后六位或全名" v-model="transferForm.usertext" clearable></el-input>
+                        <el-button class="m-btn-addMenu" type="primary" @click="searchTransfer">查询</el-button>
+                    </div>
+                    <div class="transfer-wrap-table">
+                        <el-table :data="transferForm.personList" style="width: 100%">
+                            <el-table-column prop="user_no" label="编号"></el-table-column>
+                            <el-table-column prop="relname" label="姓名"></el-table-column>
+                            <el-table-column label="操作">
+                                <template scope="scope">
+                                    <el-button size="mini" type="text" @click="submitTransfer(scope.row)">转让</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </div>
+                <!--<span slot="footer" class="dialog-footer">-->
+                <!--<el-button @click="transferVisible = false">退 出</el-button>-->
+                <!--<el-button type="primary" @click="finishTransfer">确 定</el-button>-->
+                <!--</span>-->
+            </el-dialog>
         </div>
     </section>
 
 </template>
 
 <script>
+    import GuestApi from '../api/api_guest.js';
+    import Vue from 'vue';
+    import { Message } from 'element-ui';
     export default {
+        install(Vue) {
+            Vue.prototype.$message = Message
+        },
         name: "passenger-details",
         props: ['id'],
         data() {
             return {
-
-                formUser: {
-                    userName: '王小虎',
-                    userGender: '男',
-                    userCode: '50235678934',
-                    userLevel: 3,
-                    lastTime: '2018-07-10',
-                    entrustTime: '2018-07-05',
-                    userTags: [
-                        {id: 0, tagName: '链家App'},
-                        {id: 1, tagName: '健康客户'},
+                pageVisbaleEmpty: false,
+                pageVisbaleData: true,
+                transferVisible: false,
+                transferForm: {
+                    usertext:'',
+                    personList: [
+                        {
+                            relname: '',
+                            user_no: '',
+                            username: ''
+                        }
                     ],
+                    chooseName: '',
+                    chooseCode: '',
+                    chooseAcc: '',
                 },
-                needForm:'这里是需求内容',
+                formUser: {
+                    guestname: '',
+                    sex: '',
+                    iskey:'',
+                    number: '',
+                    guestgrade: '',
+                    recordTime: '',
+                    createTime: '',
+                    label: '',//自定义标签
+                    phone: "",  //联系电话
+                    phonetow: "",//备用电话
+                },
+                needForm:{
+                    type: "",  //客源类型(0:买,1:租)
+                    heartprice: "",  //心里价位
+                    remarks: "",  //备注简介
+                    areas: "",  //需求面积
+                    position: "",//位置
+                    huxingshi: "",  //需求几室
+                    huxingting: "",  //需求几厅
+                    huxingwei: "",  //需求几卫
+                    huxingchu: "",  //需求几厨
+                    purpose: "",  //目的用途
+                },
                 remarkForm:{
-                    remarkList:[
+                    pageSize: 10,
+                    pageNum: 1,
+                    total: 0,
+                    list: [
                         {
-                            message: '备注1'
-                        },
-                        {
-                            message: '备注2'
-                        },
-                        {
-                            message: '备注3'
+                            createTime:'',
+                            content:'',
                         }
                     ]
                 },
 
                 takeLookForm:{
-                    takeLookList:[
+                    pageSize: 10,
+                    pageNum: 1,
+                    total: 0,
+                    list: [
                         {
-                            message: '带看记录1'
-                        },
-                        {
-                            message: '带看记录2'
-                        },
-                        {
-                            message: '带看记录3'
+                            createTime:'',
+                            houseName:'',
+                            feedback:'',
                         }
-                    ],
+                    ]
                 },
 
                 phoneVisible: false,
@@ -267,42 +449,33 @@
                 lookVisible: false,
                 lookDetailVisible: false,
 
-                lookTableData: [
-                    {
-                        id: 0,
-                        imgUrl: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2714851461,2662863538&fm=27&gp=0.jpg',
-                        houseName: '万科樱花园',
-                        houseCode: '1234',
-                        housePrice: '106万',
-                        checked: false,
-                        disabled: false,
-                    },
-                    {
-                        id: 1,
-                        imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1531038527286&di=e32f5bc68986d591090cb2d8e687b5b8&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F17%2F87%2F08%2F55a0dcd4ab768_1024.jpg',
-                        houseName: '万科翡翠书院',
-                        houseCode: '2234',
-                        housePrice: '106万',
-                        checked: false,
-                        disabled: false,
-                    },
-                    {
-                        id: 3,
-                        imgUrl: 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3497046269,138674714&fm=27&gp=0.jpg',
-                        houseName: '万科溪之谷',
-                        houseCode: '3234',
-                        housePrice: '106万',
-                        checked: false,
-                        disabled: false,
-                    }
-                ],
+                lookTableData:{
+                    pageSize: 10,
+                    pageNum: 1,
+                    total: 0,
+                    list: [
+                        {
+                            id: '',
+                            number:'',
+                            titleimg: '',
+                            xiaoquName: '',
+                            huxing: '',
+                            areas: '',
+                            price: '',
+                            floor: '',
+                            checked: false,
+                            disabled: false,
+
+                        }
+                    ]
+                },
                 lookTableCheckedList: [],
                 LookedList: [],
 
 
                 addLookForm:{
-                    areaName: '',
-                    areaCode: '',
+                    xiaoquName: '',
+                    number: '',
                 },
 
 
@@ -318,7 +491,220 @@
         },
         filter:{
         },
+        created(){
+            this.doSearch();
+        },
         methods: {
+            doSearch(){
+                var that = this;
+                var gid = this.id;
+
+                var postData = {
+                    id: gid,
+                    page: 1,
+                    size: 5
+                };
+
+                GuestApi.guestDetail(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    if(result.data==0){
+                        that.pageVisbaleEmpty=true;
+                        that.pageVisbaleData =false;
+                        return;
+                    }
+                    that.formUser=result.data;
+                    that.needForm=result.data;
+                }).catch(error => {
+                    console.log('guestDetail_error');
+                });
+
+                GuestApi.lookDetail(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.takeLookForm=result.data;
+                }).catch(error => {
+                    console.log('lookDetail_error'+error);
+                });
+
+                GuestApi.recordDetail(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.remarkForm=result.data;
+                }).catch(error => {
+                    console.log('recordDetail_error');
+                });
+            },
+            insertRemark(){
+                var that = this;
+                var gid = this.id;
+
+                var postData = {
+                    guestId: gid,
+                    content: this.remarkMes
+                };
+
+                GuestApi.recordInsert(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    Message({
+                        message: "跟进成功",
+                        type: 'success'
+                    });
+                    that.remarkVisible = false;
+                    var postData1 = {
+                        id: gid,
+                        page: that.remarkForm.pageNum,
+                        size: 5
+                    };
+
+                    GuestApi.recordDetail(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.remarkForm=result.data;
+                    }).catch(error => {
+                        console.log('recordDetail_error');
+                    });
+
+                }).catch(error => {
+                    console.log('guestDetail_error');
+                });
+            },
+            insertLookRecord(){
+                var that = this;
+                var gid = this.id;
+                var postData = this.LookedList;
+
+                GuestApi.insertLook(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    Message({
+                        message: "成功添加带看记录",
+                        type: 'success'
+                    });
+                    that.lookVisible = false;
+                    that.LookedList = [];
+                    var postData1 = {
+                        id: gid,
+                        page: that.takeLookForm.pageNum,
+                        size: 5
+                    };
+
+                    GuestApi.lookDetail(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.takeLookForm=result.data;
+                    }).catch(error => {
+                        console.log('lookDetail_error'+error);
+                    });
+
+                }).catch(error => {
+                    console.log('guestDetail_error');
+                });
+            },
+            transferHandel(){
+                this.transferForm.usertext = '';
+                this.transferForm.personList = [];
+                this.transferForm.chooseName = '';
+                this.transferForm.chooseCode = '';
+                this.transferForm.chooseAcc = '';
+                this.transferVisible = true;
+            },
+            searchTransfer(){
+                var that = this;
+                var postData = {
+                    usertext: this.transferForm.usertext
+                };
+                GuestApi.searchUser(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.transferForm.personList=result.data;
+                }).catch(error => {
+                    console.log('searchUser_error');
+                });
+            },  //查找用户
+            submitTransfer(item){
+                var that = this;
+                var gid = this.id;
+                var postData = {
+                    id: gid,
+                    recordUserName: item.username
+                };
+                GuestApi.updateRecordUser(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.transferVisible = false;
+                    Message({
+                        message: '转让成功!',
+                        type: 'success'
+                    });
+
+                    var postData1 = {
+                        id: gid
+                    };
+                    GuestApi.guestDetail(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        if(result.data==0){
+                            that.pageVisbaleEmpty=true;
+                            that.pageVisbaleData =false;
+                            return;
+                        }
+                        that.formUser=result.data;
+                        that.needForm=result.data;
+                    }).catch(error => {
+                        console.log('guestDetail_error');
+                    });
+                }).catch(error => {
+                    Message.error('转让失败!')
+                });
+
+
+            },  //确定选择
+            stateHandel(){
+                var that = this;
+                var gid = this.id;
+                var isData = this.formUser.iskey;
+                var isData1 ;
+                var text = '申请审核此客源为无效客源, 是否继续?';
+                if(isData=='2'){
+                    Message({
+                        message: '无效客源审核中，请等待审核结束，再申请',
+                        type: 'warning'
+                    });
+                    return;
+                }
+                if(isData=='3'){
+                    Message({
+                        message: '取消无效客源审核中，请等待审核结束，再申请',
+                        type: 'warning'
+                    });
+                    return;
+                }
+
+                if(isData=='0'){
+                    isData1='1';
+                }else if(isData=='1'){
+                    isData1='0';
+                    text = '申请审核取消无效客源, 是否继续?';
+                }
+                this.$confirm(text, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var postData = {
+                        id: gid,
+                        iskey:isData1
+                    };
+                    GuestApi.updateState(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.formUser.iskey = result.data;
+                        Message({
+                            type: 'success',
+                            message: '申请成功，请等待审核!'
+                        });
+                    }).catch(error => {
+                        console.log('updateState_error'+error);
+                    });
+
+                }).catch(() => {
+                    // Message({
+                    //     type: 'info',
+                    //     message: '已取消更改!'
+                    // });
+                });
+            },
             dialogShow(){
                 this.dialogVisible = true;
                 this.searchList = [];
@@ -346,12 +732,12 @@
                 var that = this;
                 this.lookDetailVisible = true;
                 this.lookTableCheckedList = [];
-                that.lookTableData.forEach((item) => {
+                that.lookTableData.list.forEach((item) => {
                     var item1 = item;
                     item1.checked = false;
                     item1.disabled = false;
                     that.LookedList.forEach((item2) => {
-                        if(item1.id == item2.id){
+                        if(item1.houseId == item2.houseId){
                             item1.checked = true;
                             item1.disabled = true;
                             return;
@@ -367,34 +753,38 @@
                 var that = this;
                 if(item.checked == true){
                     that.lookTableCheckedList.push(item);
-                }
-                else{
+                } else{
                     this.lookTableCheckedList.forEach((items) => {
                         if(item.id == items.id){
                             that.lookTableCheckedList.splice(that.lookTableCheckedList.indexOf(items), 1);
                         };
                     });
                 }
-                console.log(that.lookTableCheckedList);
+                // console.log(that.lookTableCheckedList);
             },  //带看详情 选择房源
             addLookDetail(){
                 var that = this;
+                var gid = this.id;
                 this.lookTableCheckedList.forEach((item) => {
                     item.disabled = true;
                     that.LookedList.push({
-                        id: item.id,
-                        imgUrl: item.imgUrl,
-                        houseName: item.houseName,
-                        houseCode: item.houseCode,
-                        housePrice: item.housePrice,
+                        houseId: item.id,
+                        guestId: gid,
+                        number:item.number,
+                        titleimg: item.titleimg,
+                        xiaoquName: item.xiaoquName,
+                        huxing: item.huxing,
+                        areas: item.areas,
+                        price: item.price,
+                        floor: item.floor,
                         checked: item.checked,
                         disabled: item.disabled,
-                        startDate: '',
-                        endDate: '',
-                        feedBack: '',
+                        createTime: '',
+                        endtime: '',
+                        feedback: '',
                     });
                 });
-                console.log(this.LookedList)
+                // console.log(this.LookedList)
                 this.lookTableCheckedList = [];
             },
             finishLookDetail(){
@@ -403,19 +793,114 @@
             },  //添加带看房源 完毕
             delLooked(item){
                 this.LookedList.forEach((items) => {
-                    if(item.id == items.id){
+                    if(item.houseId == items.houseId){
                         this.LookedList.splice(this.LookedList.indexOf(items), 1)
                     }
                 });
             },  //带看房源 删除
 
+            handleRemarkFormChangeSearch(val){
+                this.remarkForm.pageNum = val;
+                var that = this;
+                var gid = this.id;
 
+                var postData = {
+                    id: gid,
+                    page: this.remarkForm.pageNum,
+                    size: 5
+                };
+
+                GuestApi.recordDetail(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.remarkForm=result.data;
+                }).catch(error => {
+                    console.log('recordDetail_error');
+                });
+            },
+            handleTakeLookFormChangeSearch(val){
+                this.takeLookForm.pageNum = val;
+                var that = this;
+                var gid = this.id;
+
+                var postData = {
+                    id: gid,
+                    page: this.takeLookForm.pageNum,
+                    size: 5
+                };
+
+                GuestApi.lookDetail(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.takeLookForm=result.data;
+                }).catch(error => {
+                    console.log('lookDetail_error');
+                });
+            },
+            handlelookTableDataChangeSearch(val){
+                this.lookTableData.pageNum = val;
+                var that = this;
+
+                var postData = {
+                    xiaoquName: this.addLookForm.xiaoquName,
+                    number: this.addLookForm.number,
+                    page: this.lookTableData.pageNum,
+                    size: 5
+                };
+
+                GuestApi.houseListGuest(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.lookTableData=result.data;
+                }).catch(error => {
+                    console.log('houseListGuest_error');
+                });
+            },
+            searchHouseList(){
+                var xiaoquName=this.addLookForm.xiaoquName;
+                var number=this.addLookForm.number;
+                if(xiaoquName.trim()=='' && number.trim()==''){
+                    Message.error("查询条件不允许都为空");
+                    return;
+                }
+                var that = this;
+                var postData = {
+                    xiaoquName: this.addLookForm.xiaoquName,
+                    number: this.addLookForm.number,
+                    page: this.lookTableData.pageNum,
+                    size: 5
+                };
+
+                GuestApi.houseListGuest(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.lookTableData=result.data;
+                }).catch(error => {
+                    console.log('houseListGuest_error');
+                });
+
+            },
         }
     }
 </script>
 
 <style lang="less">
     @import "../assets/css/element.less";
+    .bottom {
+        margin-top: 13px;
+        line-height: 12px;
+    }
+
+    .image {
+        width: 80px;
+        display: block;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        display: table;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both
+    }
     .passengerDetails {
         /*border:1px solid red;*/
         .detail-template{
@@ -531,7 +1016,7 @@
                             /*border: 1px solid #f2f2f2;*/
                             box-shadow: 0px 0px 10px #e3e3e3;
                             li{
-                                width: 25%;
+                                width: 14%;
                                 height: 13vw;
                                 line-height: 13vw;
                                 /*border-right: 1px solid #f2f2f2;*/
@@ -565,13 +1050,30 @@
                         padding: 20px;
                         margin-top: 20px;
                         box-shadow: 0px 0px 10px #e3e3e3;
-                        text-align: center;
+                        /*text-align: center;*/
                         img{
                             height: 11vw;
                         }
                     }
                 }
 
+            }
+        }
+        .transfer-wrap{
+            .transfer-wrap-header{
+                padding: 20px;
+                box-shadow: 0px 0px 10px #e3e3e3;
+                .el-input{
+                    width: 200px;
+                }
+            }
+            .transfer-wrap-table{
+                padding: 20px;
+                margin-top: 20px;
+                box-shadow: 0px 0px 10px #e3e3e3;
+                img{
+                    height: 11vw;
+                }
             }
         }
     }
