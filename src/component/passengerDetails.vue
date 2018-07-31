@@ -55,7 +55,7 @@
                                 <el-row type="flex" class="row-bg" :gutter="20">
                                     <el-col :span="1"></el-col>
                                     <el-col :span="10">
-                                            <span>类型： </span>
+                                            <span class="spanlabel">类型： </span>
                                             <span>{{needForm.type=='0'?'买卖':'租赁'}}</span>
                                     </el-col>
                                     <el-col :span="3"></el-col>
@@ -63,15 +63,15 @@
                                 <el-row type="flex" class="row-bg" :gutter="20">
                                     <el-col :span="1"></el-col>
                                     <el-col :span="10">
-                                        <span>心里价位： </span>
-                                        <span>{{needForm.heartprice}}¥</span>
+                                        <span class="spanlabel">心里价位： </span>
+                                        <span>¥{{needForm.heartprice}}</span>
                                     </el-col>
                                     <el-col :span="3"></el-col>
                                 </el-row>
                                 <el-row type="flex" class="row-bg" :gutter="20">
                                     <el-col :span="1"></el-col>
                                     <el-col :span="10">
-                                        <span>面积： </span>
+                                        <span class="spanlabel">面积： </span>
                                         <span>{{needForm.areas}}m²</span>
                                     </el-col>
                                     <el-col :span="3"></el-col>
@@ -79,7 +79,7 @@
                                 <el-row type="flex" class="row-bg" :gutter="20">
                                     <el-col :span="1"></el-col>
                                     <el-col :span="10">
-                                        <span>目的用途： </span>
+                                        <span class="spanlabel">目的用途： </span>
                                         <span>{{needForm.purpose}}</span>
                                     </el-col>
                                     <el-col :span="3"></el-col>
@@ -88,33 +88,23 @@
                                 <el-row type="flex" class="row-bg" :gutter="20">
                                     <el-col :span="1" >
                                     </el-col>
-                                    <el-col :span="2">
-                                        <span>户型： </span>
-                                        <span>{{needForm.huxingshi}}</span>
-                                    </el-col>
-                                    <el-col :span="2">
-                                        <span>室 </span>
-                                        <span>{{needForm.huxingting}}</span>
-                                    </el-col>
-                                    <el-col :span="2">
-                                        <span>厅 </span>
-                                        <span>{{needForm.huxingwei}}</span>
-                                    </el-col>
-                                    <el-col :span="2">
-                                        <span>卫 </span>
-                                        <span>{{needForm.huxingchu}}</span>
-                                    </el-col>
-                                    <el-col :span="2" >
-                                        厨
-                                    </el-col>
-                                    <el-col :span="3" >
+                                    <el-col :span="20">
+                                        <span class="spanlabel">户型： </span>
+                                        <span>{{needForm.huxingshi?needForm.huxingshi:0}}</span>
+                                        <span> 室 </span>
+                                        <span>{{needForm.huxingting?needForm.huxingting:0}}</span>
+                                        <span> 厅 </span>
+                                        <span>{{needForm.huxingwei?needForm.huxingwei:0}}</span>
+                                        <span> 卫 </span>
+                                        <span>{{needForm.huxingchu?needForm.huxingchu:0}}</span>
+                                        <span> 厨 </span>
                                     </el-col>
                                 </el-row>
 
                                 <el-row type="flex" class="row-bg" :gutter="20">
                                     <el-col :span="1"></el-col>
                                     <el-col :span="20">
-                                        <span>位置： </span>
+                                        <span class="spanlabel">位置： </span>
                                         <span>{{needForm.position}}</span>
                                     </el-col>
                                     <el-col :span="3"></el-col>
@@ -123,7 +113,7 @@
                                 <el-row type="flex" class="row-bg" :gutter="20">
                                     <el-col :span="1"></el-col>
                                     <el-col :span="20">
-                                        <span>备注： </span>
+                                        <span class="spanlabel">备注： </span>
                                         <span>{{needForm.remarks}}</span>
                                     </el-col>
                                     <el-col :span="3"></el-col>
@@ -514,6 +504,7 @@
                     }
                     that.formUser=result.data;
                     that.needForm=result.data;
+                    console.log(result.data);
                 }).catch(error => {
                     console.log('guestDetail_error');
                 });
@@ -964,6 +955,11 @@
                     .needForm{
                         background: #f8f8f8;
                         min-height: 280px;
+                    }
+                    .spanlabel{
+                        color:#c51010;
+                        display:inline-block;
+                        width:100px;
                     }
                 }
 
