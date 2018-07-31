@@ -112,6 +112,7 @@ export default {
     .achievements-template{
         width: 100%;
         padding: 25px 50px;
+        background: #fff;
         .achievements-content{
             min-height: 200px;
             box-shadow: 0px 0px 10px #e3e3e3;

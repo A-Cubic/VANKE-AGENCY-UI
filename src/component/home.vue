@@ -83,7 +83,7 @@
                     <div class="grid-content">
                         <el-card class="box-card" shadow="always">
                             <div slot="header" class="clearfix">优质房源</div>
-                            <div v-for="(item, index) in goodHouseList" :key="index" class="text item">
+                            <div v-for="(item, index) in goodHouseList" :key="index" class="text item highQuality">
                                 <router-link tag="a" target="_blank" :to="'/admin/houseDetails/'+item.id">{{ item.xiaoquName }}</router-link>
                             </div>
                         </el-card>
@@ -141,7 +141,7 @@ export default {
                     id: 0,
                     news: '暂无'
                 },
-                
+
             ],
         };
     },
@@ -247,7 +247,7 @@ export default {
                 .user-mes{
                     float: left;
                     height: 120px;
-                    margin: 10px 0 0;
+                    margin: 10px 30px 0;
                     .user_name{
                         height: 30px;
                         line-height: 30px;
@@ -281,6 +281,9 @@ export default {
                     text-align: right;
                 }
                 .box-card{
+                    .highQuality{
+                        margin-bottom:10px;
+                    }
                     &:nth-child(2) {
                         margin-top: 20px;
                     }

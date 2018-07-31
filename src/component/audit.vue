@@ -520,6 +520,7 @@ export default {
     .audit-template{
         width: 100%;
         padding: 25px 50px;
+        background: #fff;
         .audit-content{
             min-height: 200px;
             box-shadow: 0px 0px 10px #e3e3e3;
@@ -563,7 +564,7 @@ export default {
                     a{
                         color: #c51010;
                     }
-                    
+
                 }
                 .el-form{
                     .el-form-item{
@@ -577,7 +578,7 @@ export default {
             }
             .btn-footer{
                 overflow: hidden;
-                
+
                 .btn-pass{
                     margin-top:10px;
                     float: right;

@@ -48,7 +48,7 @@
                             <el-tab-pane label="需求">
                                 <div class='needForm'>{{needForm}}</div>
                                 <!-- <el-alert title="意向小区" type="info"></el-alert> -->
-                                
+
 
                             </el-tab-pane>
                             <el-tab-pane label="带看">
@@ -59,7 +59,7 @@
                                 <el-card v-for="(item, index) in takeLookList" :key="index" class="box-card" v-show="takeLookList.length > 0" shadow="always">
                                     {{'编号: ' + item.serialNumber }}
                                 </el-card> -->
-                                <el-table :data="takeLookForm.takeLookList" 
+                                <el-table :data="takeLookForm.takeLookList"
                                         size="mini"
                                         :show-header="false"
                                         max-height="320"
@@ -68,7 +68,7 @@
                                 </el-table>
                             </el-tab-pane>
                             <el-tab-pane label="备注">
-                                <el-table :data="remarkForm.remarkList" 
+                                <el-table :data="remarkForm.remarkList"
                                         size="mini"
                                         :show-header="false"
                                         max-height="320"
@@ -421,6 +421,7 @@
         .detail-template{
             width: 100%;
             padding: 25px 50px;
+            background: #fff;
             .el-row {
                 margin-bottom: 20px;
                 &:last-child {

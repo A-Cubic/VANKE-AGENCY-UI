@@ -529,6 +529,7 @@
         .passenger_template{
             width: 100%;
             padding: 25px 50px;
+            background: #fff;
             .passenger_search{
                 padding: 20px;
                 box-shadow: 0px 0px 10px #e3e3e3;

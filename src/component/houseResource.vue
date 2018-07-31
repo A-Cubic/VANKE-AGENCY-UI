@@ -1227,7 +1227,7 @@ export default {
            this.formData.floorType = id;
            this.search();
         },
-        
+
         getId(index, list){
             var id = 0;
             list.forEach((item) => {
@@ -1292,6 +1292,7 @@ export default {
     .house_template{
         width: 100%;
         padding: 25px 50px;
+        background: #fff;
         .house_search{
             padding: 20px;
             box-shadow: 0px 0px 10px #e3e3e3;

@@ -2,7 +2,7 @@
     <section class="house-details">
         <div class="house-template">
             <el-tag type="success" >房源编号：{{houseDataForm.number}}</el-tag>
-            
+
             <el-row :gutter="25">
                 <el-col :span="15">
                     <ul class="mes-concent">
@@ -81,7 +81,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </li>
                         <li>
@@ -112,7 +112,7 @@
                                     <div><i class="iconfont icon-method-draw-image"></i></div>
                                     <div>钥匙</div>
                                     <div class="radius-data">{{ radiusForm.keyrelName==''|| radiusForm.keyrelName==null?"暂无": radiusForm.keyrelName}}</div>
-                                    <el-button type="text" 
+                                    <el-button type="text"
                                                size="small"
                                                icon="el-icon-plus"
                                                @click="keyHandel">
@@ -316,7 +316,7 @@
                             <span>姓名：</span>
                             <span>{{ ownerForm.phone1 }}</span>
                         </div>
-                        
+
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="ownerVisible = false">退 出</el-button>
@@ -1156,7 +1156,7 @@
 //                 // }else{
 //                 //     this.otherForm.isspecial = 0;
 //                 // }
-                
+
 //             },
 //             applyState(){
 //                 this.otherForm.state = this.otherForm.state == 0 ? 1 : 0;
@@ -1377,6 +1377,7 @@
         .house-template{
             width: 100%;
             padding: 25px 50px;
+            background: #fff;
             .el-row {
                 .mes-concent{
                     list-style-type: none;
