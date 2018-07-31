@@ -81,6 +81,11 @@
                                             <span class="span" @click="placeHandle">查看</span>
                                         </div>
                                     </div>
+                                    <div class="other-mes" style="margin-top:10px">
+                                        <span><el-tag v-show="otherForm.isspecial=='1'?true:false" type="warning">特殊房源</el-tag></span>
+                                        <span><el-tag v-show="otherForm.isfine=='1'?true:false" type="success">优质房源</el-tag></span>
+                                        <span><el-tag v-show="otherForm.state=='1'?true:false" type="danger">无效房源</el-tag></span>
+                                    </div>
                                 </div>
 
                             </div>
@@ -643,9 +648,9 @@
                 ],
                 //修改
                 otherForm: {
-                    // isspecial: 0,
-                    // state: 0,
-                    // isfine: 0,
+                     isspecial: '0',
+                     state: '0',
+                     isfine: '0',
                 },
                 transferVisible: false,  //转让dialog
                 transferForm: {
@@ -710,16 +715,7 @@
             });
         },
         computed: {
-            isspecialVisible(){
-                var isspecial;
-                if(this.otherForm.isspecial == 0 || this.otherForm.isspecial == null){
-                    isspecial = false;
-                }
-                else{
-                    isspecial = true;
-                }
-                return isspecial;
-            }
+
         },
         filter:{
         },

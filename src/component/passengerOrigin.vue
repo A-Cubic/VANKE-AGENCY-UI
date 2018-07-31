@@ -57,7 +57,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="remarks" label="需求" width="180"></el-table-column>
+                    <el-table-column prop="remarks" label="备注"></el-table-column>
                     <el-table-column prop="createTime" label="委托时间"></el-table-column>
                     <el-table-column prop="recordTime" label="上次维护时间"></el-table-column>
                 </el-table>
@@ -294,7 +294,7 @@
                             choosed: true,
                         },{
                             name: '一星',
-                            id: 'A',
+                            id: 'C',
                             choosed: false,
                         },{
                             name: '二星',
@@ -302,7 +302,7 @@
                             choosed: false,
                         },{
                             name: '三星',
-                            id: 'C',
+                            id: 'A',
                             choosed: false,
                         },
                     ],
