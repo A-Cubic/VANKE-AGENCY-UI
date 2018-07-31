@@ -24,6 +24,7 @@
                         </el-option>
                     </el-select>
                     <el-button type="primary" @click="search">查询</el-button>
+                    <el-button type="primary" @click="dialogForm.statusForm1.statusVisible1=true">新增成交项</el-button>
                 </div>
                 <div class="table-template">
                     <el-table :data="tableForm.tableData" border>
@@ -112,7 +113,7 @@
                     <el-form-item label="客源:">{{dialogForm.statusForm1.phone}}</el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="">确 定</el-button>
+                    <el-button type="primary" @click="dialogFormStatus1">保存并下一步</el-button>
                 </span>
             </el-dialog>
 
@@ -142,7 +143,7 @@
                     </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="">确 定</el-button>
+                    <el-button type="primary" @click="dialogFormStatus2">保存并下一步</el-button>
                 </span>
             </el-dialog>
 
@@ -179,7 +180,7 @@
 
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="">确 定</el-button>
+                    <el-button type="primary" @click="dialogFormStatus3">确 定</el-button>
                 </span>
             </el-dialog>
 
@@ -295,6 +296,20 @@ export default {
         };
     },
     methods: {
+        // 成交信息保存并下一步
+        dialogFormStatus1(){
+            this.dialogForm.statusForm2.statusVisible2=true
+            this.dialogForm.statusForm1.statusVisible1=false
+        },
+        // 信息上传保存并下一步
+        dialogFormStatus2(){
+            this.dialogForm.statusForm3.statusVisible3=true
+            this.dialogForm.statusForm2.statusVisible2=false
+        },
+        // 业绩分配确定
+        dialogFormStatus3(){
+            this.dialogForm.statusForm3.statusVisible3=false
+        },
         doSearch(){
             var postData = {
                 searchCode: this.searchForm.searchCode,
