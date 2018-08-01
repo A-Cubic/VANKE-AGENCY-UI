@@ -3,10 +3,10 @@
         <el-row class="clinch-template" :gutter="0">
             <el-col class="clinch-content" :span="24">
                 <div class="search-header">
-                    <span>名称或编号: </span>
-                    <el-input v-model="searchForm.searchCode" placeholder="请输入内容"></el-input>
+                    <span>合同编号: </span>
+                    <el-input v-model="searchForm.contractnumber" placeholder="请输入合同编号"></el-input>
                     <span>缴费类型: </span>
-                    <el-select v-model="searchForm.payStatus" placeholder="请选择缴费类型">
+                    <el-select v-model="searchForm.type" placeholder="请选择缴费状态">
                         <el-option
                                 v-for="item in searchForm.payOption"
                                 :key="item.value"
@@ -15,7 +15,7 @@
                         </el-option>
                     </el-select>
                     <span>成交状态: </span>
-                    <el-select v-model="searchForm.dealStatus" placeholder="请选择成交状态">
+                    <el-select v-model="searchForm.state" placeholder="请选择成交状态">
                         <el-option
                                 v-for="item in searchForm.dealOption"
                                 :key="item.value"
@@ -24,17 +24,61 @@
                         </el-option>
                     </el-select>
                     <el-button type="primary" @click="search">查询</el-button>
-                    <el-button type="primary" @click="dialogForm.statusForm1.statusVisible1=true">新增成交项</el-button>
+                    <el-button type="primary" @click="addForm.addFormVisible=true">新增成交项</el-button>
                 </div>
                 <div class="table-template">
-                    <el-table :data="tableForm.tableData" border>
-                        <el-table-column prop="code" label="编号"></el-table-column>
-                        <el-table-column prop="title" label="标题"></el-table-column>
-                        <el-table-column prop="payStatus" label="缴费类型"></el-table-column>
-                        <el-table-column prop="dealStatus" label="成交状态"></el-table-column>
+                    <el-table :data="tableForm.list" border>
+                        <el-table-column type="expand">
+                            <template slot-scope="props">
+                                <el-form label-position="left" inline class="demo-table-expand">
+                                    <el-form-item prop="buyIntermediaryPrice" label="买方服务费（应缴）">
+                                        <span>{{ props.row.buyIntermediaryPrice }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="sellIntermediaryPrice" label="卖方服务费（应缴）">
+                                        <span>{{ props.row.sellIntermediaryPrice }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="buyLoanPrice" label="买方贷款费（应缴）">
+                                        <span>{{ props.row.buyLoanPrice }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="buyIntermediaryPayment" label="买方服务费（实缴）">
+                                        <span>{{ props.row.buyIntermediaryPayment }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="sellIntermediaryPayment" label="卖方服务费（实缴）">
+                                        <span>{{ props.row.sellIntermediaryPayment }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="buyLoanPayment" label="买方贷款费（实缴）">
+                                        <span>{{ props.row.buyLoanPayment }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="buyIntermediaryLack" label="买方服务费（欠缴）">
+                                        <span>{{ props.row.buyIntermediaryLack }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="sellIntermediaryLack" label="卖方服务费（欠缴）">
+                                        <span>{{ props.row.sellIntermediaryLack }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="buyLoanLack" label="买方贷款费（欠缴）">
+                                        <span>{{ props.row.buyLoanLack }}</span>
+                                    </el-form-item>
+                                    <el-form-item prop="code" label="证明（点击跳转详情）">
+                                        <span> <el-button size="mini" type="text" @click="compileIt(props.row)">查看证明照片</el-button></span>
+                                    </el-form-item>
+                                    <el-form-item prop="code" label="房源（点击跳转详情）">
+                                        <span> <el-button size="mini" type="text" @click="compileIt(props.row)">查看房源</el-button></span>
+                                    </el-form-item>
+                                    <el-form-item prop="code" label="客源（点击跳转详情）">
+                                        <span> <el-button size="mini" type="text" @click="compileIt(props.row)">查看客源</el-button></span>
+                                    </el-form-item>
+                                </el-form>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="number" label="成交编号"></el-table-column>
+                        <el-table-column prop="contractnumber" label="合同编号"></el-table-column>
+                        <el-table-column prop="createTime" label="创建日期"></el-table-column>
+                        <el-table-column prop="createrelName" label="创建人"></el-table-column>
+                        <el-table-column prop="type" label="缴费状态"></el-table-column>
+                        <el-table-column prop="state" label="成交状态"></el-table-column>
                         <el-table-column label="操作">
                             <template scope="scope">
-                                <el-button size="mini" type="text" @click="compileIt(scope.row)">编辑</el-button>
+                                <el-button size="mini" type="text" @click="compileIt(scope.row)">业绩分配</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -43,156 +87,151 @@
                     <el-pagination
                             layout="prev, pager, next, jumper, total"
                             :page-size="tableForm.pageSize"
-                            :current-page.sync="tableForm.pageCurrent"
+                            :current-page.sync="tableForm.pageNum"
                             :total ="tableForm.total"
                             @current-change="handleCurrentChangeSearch">
                     </el-pagination>
                 </div>
             </el-col>
 
-            <el-dialog title="成交信息" :visible.sync="dialogForm.statusForm1.statusVisible1" width="60%">
-                <el-form :model="dialogForm.statusForm1"
-                         status-icon ref="statusForm1"
-                         label-width="120px"
-                         label-position="left"
-                         class="demo-ruleForm">
-                    <el-form-item label="成交编号:">{{dialogForm.statusForm1.dealCode}}</el-form-item>
-                    <el-form-item label="合同编号:">
-                        <el-input v-model="dialogForm.statusForm1.contractCode" placeholder="请输入内容"></el-input>
-                    </el-form-item>
+            <el-dialog title="新增成交" :visible.sync="addForm.addFormVisible" width="60%">
+                <el-collapse v-model="activeName" accordion>
+                    <el-form :model="addForm.addFormData"
+                             status-icon ref="addFormData"
+                             label-width="120px"
+                             label-position="left"
+                             class="demo-ruleForm">
+                    <el-collapse-item title="基本信息" name="1" style="font-size: 22px">
+                            <el-form-item label="合同编号:" style="margin-top: 10px">
+                                <el-input v-model="addForm.addFormData.contractnumber" placeholder="请输入内容"></el-input>
+                            </el-form-item>
 
-                    <el-row :gutter="10">
-                        <el-col :span="8">
-                            <el-form-item label="买家服务费:">
-                                <el-input v-model="dialogForm.statusForm1.buyerCost" placeholder="请输入内容"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="买家服务费实缴:">
-                                <el-input v-model="dialogForm.statusForm1.buyerRealCost" placeholder="请输入内容"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="">差:0元</el-form-item>
-                        </el-col>
-                    </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="8">
+                                    <el-form-item label="买家服务费:">
+                                        <el-input v-model="addForm.addFormData.buyIntermediaryPrice" placeholder="请输入内容"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="买家服务费实缴:">
+                                        <el-input v-model="addForm.addFormData.buyIntermediaryPayment" placeholder="请输入内容"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="">差:{{addForm.addFormData.buyIntermediaryLack}}￥</el-form-item>
+                                </el-col>
+                            </el-row>
 
-                    <el-row :gutter="10">
-                        <el-col :span="8">
-                            <el-form-item label="买家贷款:">
-                                <el-input v-model="dialogForm.statusForm1.buyerLoans" placeholder="请输入内容"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="买家贷款实缴:">
-                                <el-input v-model="dialogForm.statusForm1.buyerRealLoans" placeholder="请输入内容"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="">差:0元</el-form-item>
-                        </el-col>
-                    </el-row>
+                            <el-row :gutter="10">
+                                <el-col :span="8">
+                                    <el-form-item label="买家贷款费:">
+                                        <el-input v-model="addForm.addFormData.buyLoanPrice" placeholder="请输入内容"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="买家贷款费实缴:">
+                                        <el-input v-model="addForm.addFormData.buyLoanPayment" placeholder="请输入内容"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="">差:{{addForm.addFormData.buyLoanLack}}￥</el-form-item>
+                                </el-col>
+                            </el-row>
 
-                    <el-row :gutter="10">
-                        <el-col :span="8">
-                            <el-form-item label="卖家服务费:">
-                                <el-input v-model="dialogForm.statusForm1.sellerCost" placeholder="请输入内容"></el-input>
+                            <el-row :gutter="10">
+                                <el-col :span="8">
+                                    <el-form-item label="卖家服务费:">
+                                        <el-input v-model="addForm.addFormData.sellIntermediaryPrice" placeholder="请输入内容"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="卖家服务费实缴:">
+                                        <el-input v-model="addForm.addFormData.sellIntermediaryPayment" placeholder="请输入内容"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="">差:{{addForm.addFormData.sellIntermediaryLack}}￥</el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-form-item label="房源:">{{addForm.addFormData.houseId}}</el-form-item>
+                            <el-form-item label="客源:">{{addForm.addFormData.guestId}}</el-form-item>
+                    </el-collapse-item>
+                    <el-collapse-item title="证明上传" name="2">
+                            <el-form-item label="合同照片:">
+                                <div>a</div>
                             </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="卖家服务费实缴:">
-                                <el-input v-model="dialogForm.statusForm1.sellerRealCost" placeholder="请输入内容"></el-input>
+                            <el-form-item label="补充协议:">
+                                <div></div>
                             </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="">差:0元</el-form-item>
-                        </el-col>
-                    </el-row>
+                            <el-form-item label="收拾:">
+                                <div></div>
+                            </el-form-item>
+                            <el-form-item label="产权证:">
+                                <div></div>
+                            </el-form-item>
+                            <el-form-item label="身份证:">
+                                <div></div>
+                            </el-form-item>
+                            <el-form-item label="贷款合同:">
+                                <div></div>
+                            </el-form-item>
+                    </el-collapse-item>
+                    </el-form>
+                </el-collapse>
 
-                    <el-form-item label="房源:">{{dialogForm.statusForm1.phone}}</el-form-item>
-                    <el-form-item label="客源:">{{dialogForm.statusForm1.phone}}</el-form-item>
-                </el-form>
                 <span slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="dialogFormStatus1">保存并下一步</el-button>
+                    <el-button @click="addForm.addFormVisible = false;resetForm('ruleForm')">取消</el-button>
+                    <el-button type="primary" @click="submitAdd('ruleForm')">保存</el-button>
                 </span>
             </el-dialog>
 
-            <el-dialog title="信息上传" :visible.sync="dialogForm.statusForm2.statusVisible2" width="60%">
-                <el-form :model="dialogForm.statusForm2"
-                         status-icon ref="statusForm2"
-                         label-width="120px"
-                         label-position="left"
-                         class="demo-ruleForm">
-                    <el-form-item label="合同照片:">
-                        <div>a</div>
-                    </el-form-item>
-                    <el-form-item label="补充协议:">
-                        <div></div>
-                    </el-form-item>
-                    <el-form-item label="收拾:">
-                        <div></div>
-                    </el-form-item>
-                    <el-form-item label="产权证:">
-                        <div></div>
-                    </el-form-item>
-                    <el-form-item label="身份证:">
-                        <div></div>
-                    </el-form-item>
-                    <el-form-item label="贷款合同:">
-                        <div></div>
-                    </el-form-item>
-                </el-form>
-                <span slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="dialogFormStatus2">保存并下一步</el-button>
-                </span>
-            </el-dialog>
 
-            <el-dialog title="业绩分配" :visible.sync="dialogForm.statusForm3.statusVisible3" width="60%">
-                <el-form :model="dialogForm.statusForm3"
-                         status-icon ref="statusForm3"
+            <el-dialog title="业绩分配" :visible.sync="allotForm.allotFormVisible" width="60%">
+                <el-form :model="allotForm.allotFormData"
+                         status-icon ref="allotFormData"
                          label-width="120px"
                          label-position="left"
                          class="demo-ruleForm">
                     <el-form-item label="录入人:">
-                        <div>{{dialogForm.statusForm3.enteringName}}</div>
+                        <div>{{allotForm.allotFormData}}</div>
                     </el-form-item>
                     <el-form-item label="维护人:">
-                        <div>{{dialogForm.statusForm3.maintainName}}</div>
+                        <div>{{allotForm.allotFormData}}</div>
                     </el-form-item>
                     <el-form-item label="实勘人:">
-                        <div>{{dialogForm.statusForm3.examineName}}</div>
+                        <div>{{allotForm.allotFormData}}</div>
                     </el-form-item>
                     <el-form-item label="钥匙人:">
-                        <div>{{dialogForm.statusForm3.keyName}}</div>
+                        <div>{{allotForm.allotFormData}}</div>
                     </el-form-item>
                     <el-form-item label="促成人:">
-                        <div>{{dialogForm.statusForm3.facilitateName}}</div>
+                        <div>{{allotForm.allotFormData}}</div>
                     </el-form-item>
                     <el-form-item label="业绩分配:">
                         <el-button type="primary" icon="el-icon-plus" @click="addPerformance"></el-button>
                     </el-form-item>
 
                     <el-form-item label="">
-                        <div v-for="(item, index) in dialogForm.addPerformanceForm.showPerformanceList">
+                        <div v-for="(item, index) in allotForm.addUserForm.showPerformanceList">
                             {{ item.name }}
                         </div>
                     </el-form-item>
 
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="dialogFormStatus3">确 定</el-button>
+                    <el-button type="primary" @click="submitAllot">确 定</el-button>
                 </span>
             </el-dialog>
 
-            <el-dialog title="添加业绩" :visible.sync="dialogForm.addPerformanceForm.addPerformanceVisible" width="50%">
+            <el-dialog title="添加业绩" :visible.sync="allotForm.addUserForm.addUserFormVisible" width="50%">
                 <div class="performance-header">
                     <span>名称或编号: </span>
-                    <el-input v-model="dialogForm.addPerformanceForm.searchMes" placeholder="请输入内容"></el-input>
+                    <el-input v-model="allotForm.addUserForm.searchMes" placeholder="请输入内容"></el-input>
                     <el-button type="primary" @click="searchPerformance">查询</el-button>
                 </div>
                 <div class="performance-table">
 
-                    <el-table :data="dialogForm.addPerformanceForm.performanceList" border>
+                    <el-table :data="allotForm.addUserForm.performanceList" border>
                         <el-table-column prop="code" label="编号"></el-table-column>
                         <el-table-column prop="name" label="名称"></el-table-column>
                         <el-table-column label="操作">
@@ -216,105 +255,179 @@
 export default {
     data() {
         return {
+            activeName: '1',
             searchForm: {
-                searchCode: '',
-                payStatus: '',
+                contractnumber: '',
+                type: '',
                 payOption: [
                     {
-                        value: 0,
-                        label: '续缴'
+                        value: '',
+                        label: '全部'
                     },
                     {
-                        value: 1,
+                        value: '0',
+                        label: '欠缴'
+                    },
+                    {
+                        value: '1',
                         label: '已缴清'
                     }
                 ],
-                dealStatus: '',
+                state: '',
                 dealOption: [
                     {
-                        value: 0,
-                        label: '成交未完成'
+                        value: '',
+                        label: '全部'
                     },
                     {
-                        value: 1,
-                        label: '成交完成'
+                        value: '1',
+                        label: '创建完成'
                     },
+                    {
+                        value: '2',
+                        label: '等待审核'
+                    },
+                    {
+                        value: '3',
+                        label: '成交完成'
+                    }
                 ]
             },
 
             tableForm: {
-                tableData: [
+                list: [
                     {
-                        code: 0,
-                        title: '成交记录1',
-                        payStatus: 1,
-                        dealStatus: 1,
-                        status: 2, //编辑状态
+                        id:'',
+                        createTime: '',//创建时间
+                        buyIntermediaryPrice: '',//买方服务费
+                        sellIntermediaryPrice: '',//卖方服务费
+                        buyLoanPrice: '',//买方贷款费
+                        buyIntermediaryPayment: '',//买方实缴服务费
+                        sellIntermediaryPayment: '',//卖方实缴服务费
+                        buyLoanPayment: '',//买房实缴贷款
+                        buyIntermediaryLack: '', //买房服务费差价
+                        sellIntermediaryLack: '', //卖方服务费差价
+                        buyLoanLack: '', //买方贷款差价
+                        createrelName: '',//创建人真实姓名
+                        number: '',//成交编号
+                        contractnumber: '',//合同编号
+                        state: '', //成交状态
+                        type: '', //应缴费是否结清
+                        contractImg: '',  //合同图片
+                        houseProveImg: '', //产权证图片
+                        loanContractImg: '', //贷款合同图片
+                        identityProveImg: '', //身份证图片
+                        receiptImg: '', //收据图片
+                        agreementImg: '', //补充协议图片
+                        houseId: '',
+                        guestId: '',
                     }
                 ],
                 pageSize: 10,
                 total: 0,
-                pageCurrent: 1,
+                pageNum: 1,
             },
 
-            dialogForm:{
-                statusForm1:{
-                    statusVisible1: false,
-                    dealCode: 'C232112',  //成交编号
-                    contractCode: 'H232112',  //合同编号
-                    buyerCost: '',  //买家服务费
-                    buyerRealCost: '',  //买家服务费实缴
-                    buyerLoans: '',  //买家贷款
-                    buyerRealLoans: '',  //买家贷款实缴
-                    sellerCost: '',  //卖家服务费
-                    sellerRealCost: '',  //卖家服务费实缴
-                    houseResource: [],
-                    guestResource: [],
+            addForm:{
+                addFormVisible: false,
+                addFormData: {
+                    buyIntermediaryPrice: '',//买方服务费
+                    sellIntermediaryPrice: '',//卖方服务费
+                    buyLoanPrice: '',//买方贷款费
+                    buyIntermediaryPayment: '',//买方实缴服务费
+                    sellIntermediaryPayment: '',//卖方实缴服务费
+                    buyLoanPayment: '',//买方实缴贷款
+                    buyIntermediaryLack: '', //买房服务费差价
+                    sellIntermediaryLack: '', //卖方服务费差价
+                    buyLoanLack: '', //买方贷款费差价
+                    contractnumber: '',//合同编号
+                    contractImg: '',  //合同图片
+                    houseProveImg: '', //产权证图片
+                    loanContractImg: '', //贷款合同图片
+                    identityProveImg: '', //身份证图片
+                    receiptImg: '', //收据图片
+                    agreementImg: '', //补充协议图片
+                    houseId: '',
+                    guestId: '',
                 },
 
-                statusForm2:{
-                    statusVisible2: false,
+                addHouseForm: {
+                    addHouseVisible: false,
+                    searchMes: '',
+                    performanceList: [],  //查询条件  列表
+                    performanceCheckList: [],   //check选择 列表
+                    showPerformanceList: []  //确定后  展示列表
                 },
 
-                statusForm3:{
-                    statusVisible3: false,
-                    enteringName: '王小虎',  //录入人
-                    maintainName: '王小虎',  //维护人
-                    examineName: '王小虎',  //实勘人
-                    keyName: '王小虎',  //钥匙人
-                    facilitateName: '王小虎',  //促成人
-                },
-
-                addPerformanceForm: {
-                    addPerformanceVisible: false,
+                addGuestForm: {
+                    addGuestVisible: false,
                     searchMes: '',
                     performanceList: [],  //查询条件  列表
                     performanceCheckList: [],   //check选择 列表
                     showPerformanceList: []  //确定后  展示列表
                 }
-            }
+            },
+
+            allotForm: {
+                allotFormVisible: false,
+                allotFormData:{
+
+                },
+                addUserForm: {
+                    addUserFormVisible: false,
+                    searchMes: '',
+                    performanceList: [],  //查询条件  列表
+                    performanceCheckList: [],   //check选择 列表
+                    showPerformanceList: []  //确定后  展示列表
+                }
+            },
         };
     },
     methods: {
-        // 成交信息保存并下一步
-        dialogFormStatus1(){
-            this.dialogForm.statusForm2.statusVisible2=true
-            this.dialogForm.statusForm1.statusVisible1=false
+        // 成交信息保存
+        resetForm(formName) {
+            this.$refs[formName].resetFields();
         },
-        // 信息上传保存并下一步
-        dialogFormStatus2(){
-            this.dialogForm.statusForm3.statusVisible3=true
-            this.dialogForm.statusForm2.statusVisible2=false
+        submitAdd(ruleForm){
+            var that = this;
+            this.$refs[ruleForm].validate((valid) => {
+                if (valid) {
+                    this.$confirm('确定新增该客源?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        GuestApi.insertGuest(this.alertAdd.ruleForm).then(function (result) {
+                            console.log(result);
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            Message({
+                                message: "新增客源成功",
+                                type: 'success'
+                            });
+                            that.alertAdd.visible=false;
+                            that.resetForm(ruleForm);
+                            that.doSearch();
+                        }).catch(error => {
+                            console.log('insertGuest_error'+error);
+                        });
+                    }).catch(() => {
+
+                    });
+                } else {
+                    return false;
+                }
+            });
         },
+
         // 业绩分配确定
-        dialogFormStatus3(){
+        submitAllot(){
             this.dialogForm.statusForm3.statusVisible3=false
         },
         doSearch(){
             var postData = {
-                searchCode: this.searchForm.searchCode,
-                payStatus: this.searchForm.payStatus,
-                dealStatus: this.searchForm.dealStatus,
+                contractnumber: this.searchForm.contractnumber,
+                type: this.searchForm.type,
+                state: this.searchForm.state,
             };
             console.log(postData);
         },
@@ -324,7 +437,7 @@ export default {
         },  //搜索
 
         handleCurrentChangeSearch(val){
-            this.tableForm.pageCurrent = val;
+            this.tableForm.pageNum = val;
             this.doSearch();
         },  //分页change
 
@@ -401,6 +514,30 @@ export default {
 @import "../assets/css/element.less";
 .clinch-deal {
 	/*border:1px solid red;*/
+    .el-collapse-item__header {
+        height: 48px;
+        line-height: 48px;
+        color: #303133;
+        cursor: pointer;
+        border-bottom: 1px solid #dcdfe6;
+        font-size: 18px;
+        font-weight: 500;
+        -webkit-transition: border-bottom-color .3s;
+        transition: border-bottom-color .3s;
+        outline: 0;
+    }
+    .demo-table-expand {
+        font-size: 0;
+    }
+    .demo-table-expand label {
+        width: 160px;
+        color: #99a9bf;
+    }
+    .demo-table-expand .el-form-item {
+        margin-right: 0;
+        margin-bottom: 0;
+        width: 30%;
+    }
     .clinch-template{
         width: 100%;
         padding: 25px 50px;
