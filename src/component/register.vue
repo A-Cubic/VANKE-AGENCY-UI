@@ -11,35 +11,36 @@
                              :model="addRegister.registerForm"
                              :rules="addRegister.ruleForm"
                              ref="registerForm">
-                        <el-form-item label="名称:" prop="name">
-                            <el-input v-model="addRegister.registerForm.name"></el-input>
+
+                        <el-form-item label="注册账号:" prop="username">
+                            <el-input v-model="addRegister.registerForm.username"  placeholder="注册账号（必填）"></el-input>
+                        </el-form-item>
+                        <el-form-item label="账号密码:" prop="password">
+                            <el-input v-model.trim="addRegister.registerForm.password" maxlength="15" minlength="6" placeholder="6~15位（不填默认123456）"></el-input>
+                        </el-form-item>
+                        <el-form-item label="真实姓名:" prop="relname" >
+                            <el-input v-model="addRegister.registerForm.relname" placeholder="真实姓名（必填）"></el-input>
                         </el-form-item>
                         <el-form-item label="联系电话:" prop="phone">
-                            <el-input v-model="addRegister.registerForm.phone"></el-input>
+                            <el-input v-model="addRegister.registerForm.phone" placeholder="手机号码"></el-input>
                         </el-form-item>
-                        <el-form-item label="账号:" prop="account">
-                            <el-input v-model="addRegister.registerForm.account"></el-input>
-                        </el-form-item>
-                        <el-form-item label="密码:" prop="password">
-                            <el-input v-model="addRegister.registerForm.password"></el-input>
-                        </el-form-item>
-                        <el-form-item label="角色:" prop="role">
-                            <el-select v-model="addRegister.registerForm.role" placeholder="请选择角色">
+                        <el-form-item label="角色:" prop="roleId">
+                            <el-select v-model="addRegister.registerForm.roleId" placeholder="请选择角色（必填）">
                                 <el-option
-                                        v-for="item in addRegister.registerForm.roleList"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
+                                        v-for="item in addRegister.roleList"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="门店:" prop="stores">
-                            <el-select v-model="addRegister.registerForm.stores" placeholder="请选择门店">
+                        <el-form-item label="门店:" prop="store_id">
+                            <el-select v-model="addRegister.registerForm.store_id" placeholder="请选择门店（必填）">
                                 <el-option
-                                        v-for="item in addRegister.registerForm.storesList"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
+                                        v-for="item in addRegister.storesList"
+                                        :key="item.id"
+                                        :label="item.storeName"
+                                        :value="item.id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -57,86 +58,108 @@
 </template>
 
 <script>
+    import RegisterApi from '../api/api_register.js';
+    import Vue from 'vue';
+    import { Message } from 'element-ui';
     export default {
+        install(Vue) {
+            Vue.prototype.$message = Message
+        },
         name: "register",
         data(){
             return{
                 addRegister:{
                     registerForm:{
-                        name: '',
+                        relname: '',
                         phone: '',
-                        account: '',
+                        username: '',
                         password: '',
-                        role: '',
-                        roleList: [
-                            {
-                                label: '店长',
-                                value: 1,
-                            },
-                            {
-                                label: '副店长',
-                                value: 2,
-                            },
-                            {
-                                label: '店员',
-                                value: 3,
-                            }
-                        ],
-                        stores: '',
-                        storesList: [
-                            {
-                                label: '西岗店',
-                                value: 1,
-                            },
-                            {
-                                label: '中山店',
-                                value: 2,
-                            },
-                            {
-                                label: '沙河口店',
-                                value: 3,
-                            }
-                        ]
+                        roleId: '',
+                        store_id: '',
                     },
+                    roleList: [
+                        {
+                            id: '',
+                            name: '',
+                        }
+                    ],
+                    storesList: [
+                        {
+                            id: '',
+                            storeName: '',
+                        }
+                    ],
                     ruleForm: {
-                        name: [
-                            { required: true, message: '请输入名称', trigger: 'blur' },
+                        relname: [
+                            { required: true, message: '请输入真实姓名', trigger: 'blur' },
                         ],
-                        phone: [
-                            { required: true, message: '请输入联系电话', trigger: 'blur' },
+                        username: [
+                            { required: true, message: '请输入注册账号', trigger: 'blur' },
                         ],
-                        account: [
-                            { required: true, message: '请输入账号', trigger: 'blur' },
-                        ],
-                        password: [
-                            { required: true, message: '请输入密码', trigger: 'blur' },
-                        ],
-                        role: [
+                        roleId: [
                             { required: true, message: '请选择角色', trigger: 'change' }
                         ],
-                        stores: [
+                        store_id: [
                             { required: true, message: '请选择门店', trigger: 'change' }
+                        ],
+                        password: [
+                            { min: 6, max: 15, message: '密码长度6-15位', trigger: 'blur' }
                         ],
                     }
                 }
             }
         },
-
+        created(){
+            this.doSearch();
+        },
         methods:{
-            addRegister(){
+
+            doSearch(){
                 var that = this;
                 var postData = {
 
                 };
-                that.$message({showClose: true, message: '注册成功!', type: 'success'});
+                RegisterApi.storeList(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.addRegister.storesList=result.data;
+                }).catch(error => {
+                    console.log('storeList_error');
+                });
+
+                RegisterApi.roleList(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.addRegister.roleList=result.data;
+                }).catch(error => {
+                    console.log('roleList_error');
+                });
             },
+
             submitForm(formName) {
                 var that = this;
+
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        that.addRegister();
+                        if(this.addRegister.registerForm.password.trim()==''){
+                            that.addRegister.registerForm.password='123456';
+                        }
+                        var postData = this.addRegister.registerForm;
+                        RegisterApi.registerSubmit(postData).then(function (result) {
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            if(result.data=='0'){
+                                Message.error('账号已存在');
+                            }else if(result.data=='1'){
+                                that.resetForm(formName);
+                                Message({message: '注册用户成功!', type: 'success'});
+                            }else {
+                                Message.error('注册失败！');
+                            }
+
+                        }).catch(error => {
+                            console.log('registerSubmit_error');
+                        });
+
                     } else {
-                        that.$message({showClose: true, message: '请填写完整信息!', type: 'error'});
+                        Message.error('请填写完整信息!');
                         return false;
                     }
                 });

@@ -5,7 +5,7 @@
 				<div class="login-container">
 					<div class="title">
 						<i class="el-icon-location-outline"></i>
-						管理平台
+						万科有家·ERP管理平台
 					</div>
 					<div class="demo-ruleForm">
 						<el-form :model="loginForm" :rules="rules" ref="loginForm" status-icon label-position="left" label-width="0px">
@@ -16,7 +16,8 @@
 							</el-form-item>
 							<!--密码-->
 							<el-form-item prop="pass" class="login-form-item">
-								<el-input type="password" v-model="loginForm.checkPass" placeholder="密码" auto-complete="off" prefix-icon="icon-mima iconfont">
+								<el-input type="password" v-model="loginForm.checkPass" placeholder="密码" auto-complete="off" prefix-icon="icon-mima iconfont"
+										  @keyup.enter.native="handleLoginReal">
 								</el-input>
 							</el-form-item>
 							<el-form-item class="login-form-item">
@@ -24,7 +25,7 @@
 							</el-form-item>
 							<el-form-item class="login-form-item">
 								<span>
-									输入admin和任意密码/123456即可
+									万科有家  情系万家
 								</span>
 							</el-form-item>
 						</el-form>

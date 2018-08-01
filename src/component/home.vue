@@ -41,7 +41,7 @@
                     <div class="grid-content">
                         <el-card class="box-card" shadow="always">
                             <div slot="header" class="clearfix">
-                                <span>业绩排行榜</span>
+                                <span style="font-size: 18px; text-align: center;">业绩排行榜</span>
                             </div>
                             <div class="table-button">
                                 <el-button type="primary"

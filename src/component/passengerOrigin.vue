@@ -3,9 +3,14 @@
         <div class="passenger_template">
             <div class="passenger_search">
                 <div class="passenger_search_header">
-                    <el-input size="medium" v-model="formData.searchText" placeholder="请输入内容"></el-input>
-                    <el-button size="medium" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-                    <el-button type="primary" icon="el-icon-plus" class="add_button" @click="alertAdd.visible=true">新增客源</el-button>
+                    <el-input
+                            placeholder="请输入客户姓名搜索客源"
+                            v-model="formData.searchText" style="width: 400px;"  size="large" @keyup.enter.native="search">
+                        <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+                    </el-input>
+                    <!--<el-input size="medium" v-model="formData.searchText" placeholder="请输入内容"></el-input>-->
+                    <!--<el-button size="medium" type="primary" icon="el-icon-search" @click="search">搜索</el-button>-->
+                    <el-button type="primary" icon="el-icon-plus" class="add_button" @click="alertAdd.visible=true" round>新增客源</el-button>
                 </div>
                 <div class="passenger_search_block">
                     <el-form :model="formData" ref="formData" class="form-wrap">
@@ -91,12 +96,12 @@
                             <el-col :span="1"></el-col>
                             <el-col :span="10">
                                 <el-form-item label="姓名" prop="guestname">
-                                    <el-input v-model="alertAdd.ruleForm.guestname" placeholder="客户姓名"></el-input>
+                                    <el-input v-model="alertAdd.ruleForm.guestname" placeholder="客户姓名（必填）"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="10">
                                 <el-form-item label="性别" prop="sex">
-                                    <el-select v-model="alertAdd.ruleForm.sex" style="width: 100%;" placeholder="请选择性别">
+                                    <el-select v-model="alertAdd.ruleForm.sex" style="width: 100%;" placeholder="请选择性别（必填）">
                                         <el-option label="男" value="男"></el-option>
                                         <el-option label="女" value="女"></el-option>
                                     </el-select>
@@ -108,7 +113,7 @@
                             <el-col :span="1"></el-col>
                             <el-col :span="10">
                                 <el-form-item label="联系电话" prop="phone">
-                                    <el-input v-model="alertAdd.ruleForm.phone" placeholder="联系电话"></el-input>
+                                    <el-input v-model="alertAdd.ruleForm.phone" placeholder="联系电话（必填）"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="10">
@@ -122,7 +127,7 @@
                             <el-col :span="1"></el-col>
                             <el-col :span="10">
                                 <el-form-item label="星级" prop="guestgrade">
-                                    <el-select v-model="alertAdd.ruleForm.guestgrade" style="width: 100%;" placeholder="请选择星级">
+                                    <el-select v-model="alertAdd.ruleForm.guestgrade" style="width: 100%;" placeholder="请选择星级（必填）">
                                         <el-option label="A" value="A"></el-option>
                                         <el-option label="B" value="B"></el-option>
                                         <el-option label="C" value="C"></el-option>
@@ -147,7 +152,7 @@
                             <el-col :span="1"></el-col>
                             <el-col :span="10">
                                 <el-form-item label="房屋类型" prop="type">
-                                    <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择类型">
+                                    <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择类型（必填）">
                                         <el-option label="买卖" value="0"></el-option>
                                         <el-option label="租赁" value="1"></el-option>
                                     </el-select>

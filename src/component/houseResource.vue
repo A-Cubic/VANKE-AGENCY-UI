@@ -5,9 +5,14 @@
         <div class="house_template">
             <div class="house_search">
                 <div class="house_search_header">
-                    <el-input size="medium" v-model="formData.searchText" placeholder="请输入内容"></el-input>
-                    <el-button size="medium"  type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-                    <el-button type="primary" icon="el-icon-plus" class="add_button" @click="alertAdd.visible=true">新增房源</el-button>
+                    <el-input
+                            placeholder="请输入区域、街道或小区名搜索房源"
+                            v-model="formData.searchText" style="width: 500px;"  size="large" @keyup.enter.native="search">
+                        <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+                    </el-input>
+                    <!--<el-input size="medium" v-model="formData.searchText" placeholder="请输入区域、街道或小区名找房源"></el-input>-->
+                    <!--<el-button size="medium"  type="primary" icon="el-icon-search" @click="search">搜索</el-button>-->
+                    <el-button type="primary" icon="el-icon-plus" class="add_button" @click="alertAdd.visible=true" round>新增房源</el-button>
                 </div>
                 <div class="house_search_block">
                     <el-form :model="formData" ref="formData" class="form-wrap">
@@ -152,12 +157,12 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="价钱" prop="price">
-                            <el-input v-model="alertAdd.ruleForm.price"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.price" placeholder="房屋价格（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="7">
                         <el-form-item label="面积" prop="areas">
-                            <el-input v-model="alertAdd.ruleForm.areas">></el-input>
+                            <el-input v-model="alertAdd.ruleForm.areas" placeholder="房屋面积（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -165,7 +170,7 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="朝向" prop="chaoxiang">
-                            <el-select v-model="alertAdd.ruleForm.chaoxiang" style="width: 100%;" placeholder="请选择房屋朝向">
+                            <el-select v-model="alertAdd.ruleForm.chaoxiang" style="width: 100%;" placeholder="请选择房屋朝向（必填）">
                                 <el-option label="正南" value="1"></el-option>
                                 <el-option label="正北" value="2"></el-option>
                                 <el-option label="正东" value="3"></el-option>
@@ -184,23 +189,23 @@
                     <el-col :span="1" >
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="户型" prop="add_room">
-                            <el-input v-model="alertAdd.ruleForm.huxingshi" ></el-input>
+                        <el-form-item label="户型" prop="huxingshi">
+                            <el-input v-model="alertAdd.ruleForm.huxingshi" placeholder="几室（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="5">
-                        <el-form-item label="室" label-width="40px" prop="add_hall">
-                            <el-input v-model="alertAdd.ruleForm.huxingting"></el-input>
+                        <el-form-item label="室" label-width="40px" prop="huxingting">
+                            <el-input v-model="alertAdd.ruleForm.huxingting" placeholder="几厅（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="5">
-                        <el-form-item label="厅" label-width="40px" prop="add_toilet">
-                            <el-input v-model="alertAdd.ruleForm.huxingwei"></el-input>
+                        <el-form-item label="厅" label-width="40px" prop="huxingwei">
+                            <el-input v-model="alertAdd.ruleForm.huxingwei" placeholder="几卫（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="5">
-                        <el-form-item label="卫" label-width="40px" prop="add_kitchen">
-                            <el-input v-model="alertAdd.ruleForm.huxingchu"></el-input>
+                        <el-form-item label="卫" label-width="40px" prop="huxingchu">
+                            <el-input v-model="alertAdd.ruleForm.huxingchu" placeholder="几厨（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -214,7 +219,7 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="有无钥匙" prop="iskey">
-                            <el-select v-model="alertAdd.ruleForm.iskey" style="width: 100%;" placeholder="请选择有无钥匙">
+                            <el-select v-model="alertAdd.ruleForm.iskey" style="width: 100%;" placeholder="请选择有无钥匙（必填）">
                                 <el-option label="有钥匙" value="1"></el-option>
                                 <el-option label="无钥匙" value="0"></el-option>
                             </el-select>
@@ -222,7 +227,7 @@
                     </el-col>
                     <el-col :span="9">
                         <el-form-item label="隐藏面积" prop="hiddenarea">
-                            <el-input v-model="alertAdd.ruleForm.hiddenarea"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.hiddenarea" placeholder="请输入隐藏面积（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -236,7 +241,7 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房屋等级" prop="grade">
-                            <el-select v-model="alertAdd.ruleForm.grade" style="width: 100%;" placeholder="请选择房屋等级">
+                            <el-select v-model="alertAdd.ruleForm.grade" style="width: 100%;" placeholder="请选择房屋等级（必填）">
                                 <el-option label="A" value="1"></el-option>
                                 <el-option label="B" value="2"></el-option>
                                 <el-option label="C" value="3"></el-option>
@@ -245,7 +250,7 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房屋类型" prop="type">
-                            <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择房屋类型">
+                            <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择房屋类型（必填）">
                                 <el-option label="买卖" value="1"></el-option>
                                 <el-option label="租赁" value="2"></el-option>
                             </el-select>
@@ -262,7 +267,7 @@
 		              <el-form-item label="大连市" prop="addressSelectedOptions">
 		                <el-cascader
 		                	style="width: 100%;"
-                            placeholder="请选择地市街道"
+                            placeholder="请选择地市街道（必填）"
 									    :options="alertAdd.ruleForm.addressOptions"
 									    v-model="alertAdd.ruleForm.addressSelectedOptions"
                             @change="handleChange"
@@ -279,7 +284,7 @@
                           class="inline-input"
                           v-model="alertAdd.ruleForm.xiaoquName"
                           :fetch-suggestions="querySearch"
-                          placeholder="请输入小区名字"
+                          placeholder="请输入小区名称（必填）"
                             @select="handleSelect"
                         ></el-autocomplete>
 
@@ -293,27 +298,27 @@
                     </el-col>
                     <el-col :span="4">
                         <el-form-item label="" prop="numfloor">
-                            <el-input v-model="alertAdd.ruleForm.numfloor"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.numfloor" placeholder="（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item label="号楼" label-width="50px" prop="numunit">
-                            <el-input v-model="alertAdd.ruleForm.numunit"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.numunit" placeholder="（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item label="单元" label-width="50px" prop="floor">
-                            <el-input v-model="alertAdd.ruleForm.floor"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.floor" placeholder="（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item label="层 /" label-width="50px" prop="maxfloor">
-                            <el-input v-model="alertAdd.ruleForm.maxfloor"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.maxfloor" placeholder="（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item label="层(顶层)" label-width="80px" prop="numhousehold">
-                            <el-input v-model="alertAdd.ruleForm.numhousehold"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.numhousehold" placeholder="（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -336,12 +341,12 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房主姓名" prop="owner">
-                            <el-input v-model="alertAdd.ruleForm.owner"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.owner" placeholder="房主姓名（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房主电话" prop="phone">
-                            <el-input v-model="alertAdd.ruleForm.phone"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.phone" placeholder="房主电话（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="3" >
@@ -352,12 +357,12 @@
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房主姓名" prop="owner1">
-                            <el-input v-model="alertAdd.ruleForm.owner1"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.owner1" placeholder="备用房主姓名（选填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="10">
                         <el-form-item label="房主电话" prop="phone1">
-                            <el-input v-model="alertAdd.ruleForm.phone1"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.phone1" placeholder="备用房主电话（选填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="3" >
@@ -853,7 +858,7 @@ export default {
                       { required: true, message: '请选择市区街道', trigger: 'change' },
                     ],
                     xiaoquName: [
-                      { required: true, message: '请输入小区', trigger: 'blur' },
+                      { required: true, message: '请输入小区名称', trigger: 'blur' },
                     ],
                     numfloor: [
                       { required: true, message: '请输入楼号', trigger: 'blur' },

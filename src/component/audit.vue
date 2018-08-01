@@ -157,8 +157,8 @@
                           placeholder="如果审核不通过，请输入不通过理由。"
                           v-model.trim="auditForm.unPassMes">
                     </el-input>
-                    <el-button class="btn-unpass" type="danger" @click="doUnPass" icon="el-icon-close" circle></el-button>
-                    <el-button class="btn-pass" type="success" @click="doPass" icon="el-icon-check" circle></el-button>
+                    <el-button class="btn-unpass" type="danger" @click="doUnPass" icon="el-icon-close">不通过</el-button>
+                    <el-button class="btn-pass" type="success" @click="doPass" icon="el-icon-check" >通过</el-button>
                 </div>
             </el-dialog>
 
