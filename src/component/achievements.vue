@@ -14,7 +14,7 @@
                             type="date"
                             placeholder="选择结束日期">
                     </el-date-picker>
-                    <el-button type="primary" @click="search">查询</el-button>
+                    <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
                 </div>
                 <!--<div class="total-performance">-->
                     <!--<span>当前总业绩: </span><span>{{ tableForm.totalPerformance }}</span>-->

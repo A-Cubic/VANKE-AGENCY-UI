@@ -23,8 +23,8 @@
                                 :value="item.value">
                         </el-option>
                     </el-select>
-                    <el-button type="primary" @click="search">查询</el-button>
-                    <el-button type="primary" @click="addForm.addFormVisible=true">新增成交项</el-button>
+                    <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+                    <el-button type="primary" icon="el-icon-plus" @click="addForm.addFormVisible=true">创建</el-button>
                 </div>
                 <div class="table-template">
                     <el-table :data="tableForm.list" border>
@@ -94,97 +94,305 @@
                 </div>
             </el-col>
 
-            <el-dialog title="新增成交" :visible.sync="addForm.addFormVisible" width="60%">
-                <el-collapse v-model="activeName" accordion>
-                    <el-form :model="addForm.addFormData"
-                             status-icon ref="addFormData"
-                             label-width="120px"
-                             label-position="left"
-                             class="demo-ruleForm">
-                    <el-collapse-item title="基本信息" name="1" style="font-size: 22px">
-                            <el-form-item label="合同编号:" style="margin-top: 10px">
-                                <el-input v-model="addForm.addFormData.contractnumber" placeholder="请输入内容"></el-input>
-                            </el-form-item>
+            <el-dialog title="新增成交表单" :visible.sync="addForm.addFormVisible" width="80%">
+                <el-tabs tab-position="left"
+                         style="height: 600px;"
+                         v-model="editableTabsValue"
+                         :stretch="true"
+                         :before-leave="tabLeaveHandle">
+                        <el-tab-pane  label="添加房源">
+                            <span slot="label" style="font-size: 16px"><i class="el-icon-edit-outline"></i> 添加房源</span>
+                            <el-scrollbar style="height: 600px;">
+                                <div class="look-detail-wrap">
+                                    <div class="look-detail-wrap-header">
+                                        <el-input placeholder="请输入小区名称" v-model="addForm.addHouseForm.searchHouseForm.xiaoquName" clearable></el-input>
+                                        <el-input placeholder="请输入房源编号" v-model="addForm.addHouseForm.searchHouseForm.number" clearable></el-input>
+                                        <el-button  type="primary" icon="el-icon-search" @click="searchHouseList">查询</el-button>
+                                    </div>
+                                    <div class="look-detail-wrap-table">
+                                        <el-table :data="addForm.addHouseForm.houseTableData.list" style="width: 100%">
+                                            <el-table-column label="标题图">
+                                                <template scope="scope">
+                                                    <img style="height: 100px;width: 150px;" :src="scope.row.titleimg" alt="">
+                                                </template>
+                                            </el-table-column>
+                                            <el-table-column prop="number" label="编号"></el-table-column>
+                                            <el-table-column prop="xiaoquName" label="小区"></el-table-column>
+                                            <el-table-column prop="areas" label="面积"></el-table-column>
+                                            <el-table-column prop="floor" label="楼层"></el-table-column>
+                                            <el-table-column prop="price" label="价格"></el-table-column>
+                                            <el-table-column label="操作">
+                                                <template scope="scope">
+                                                    <el-button size="mini" type="danger" @click="selectedHouse(scope.row)" icon="el-icon-plus" circle></el-button>
+                                                </template>
+                                            </el-table-column>
+                                        </el-table>
+                                        <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
+                                            <el-pagination
+                                                    layout="prev, pager, next, jumper, total"
+                                                    :page-size="addForm.addHouseForm.houseTableData.pageSize"
+                                                    :current-page.sync="addForm.addHouseForm.houseTableData.pageNum"
+                                                    :total ="addForm.addHouseForm.houseTableData.total"
+                                                    @current-change="handleHouseTableDataChangeSearch">
+                                            </el-pagination>
+                                        </div>
+                                    </div>
+                                </div>
+                            </el-scrollbar>
+                        </el-tab-pane>
+                        <el-tab-pane  label="添加客源">
+                            <span slot="label" style="font-size: 16px"><i class="el-icon-edit-outline"></i> 添加客源</span>
+                            <el-scrollbar style="height: 600px;">
+                                <div class="passenger_table">
+                                    <div class="passenger-wrap-header">
+                                        <el-input placeholder="请输入客源姓名或编号" v-model="addForm.addGuestForm.searchGuestForm.searchGuestText" clearable></el-input>
+                                        <el-button class="m-btn-addMenu" type="primary" icon="el-icon-search" @click="searchGuestList">查询</el-button>
+                                    </div>
+                                    <div class="passenger-wrap-table">
+                                        <el-table :data="addForm.addGuestForm.guestTableData.list" style="width: 100%">
+                                            <el-table-column fixed label="姓名" width="180">
+                                                <template scope="scope">
+                                                    <div>
+                                                        {{scope.row.guestname}}
+                                                    </div>
+                                                    <div>
+                                                        <i v-for="it in (scope.row.guestgrade=='A'?3:scope.row.guestgrade=='B'?2:1)" class="el-icon-star-on"></i>
+                                                    </div>
+                                                </template>
+                                            </el-table-column>
+                                            <el-table-column prop="remarks" label="备注"></el-table-column>
+                                            <el-table-column prop="createTime" label="委托时间"></el-table-column>
+                                            <el-table-column prop="recordTime" label="上次维护时间"></el-table-column>
+                                            <el-table-column label="操作">
+                                                <template scope="scope">
+                                                    <el-button size="mini" type="danger" @click="selectedGuest(scope.row)" icon="el-icon-plus" circle></el-button>
+                                                </template>
+                                            </el-table-column>
+                                        </el-table>
+                                        <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
+                                            <el-pagination
+                                                    layout="prev, pager, next, jumper, total"
+                                                    :page-size="addForm.addGuestForm.guestTableData.pageSize"
+                                                    :current-page.sync="addForm.addGuestForm.guestTableData.pageNum"
+                                                    :total ="addForm.addGuestForm.guestTableData.total"
+                                                    @current-change="handleGuestTableDataChangeSearch">
+                                            </el-pagination>
+                                        </div>
+                                    </div>
+                                </div>
+                            </el-scrollbar>
+                        </el-tab-pane>
+                        <el-tab-pane  label="基本信息">
+                            <span slot="label" style="font-size: 16px"><i class="el-icon-edit-outline"></i> 基本信息</span>
+                            <el-form :model="addForm.addFormData"
+                                     status-icon ref="addFormData"
+                                     label-width="120px"
+                                     label-position="left"
+                                     class="demo-ruleForm"
+                                     style="margin-top: 10px">
 
-                            <el-row :gutter="10">
-                                <el-col :span="8">
-                                    <el-form-item label="买家服务费:">
-                                        <el-input v-model="addForm.addFormData.buyIntermediaryPrice" placeholder="请输入内容"></el-input>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-form-item label="买家服务费实缴:">
-                                        <el-input v-model="addForm.addFormData.buyIntermediaryPayment" placeholder="请输入内容"></el-input>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-form-item label="">差:{{addForm.addFormData.buyIntermediaryLack}}￥</el-form-item>
-                                </el-col>
-                            </el-row>
+                                <el-form-item label="房源:">{{addForm.addFormData.houseId}}</el-form-item>
+                                <el-form-item label="客源:">{{addForm.addFormData.guestId}}</el-form-item>
+                                <el-row :gutter="10">
+                                    <el-col :span="16">
+                                        <el-form-item label="合同编号:" >
+                                            <el-input v-model="addForm.addFormData.contractnumber" placeholder="签订合同编号"></el-input>
+                                        </el-form-item>
+                                    </el-col>
 
-                            <el-row :gutter="10">
-                                <el-col :span="8">
-                                    <el-form-item label="买家贷款费:">
-                                        <el-input v-model="addForm.addFormData.buyLoanPrice" placeholder="请输入内容"></el-input>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-form-item label="买家贷款费实缴:">
-                                        <el-input v-model="addForm.addFormData.buyLoanPayment" placeholder="请输入内容"></el-input>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-form-item label="">差:{{addForm.addFormData.buyLoanLack}}￥</el-form-item>
-                                </el-col>
-                            </el-row>
+                                </el-row>
 
-                            <el-row :gutter="10">
-                                <el-col :span="8">
-                                    <el-form-item label="卖家服务费:">
-                                        <el-input v-model="addForm.addFormData.sellIntermediaryPrice" placeholder="请输入内容"></el-input>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-form-item label="卖家服务费实缴:">
-                                        <el-input v-model="addForm.addFormData.sellIntermediaryPayment" placeholder="请输入内容"></el-input>
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="8">
-                                    <el-form-item label="">差:{{addForm.addFormData.sellIntermediaryLack}}￥</el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-form-item label="房源:">{{addForm.addFormData.houseId}}</el-form-item>
-                            <el-form-item label="客源:">{{addForm.addFormData.guestId}}</el-form-item>
-                    </el-collapse-item>
-                    <el-collapse-item title="证明上传" name="2">
-                            <el-form-item label="合同照片:">
-                                <div>a</div>
-                            </el-form-item>
-                            <el-form-item label="补充协议:">
-                                <div></div>
-                            </el-form-item>
-                            <el-form-item label="收拾:">
-                                <div></div>
-                            </el-form-item>
-                            <el-form-item label="产权证:">
-                                <div></div>
-                            </el-form-item>
-                            <el-form-item label="身份证:">
-                                <div></div>
-                            </el-form-item>
-                            <el-form-item label="贷款合同:">
-                                <div></div>
-                            </el-form-item>
-                    </el-collapse-item>
-                    </el-form>
-                </el-collapse>
+                                <el-row :gutter="10">
+                                    <el-col :span="8">
+                                        <el-form-item label="买家服务费:">
+                                            <el-input v-model="addForm.addFormData.buyIntermediaryPrice" placeholder="买家服务费金额"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-form-item label="买家服务费实缴:">
+                                            <el-input v-model="addForm.addFormData.buyIntermediaryPayment" placeholder="实际缴纳金额"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-form-item label="">差:{{addForm.addFormData.buyIntermediaryLack}}￥</el-form-item>
+                                    </el-col>
+                                </el-row>
 
+                                <el-row :gutter="10">
+                                    <el-col :span="8">
+                                        <el-form-item label="买家贷款费:">
+                                            <el-input v-model="addForm.addFormData.buyLoanPrice" placeholder="买家贷款费金额"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-form-item label="买家贷款费实缴:">
+                                            <el-input v-model="addForm.addFormData.buyLoanPayment" placeholder="实际缴纳金额"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-form-item label="">差:{{addForm.addFormData.buyLoanLack}}￥</el-form-item>
+                                    </el-col>
+                                </el-row>
+
+                                <el-row :gutter="10">
+                                    <el-col :span="8">
+                                        <el-form-item label="卖家服务费:">
+                                            <el-input v-model="addForm.addFormData.sellIntermediaryPrice" placeholder="卖家服务费金额"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-form-item label="卖家服务费实缴:">
+                                            <el-input v-model="addForm.addFormData.sellIntermediaryPayment" placeholder="实际缴纳金额"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <el-form-item label="">差:{{addForm.addFormData.sellIntermediaryLack}}￥</el-form-item>
+                                    </el-col>
+                                </el-row>
+
+                            </el-form>
+                        </el-tab-pane>
+                        <el-tab-pane label="合同信息">
+                            <span slot="label" style="font-size: 16px"><i class="el-icon-printer"></i> 合同信息</span>
+                            <el-scrollbar style="height: 600px;">
+                                <el-form :model="addForm.addFormData"
+                                         status-icon ref="addFormData"
+                                         label-width="120px"
+                                         label-position="left"
+                                         class="demo-ruleForm"
+                                         style="margin-top: 10px">
+                                    <el-form-item label="合同照片">
+                                        <div>
+                                            <el-upload
+                                                    action=""
+                                                    list-type="picture-card"
+                                                    :limit="addForm.uploadImgData.contractImgLimit"
+                                                    :auto-upload="false"
+                                                    :on-change="handleChangeImg1"
+                                                    :on-remove="handleRemove1"
+                                                    :on-exceed="handleExceed"
+                                                    :http-request="uploadImg">
+                                                <i class="el-icon-plus"></i>
+                                            </el-upload>
+                                            <el-dialog :visible.sync="addForm.uploadImgData.dialogVisible">
+                                                <img width="100%" :src="addForm.uploadImgData.dialogImageUrl" alt="">
+                                            </el-dialog>
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="补充协议照片">
+                                        <div>
+                                            <el-upload
+                                                    action=""
+                                                    list-type="picture-card"
+                                                    :limit="addForm.uploadImgData.agreementImgLimit"
+                                                    :auto-upload="false"
+                                                    :on-change="handleChangeImg3"
+                                                    :on-remove="handleRemove3"
+                                                    :on-exceed="handleExceed"
+                                                    :http-request="uploadImg">
+                                                <i class="el-icon-plus"></i>
+                                            </el-upload>
+                                            <el-dialog :visible.sync="addForm.uploadImgData.dialogVisible">
+                                                <img width="100%" :src="addForm.uploadImgData.dialogImageUrl" alt="">
+                                            </el-dialog>
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="收据图片">
+                                        <div>
+                                            <el-upload
+                                                    action=""
+                                                    list-type="picture-card"
+                                                    :limit="addForm.uploadImgData.receiptImgLimit"
+                                                    :auto-upload="false"
+                                                    :on-change="handleChangeImg4"
+                                                    :on-remove="handleRemove4"
+                                                    :on-exceed="handleExceed"
+                                                    :http-request="uploadImg">
+                                                <i class="el-icon-plus"></i>
+                                            </el-upload>
+                                            <el-dialog :visible.sync="addForm.uploadImgData.dialogVisible">
+                                                <img width="100%" :src="addForm.uploadImgData.dialogImageUrl" alt="">
+                                            </el-dialog>
+                                        </div>
+                                    </el-form-item>
+
+                                    <el-form-item label="贷款合同图片">
+                                        <div>
+                                            <el-upload
+                                                    action=""
+                                                    list-type="picture-card"
+                                                    :limit="addForm.uploadImgData.loanContractImgLimit"
+                                                    :auto-upload="false"
+                                                    :on-change="handleChangeImg6"
+                                                    :on-remove="handleRemove6"
+                                                    :on-exceed="handleExceed"
+                                                    :http-request="uploadImg">
+                                                <i class="el-icon-plus"></i>
+                                            </el-upload>
+                                            <el-dialog :visible.sync="addForm.uploadImgData.dialogVisible">
+                                                <img width="100%" :src="addForm.uploadImgData.dialogImageUrl" alt="">
+                                            </el-dialog>
+                                        </div>
+                                    </el-form-item>
+                                </el-form>
+                            </el-scrollbar>
+
+                        </el-tab-pane>
+                        <el-tab-pane label="个人信息">
+                            <span slot="label" style="font-size: 16px"><i class="el-icon-mobile-phone"></i> 个人信息</span>
+                            <el-form :model="addForm.addFormData"
+                                     status-icon ref="addFormData"
+                                     label-width="120px"
+                                     label-position="left"
+                                     class="demo-ruleForm"
+                                     style="margin-top: 10px">
+                                <el-form-item label="身份证图片">
+                                    <div>
+                                        <el-upload
+                                                action=""
+                                                list-type="picture-card"
+                                                :limit="addForm.uploadImgData.identityProveImgLimit"
+                                                :auto-upload="false"
+                                                :on-change="handleChangeImg5"
+                                                :on-remove="handleRemove5"
+                                                :on-exceed="handleExceed"
+                                                :http-request="uploadImg">
+                                            <i class="el-icon-plus"></i>
+                                        </el-upload>
+                                        <el-dialog :visible.sync="addForm.uploadImgData.dialogVisible">
+                                            <img width="100%" :src="addForm.uploadImgData.dialogImageUrl" alt="">
+                                        </el-dialog>
+                                    </div>
+                                </el-form-item>
+
+                                <el-form-item label="产权证照片">
+                                    <div>
+                                        <el-upload
+                                                action=""
+                                                list-type="picture-card"
+                                                :limit="addForm.uploadImgData.houseProveImgLimit"
+                                                :auto-upload="false"
+                                                :on-change="handleChangeImg2"
+                                                :on-remove="handleRemove2"
+                                                :on-exceed="handleExceed"
+                                                :http-request="uploadImg">
+                                            <i class="el-icon-plus"></i>
+                                        </el-upload>
+                                        <el-dialog :visible.sync="addForm.uploadImgData.dialogVisible">
+                                            <img width="100%" :src="addForm.uploadImgData.dialogImageUrl" alt="">
+                                        </el-dialog>
+                                    </div>
+                                </el-form-item>
+                            </el-form>
+                        </el-tab-pane>
+                </el-tabs>
                 <span slot="footer" class="dialog-footer">
-                    <el-button @click="addForm.addFormVisible = false;resetForm('ruleForm')">取消</el-button>
-                    <el-button type="primary" @click="submitAdd('ruleForm')">保存</el-button>
+                    <el-button v-show="addForm.backVisible" @click="backHandle">{{editableTabsValue==0?'取消':'上一步'}}</el-button>
+                    <el-button v-show="addForm.nextVisible" type="primary" @click="nextHandle">{{editableTabsValue==4?'保存':'下一步'}}</el-button>
                 </span>
             </el-dialog>
-
 
             <el-dialog title="业绩分配" :visible.sync="allotForm.allotFormVisible" width="60%">
                 <el-form :model="allotForm.allotFormData"
@@ -252,10 +460,17 @@
     </section>
 </template>
 <script>
+    import ClinchDealApi from '../api/api_clinchDeal.js';
+    import Vue from 'vue';
+    import { Message } from 'element-ui';
 export default {
+    install(Vue) {
+        Vue.prototype.$message = Message
+    },
     data() {
         return {
             activeName: '1',
+            editableTabsValue:0,
             searchForm: {
                 contractnumber: '',
                 type: '',
@@ -330,6 +545,9 @@ export default {
 
             addForm:{
                 addFormVisible: false,
+                nextVisible: false,
+                backVisible: true,
+
                 addFormData: {
                     buyIntermediaryPrice: '',//买方服务费
                     sellIntermediaryPrice: '',//卖方服务费
@@ -347,24 +565,63 @@ export default {
                     identityProveImg: '', //身份证图片
                     receiptImg: '', //收据图片
                     agreementImg: '', //补充协议图片
-                    houseId: '',
-                    guestId: '',
+                    houseId: '',//房源id
+                    guestId: '',//客源id
+                },
+
+                uploadImgData:{
+                    dialogImageUrl: '',
+                    dialogVisible: false,
+                    contractImgLimit: 1,  //合同图片Limit
+                    houseProveImgLimit: 1, //产权证图片Limit
+                    loanContractImgLimit: 1, //贷款合同图片Limit
+                    identityProveImgLimit: 1, //身份证图片Limit
+                    receiptImgLimit: 1, //收据图片Limit
+                    agreementImgLimit: 1, //补充协议图片Limit
+                    contractImgList: [],  //合同图片List
+                    houseProveImgList: [], //产权证图片List
+                    loanContractImgList: [], //贷款合同图片List
+                    identityProveImgList: [], //身份证图片List
+                    receiptImgList: [], //收据图片List
+                    agreementImgList: [], //补充协议图片List
                 },
 
                 addHouseForm: {
-                    addHouseVisible: false,
-                    searchMes: '',
-                    performanceList: [],  //查询条件  列表
-                    performanceCheckList: [],   //check选择 列表
-                    showPerformanceList: []  //确定后  展示列表
+                    houseTableData:{
+                        pageSize: 3,
+                        pageNum: 1,
+                        total: 0,
+                        list: [
+//                            {
+//                                id: '',
+//                                number:'',
+//                                titleimg: '',
+//                                xiaoquName: '',
+//                                huxing: '',
+//                                areas: '',
+//                                price: '',
+//                                floor: '',
+//                                checked: false,
+//                                disabled: false,
+//                            }
+                        ]
+                    },
+                    searchHouseForm:{
+                        xiaoquName: '',
+                        number: '',
+                    },
                 },
 
                 addGuestForm: {
-                    addGuestVisible: false,
-                    searchMes: '',
-                    performanceList: [],  //查询条件  列表
-                    performanceCheckList: [],   //check选择 列表
-                    showPerformanceList: []  //确定后  展示列表
+                    guestTableData:{
+                        pageSize: 3,
+                        pageNum: 1,
+                        total: 0,
+                        list: []
+                    },
+                    searchGuestForm:{
+                        searchGuestText: ''
+                    },
                 }
             },
 
@@ -383,12 +640,126 @@ export default {
             },
         };
     },
+    created(){
+        this.doSearch();
+    },
     methods: {
-        // 成交信息保存
+        //确定房源选择
+        selectedHouse(item){
+            console.log(item);
+            this.nextHandle();
+        },
+        selectedGuest(item){
+            console.log(item);
+            this.nextHandle();
+        },
+
+        searchHouseList(){
+            var xiaoquName=this.addForm.addHouseForm.searchHouseForm.xiaoquName;
+            var number=this.addForm.addHouseForm.searchHouseForm.number;
+            if(xiaoquName.trim()=='' && number.trim()==''){
+                Message.error("查询条件不允许都为空");
+                return;
+            }
+            var that = this;
+            that.addForm.addHouseForm.houseTableData.pageNum=1;
+            var postData = {
+                xiaoquName: this.addForm.addHouseForm.searchHouseForm.xiaoquName,
+                number: this.addForm.addHouseForm.searchHouseForm.number,
+                page: this.addForm.addHouseForm.houseTableData.pageNum,
+                size: 3
+            };
+
+            ClinchDealApi.searchHouse(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.addForm.addHouseForm.houseTableData=result.data;
+            }).catch(error => {
+                console.log('searchHouse_error');
+            });
+        },
+        handleHouseTableDataChangeSearch(val){
+            this.addForm.addHouseForm.houseTableData.pageNum = val;
+            var that = this;
+
+            var postData = {
+                xiaoquName: this.addForm.addHouseForm.searchHouseForm.xiaoquName,
+                number: this.addForm.addHouseForm.searchHouseForm.number,
+                page: this.addForm.addHouseForm.houseTableData.pageNum,
+                size: 3
+            };
+            ClinchDealApi.searchHouse(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.addForm.addHouseForm.houseTableData=result.data;
+            }).catch(error => {
+                console.log('searchHouse_error');
+            });
+        },
+        searchGuestList(){
+            var guest=this.addForm.addGuestForm.searchGuestForm.searchGuestText;
+            if(guest.trim()=='' ){
+                Message.error("查询条件不允许为空");
+                return;
+            }
+            var that = this;
+            that.addForm.addGuestForm.guestTableData.pageNum=1;
+            var postData = {
+                searchText: this.addForm.addGuestForm.searchGuestForm.searchGuestText,
+                page: this.addForm.addGuestForm.guestTableData.pageNum,
+                size: 3
+            };
+
+            ClinchDealApi.searchGuest(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.addForm.addGuestForm.guestTableData=result.data;
+            }).catch(error => {
+                console.log('searchGuest_error');
+            });
+        },
+        handleGuestTableDataChangeSearch(val){
+            this.addForm.addGuestForm.guestTableData.pageNum = val;
+            var that = this;
+
+            var postData = {
+                searchText: this.addForm.addGuestForm.searchGuestForm.searchGuestText,
+                page: this.addForm.addGuestForm.guestTableData.pageNum,
+                size: 3
+            };
+            ClinchDealApi.searchGuest(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.addForm.addGuestForm.guestTableData=result.data;
+            }).catch(error => {
+                console.log('searchGuest_error');
+            });
+        },
+        backHandle(){
+            if(this.editableTabsValue!=0){
+                this.editableTabsValue=(parseInt(this.editableTabsValue)-1)+"";
+            }else {
+                this.addForm.addFormVisible = false;
+            }
+        },
+        nextHandle(){
+            if(this.editableTabsValue<5){
+                if(this.editableTabsValue==0 || this.editableTabsValue==1){
+                    this.addForm.backVisible=true;
+                    this.addForm.nextVisible=false;
+                }
+                this.editableTabsValue=(parseInt(this.editableTabsValue)+1)+"";
+            }
+        },
+        tabLeaveHandle(activeName, oldActiveName){
+            var that = this;
+            if(activeName != this.editableTabsValue){
+                return false;
+            }
+        },
+        // 重置新增成交
         resetForm(formName) {
             this.$refs[formName].resetFields();
         },
-        submitAdd(ruleForm){
+
+        // 新增成交信息保存
+        submitAdd(ruleForm) {
             var that = this;
             this.$refs[ruleForm].validate((valid) => {
                 if (valid) {
@@ -399,16 +770,18 @@ export default {
                     }).then(() => {
                         GuestApi.insertGuest(this.alertAdd.ruleForm).then(function (result) {
                             console.log(result);
-                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            if (typeof(result) != "object") {
+                                result = JSON.parse(result)
+                            }
                             Message({
                                 message: "新增客源成功",
                                 type: 'success'
                             });
-                            that.alertAdd.visible=false;
+                            that.alertAdd.visible = false;
                             that.resetForm(ruleForm);
                             that.doSearch();
                         }).catch(error => {
-                            console.log('insertGuest_error'+error);
+                            console.log('insertGuest_error' + error);
                         });
                     }).catch(() => {
 
@@ -420,34 +793,47 @@ export default {
         },
 
         // 业绩分配确定
-        submitAllot(){
-            this.dialogForm.statusForm3.statusVisible3=false
+        submitAllot() {
+            this.dialogForm.statusForm3.statusVisible3 = false
         },
-        doSearch(){
+
+        // 成交查询
+        doSearch() {
+            var that = this;
             var postData = {
                 contractnumber: this.searchForm.contractnumber,
                 type: this.searchForm.type,
                 state: this.searchForm.state,
+                page: this.tableForm.pageNum,
+                size: this.tableForm.pageSize
             };
-            console.log(postData);
+
+            ClinchDealApi.searchclinchDeal(postData).then(function (result) {
+                if (typeof(result) != "object") {
+                    result = JSON.parse(result)
+                }
+                that.tableForm = result.data;
+            }).catch(error => {
+                console.log('searchclinchDeal_error');
+            });
         },
-        search(){
-            this.tableForm.pageCurrent = 1;
+        search() {
+            this.tableForm.pageNum = 1;
             this.doSearch();
         },  //搜索
 
-        handleCurrentChangeSearch(val){
+        handleCurrentChangeSearch(val) {
             this.tableForm.pageNum = val;
             this.doSearch();
         },  //分页change
 
-        compileIt(item){
+        compileIt(item) {
             var that = this;
             var postData = {
                 code: item.code
             };
             console.log(postData);
-            switch(item.status) {
+            switch (item.status) {
                 case 0:
                     that.dialogForm.statusForm1.statusVisible1 = true;
                     break;
@@ -457,16 +843,17 @@ export default {
                 case 2:
                     that.dialogForm.statusForm3.statusVisible3 = true;
                     break;
-                default:;
+                default:
+                    ;
             }
         },  //编辑
-        addPerformance(){
+        addPerformance() {
             this.dialogForm.addPerformanceForm.addPerformanceVisible = true;
             this.dialogForm.addPerformanceForm.performanceList = [];
             this.dialogForm.addPerformanceForm.performanceCheckList = [];
         },  //添加业绩
 
-        searchPerformance(){
+        searchPerformance() {
             this.dialogForm.addPerformanceForm.performanceList.push({
                 code: '123',
                 name: '王小虎',
@@ -475,7 +862,7 @@ export default {
             });
             this.dialogForm.addPerformanceForm.showPerformanceList.forEach((item) => {
                 this.dialogForm.addPerformanceForm.performanceList.forEach((item2) => {
-                    if(item.code == item2.code){
+                    if (item.code == item2.code) {
                         item2.checked = true;
                         item2.disabled = true;
                     }
@@ -483,15 +870,15 @@ export default {
             });
         },  //搜索业绩
 
-        checkIt(item){
+        checkIt(item) {
             console.log(item)
-            if(item.checked == false){
+            if (item.checked == false) {
                 return;
             }
-            else{
+            else {
                 var performanceCheckList = this.dialogForm.addPerformanceForm.performanceCheckList;
                 performanceCheckList.forEach((item2) => {
-                    if(item.code == item2.code) {
+                    if (item.code == item2.code) {
                         performanceCheckList.splice(performanceCheckList.indexOf(item2), 1)
                         return;
                     }
@@ -501,17 +888,234 @@ export default {
             }
         },  //选择业绩人
 
-        putPerformance(){
+        putPerformance() {
             this.dialogForm.addPerformanceForm.performanceCheckList.forEach((item) => {
                 this.dialogForm.addPerformanceForm.showPerformanceList.push(item)
             });
             this.dialogForm.addPerformanceForm.addPerformanceVisible = false;
         },  //确定选择业绩人
+
+        //---------------------------------------上传部分 start ------------------------------------------------//
+        //新增成交 图片上传
+        uploadImg: function (param) {
+            var that = this;
+            var hid = this.id;
+            var count = this.addForm.uploadImgData.contractImgLimit.length
+                + this.addForm.uploadImgData.houseProveImgLimit.length
+                + this.addForm.uploadImgData.loanContractImgLimit.length
+                + this.addForm.uploadImgData.identityProveImgLimit.length
+                + this.addForm.uploadImgData.receiptImgLimit.length;
+            var pcount = this.addForm.uploadImgData.contractImgList.length
+                + this.addForm.uploadImgData.houseProveImgList.length
+                + this.addForm.uploadImgData.loanContractImgList.length
+                + this.addForm.uploadImgData.identityProveImgList.length
+                + this.addForm.uploadImgData.receiptImgList.length
+                + this.addForm.uploadImgData.agreementImgList.length;
+            if (pcount < count) {
+                Message.error("请上传完整数量的图片！");
+            } else {
+                this.$confirm('此操作将提交实勘审核, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    HouseApi.updateImg(postData).then(function (result) {
+                        console.log(result);
+                        if (typeof(result) != "object") {
+                            result = JSON.parse(result)
+                        }
+                        that.examineVisible = false;
+                        Message({
+                            message: '提交成功，请等待审核',
+                            type: 'success'
+                        });
+                    }).catch(error => {
+                        console.log('updateImg_error');
+                    });
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+        },
+
+        handleExceed(file, fileList) {
+            Message.error("超出上传范围！");
+        },
+
+        handleChangeImg1(file, fileList) {
+            var that = this;
+            var reader = new FileReader();
+            var fileUid = file.uid;
+            reader.readAsDataURL(file.raw);
+            reader.onloadend = function(e){
+                var img64 = this.result;
+                var bean = {uid:fileUid,base64:img64};
+                that.addForm.uploadImgData.contractImgList.push(bean);
+            };
+        },
+        handleChangeImg2(file, fileList) {
+            var that = this;
+            var reader = new FileReader();
+            var fileUid = file.uid;
+            reader.readAsDataURL(file.raw);
+            reader.onloadend = function(e){
+                var img64 = this.result;
+                var bean = {uid:fileUid,base64:img64};
+                that.addForm.uploadImgData.houseProveImgList.push(bean);
+            };
+        },
+        handleChangeImg3(file, fileList) {
+            var that = this;
+            var reader = new FileReader();
+            var fileUid = file.uid;
+            reader.readAsDataURL(file.raw);
+            reader.onloadend = function(e){
+                var img64 = this.result;
+                var bean = {uid:fileUid,base64:img64};
+                that.addForm.uploadImgData.agreementImgList.push(bean);
+            };
+        },
+        handleChangeImg4(file, fileList) {
+            var that = this;
+            var reader = new FileReader();
+            var fileUid = file.uid;
+            reader.readAsDataURL(file.raw);
+            reader.onloadend = function(e){
+                var img64 = this.result;
+                var bean = {uid:fileUid,base64:img64};
+                that.addForm.uploadImgData.receiptImgList.push(bean);
+            };
+        },
+        handleChangeImg5(file, fileList) {
+            var that = this;
+            var reader = new FileReader();
+            var fileUid = file.uid;
+            reader.readAsDataURL(file.raw);
+            reader.onloadend = function(e){
+                var img64 = this.result;
+                var bean = {uid:fileUid,base64:img64};
+                that.addForm.uploadImgData.identityProveImgList.push(bean);
+            };
+        },
+        handleChangeImg6(file, fileList) {
+            var that = this;
+            var reader = new FileReader();
+            var fileUid = file.uid;
+            reader.readAsDataURL(file.raw);
+            reader.onloadend = function(e){
+                var img64 = this.result;
+                var bean = {uid:fileUid,base64:img64};
+                that.addForm.uploadImgData.loanContractImgList.push(bean);
+            };
+        },
+
+        handleRemove1(file, fileList) {
+            var that = this;
+            var fileUid = file.uid;
+            for(let i=0;i<this.addForm.uploadImgData.contractImgList.length;i++){
+                if(this.addForm.uploadImgData.contractImgList[i].uid==fileUid){
+                    that.addForm.uploadImgData.contractImgList.splice(i,1);
+                    break;
+                }
+            }
+        },
+        handleRemove2(file, fileList) {
+            var that = this;
+            var fileUid = file.uid;
+            for(let i=0;i<this.addForm.uploadImgData.houseProveImgList.length;i++){
+                if(this.addForm.uploadImgData.houseProveImgList[i].uid==fileUid){
+                    that.addForm.uploadImgData.houseProveImgList.splice(i,1);
+                    break;
+                }
+            }
+        },
+        handleRemove3(file, fileList) {
+            var that = this;
+            var fileUid = file.uid;
+            for(let i=0;i<this.addForm.uploadImgData.agreementImgList.length;i++){
+                if(this.addForm.uploadImgData.agreementImgList[i].uid==fileUid){
+                    that.addForm.uploadImgData.agreementImgList.splice(i,1);
+                    break;
+                }
+            }
+        },
+        handleRemove4(file, fileList) {
+            var that = this;
+            var fileUid = file.uid;
+            for(let i=0;i<this.addForm.uploadImgData.receiptImgList.length;i++){
+                if(this.addForm.uploadImgData.receiptImgList[i].uid==fileUid){
+                    that.addForm.uploadImgData.receiptImgList.splice(i,1);
+                    break;
+                }
+            }
+        },
+        handleRemove5(file, fileList) {
+            var that = this;
+            var fileUid = file.uid;
+            for(let i=0;i<this.addForm.uploadImgData.identityProveImgList.length;i++){
+                if(this.addForm.uploadImgData.identityProveImgList[i].uid==fileUid){
+                    that.addForm.uploadImgData.identityProveImgList.splice(i,1);
+                    break;
+                }
+            }
+        },
+        handleRemove6(file, fileList) {
+            var that = this;
+            var fileUid = file.uid;
+            for(let i=0;i<this.addForm.uploadImgData.loanContractImgList.length;i++){
+                if(this.addForm.uploadImgData.loanContractImgList[i].uid==fileUid){
+                    that.addForm.uploadImgData.loanContractImgList.splice(i,1);
+                    break;
+                }
+            }
+        },
+
+
+        //---------------------------------------上传部分 end ------------------------------------------------//
     }
 };
 </script>
 <style lang="less">
 @import "../assets/css/element.less";
+.passenger_table{
+    margin-top: 20px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px #e3e3e3;
+    // border: 1px solid #d7d7d7;
+    .passenger-wrap-table{
+        padding: 20px;
+    }
+    .table-pagination{
+        margin-top: 20px;
+        text-align: right;
+    }
+    .passenger-wrap-header{
+        padding: 20px;
+        overflow: hidden;
+        box-shadow: 0px 0px 10px #e3e3e3;
+        .el-input{
+            width: 200px;
+        }
+    }
+}
+.look-detail-wrap{
+    .look-detail-wrap-header{
+        padding: 20px;
+        overflow: hidden;
+        box-shadow: 0px 0px 10px #e3e3e3;
+        .el-input{
+            width: 200px;
+        }
+    }
+    .look-detail-wrap-table{
+        padding: 20px;
+
+        /*text-align: center;*/
+        img{
+            height: 11vw;
+        }
+    }
+}
 .clinch-deal {
 	/*border:1px solid red;*/
     .el-collapse-item__header {

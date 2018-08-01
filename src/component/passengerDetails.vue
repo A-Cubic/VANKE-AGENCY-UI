@@ -265,7 +265,7 @@
                     <div class="look-detail-wrap-header">
                         <el-input placeholder="请输入小区名称" v-model="addLookForm.xiaoquName" clearable></el-input>
                         <el-input placeholder="请输入房源编号" v-model="addLookForm.number" clearable></el-input>
-                        <el-button class="m-btn-addMenu" type="primary" @click="searchHouseList">查询</el-button>
+                        <el-button class="m-btn-addMenu" type="primary" icon="el-icon-search" @click="searchHouseList">查询</el-button>
                     </div>
                     <div class="look-detail-wrap-table">
                         <el-table :data="lookTableData.list"  style="width: 100%">
@@ -332,7 +332,7 @@
                 <div class="transfer-wrap">
                     <div class="transfer-wrap-header">
                         <el-input placeholder="请输入编号后六位或全名" v-model="transferForm.usertext" clearable></el-input>
-                        <el-button class="m-btn-addMenu" type="primary" @click="searchTransfer">查询</el-button>
+                        <el-button class="m-btn-addMenu"  icon="el-icon-search" type="primary" @click="searchTransfer">查询</el-button>
                     </div>
                     <div class="transfer-wrap-table">
                         <el-table :data="transferForm.personList" style="width: 100%">
@@ -444,19 +444,18 @@
                     pageNum: 1,
                     total: 0,
                     list: [
-                        {
-                            id: '',
-                            number:'',
-                            titleimg: '',
-                            xiaoquName: '',
-                            huxing: '',
-                            areas: '',
-                            price: '',
-                            floor: '',
-                            checked: false,
-                            disabled: false,
-
-                        }
+//                        {
+//                            id: '',
+//                            number:'',
+//                            titleimg: '',
+//                            xiaoquName: '',
+//                            huxing: '',
+//                            areas: '',
+//                            price: '',
+//                            floor: '',
+//                            checked: false,
+//                            disabled: false,
+//                        }
                     ]
                 },
                 lookTableCheckedList: [],
@@ -852,6 +851,7 @@
                     return;
                 }
                 var that = this;
+                that.lookTableData.pageNum=1;
                 var postData = {
                     xiaoquName: this.addLookForm.xiaoquName,
                     number: this.addLookForm.number,

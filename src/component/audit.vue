@@ -30,7 +30,7 @@
                                 :value="item.value">
                         </el-option>
                     </el-select>
-                    <el-button type="primary" @click="search">查询</el-button>
+                    <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
                 </div>
                 <div class="table-template">
                     <el-table :data="tableForm.list" border>

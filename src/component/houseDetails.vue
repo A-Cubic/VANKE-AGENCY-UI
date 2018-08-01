@@ -447,7 +447,7 @@
                     <div class="transfer-wrap">
                         <div class="transfer-wrap-header">
                             <el-input placeholder="请输入编号后六位或全名" v-model="transferForm.usertext" clearable></el-input>
-                            <el-button class="m-btn-addMenu" type="primary" @click="searchTransfer">查询</el-button>
+                            <el-button class="m-btn-addMenu" type="primary" icon="el-icon-search" @click="searchTransfer">查询</el-button>
                         </div>
                         <div class="transfer-wrap-table">
                             <el-table :data="transferForm.personList" style="width: 100%">
@@ -1266,7 +1266,6 @@
                     var bean = {uid:fileUid,base64:img64};
                     that.examineForm.other.push(bean);
                 };
-// >>>>>>> 30dfeb11e29eb5ff9ae8cb1de4c6aba5c698c56c
             },
 
             uploadImg:function(param){
