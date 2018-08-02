@@ -25,33 +25,13 @@
                     <el-menu-item index="/admin/personal">个人</el-menu-item>
                     <el-menu-item index="/admin/audit">审核</el-menu-item>
                     <el-menu-item index="/admin/register">注册</el-menu-item>
-                   <!-- <el-submenu index="1">
-                        <template slot="title">
-                            <i class="el-icon-message"></i>
-                        房源</template>
-                            <el-submenu index="1-1">
-                                <template slot="title">买卖</template>
-                                <el-menu-item index="radiationPlugin">小区</el-menu-item>
-                            </el-submenu>
-                            <el-submenu index="1-2">
-                                <template slot="title">租赁</template>
-                                <el-menu-item index="fastWrite">商机</el-menu-item>
-                            </el-submenu>
-                    </el-submenu>
-                    <el-submenu index="2">
-                        <template slot="title">
-                            <i class="el-icon-setting"></i>
-                        服务</template>
-                        <el-menu-item index="diagnoseType">管理</el-menu-item>
-                    </el-submenu>
-                    <el-submenu index="3">
-                        <template slot="title">
-                            <i class="el-icon-setting"></i>
-                        系统设置</template>
-                        <el-menu-item index="log">日志管理</el-menu-item>
-                    </el-submenu> -->
+                    <el-menu-item index="/admin/achievementsT">业绩2</el-menu-item>
+                    <el-menu-item index="/admin/registerShop">注册门店</el-menu-item>
+                   
                 </el-menu>
+
             </nav>
+            <span class="identity">{{basic.relname+' | '+basic.desc}}</span>
             <span class="f22">
                 <i class="el-icon-tickets " @click="addressBook.visible = true"></i>
             </span>
@@ -60,7 +40,7 @@
                     <i class="el-icon-bell " @click="inform.visible = true"></i>
                 </el-badge>
              </span>
-             <span class="logout">退出</span>
+             <span class="logout" @click="userLogout">退出</span>
         </header>
         <section class="this_section">
             <!-- <nav class="this_nav">
@@ -104,6 +84,9 @@
     
 </template>
 <script>
+import HomeApi from './api/api_home.js';
+import LoginApi from './api/api_user';
+import { setRole, setToken } from './util/global'
     // import Default from './component/default'
     import { getToken, WsCall, addWsCall, clearWsCall }               from './util/global'
 export default {
@@ -114,7 +97,20 @@ export default {
         return {
             activeIndex: '1',
             activeIndex2: '1',
-
+            // 获取用户信息名称 角色
+            userIdentity:{
+                userName:'大魔头',
+                identity:'店长',
+            },
+            basic:{
+                avatar:'',
+                relname:'',
+                user_no:'',
+                store_name:'',
+                desc:'',
+                current_score:'',
+                latent_score:''
+            },
             addressBook:{
                 visible: false,
                 formLabelWidth: '120px',
@@ -165,6 +161,7 @@ export default {
     },
     created() {
         this.initWebsocket()
+        this.getUserIdentity()
         addWsCall('Notice', this.wsNotice)
     },
     destroyed() {
@@ -172,6 +169,32 @@ export default {
         clearWsCall()
     },
     methods: {
+
+        userLogout(){
+            const that = this;
+            let postData={};
+            LoginApi.logout(postData).then(function (result) {
+                            console.log(result)
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                                console.log('~~',result);
+                                that.$message.success({showClose: true, message:'退出成功！', duration: 2000});
+                            //  登出成功 后 清空角色和token 跳转
+                                setRole('');
+                                setToken('');
+                                that.$router.push({path: '/admin/default.vue'});
+                        }).catch(error => {
+                            console.log('login_error');
+                        })
+        },
+        getUserIdentity(){
+            var that = this;
+            HomeApi.userinfo().then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.basic=result.data;
+            }).catch(error => {
+                console.log('userinfo_error');
+            });
+        },
         initWebsocket() {
             this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
             this.vankeWebsocket.onopen = this.wsOnOpen;
@@ -233,7 +256,7 @@ export default {
             }
         .f22{
             cursor: pointer;
-            margin-right: 20px;
+            margin-right: 1em;
             font-size:22px;
             color:#fff;
             i{
@@ -256,13 +279,13 @@ export default {
             top: 0;
             z-index: 999;
             width:100%;
-            min-width:1000px;
+            min-width:1180px;
             height: 70px;
             display:flex;
             align-items:center;
             border-bottom:3px solid rgb(238, 246, 243);
             background:#c51010;
-            padding-left: 3.5em;
+            padding-left: 3em;
             img{
                 width:100px;
                 // height: 30%;
@@ -287,6 +310,11 @@ export default {
         }
         .none{display:none}
         .this_section{
+            .identity{
+                color:#fff;
+                font-size:15px;
+                margin-right:1.5em;
+            }
             margin-top:70px;
             height: 100%;
             width:100%;

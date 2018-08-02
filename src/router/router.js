@@ -64,9 +64,21 @@ const Audit = resolve => {
     })
 }
 // 注册
-const register = resolve => {
+const Register = resolve => {
     require.ensure(['../component/register.vue'], () => {
         resolve(require('../component/register.vue'))
+    })
+}
+// 业绩2
+const AchievementsT = resolve => {
+    require.ensure(['../component/achievementsT.vue'], () => {
+        resolve(require('../component/achievementsT.vue'))
+    })
+}
+// 注册门店
+const RegisterShop = resolve => {
+    require.ensure(['../component/registerShop.vue'], () => {
+        resolve(require('../component/registerShop.vue'))
     })
 }
 
@@ -103,7 +115,9 @@ const routes= [
             {   path: 'achievements',           component: Achievements,        name: '业绩'},
             {   path: 'personal',               component: Personal,            name: '个人'},
             {   path: 'audit',                  component: Audit,               name: '审核'},
-            {   path: 'register',               component: register,            name: '注册'},
+            {   path: 'register',               component: Register,            name: '注册'},
+            {   path: 'achievementsT',           component: AchievementsT,        name: '业绩2'},
+            {   path: 'registerShop',           component: RegisterShop,        name: '注册门店'},
         ] },
 
     {	path: '/default',				component: Default, 			name: '默认首页'},

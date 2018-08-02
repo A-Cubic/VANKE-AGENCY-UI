@@ -44,12 +44,18 @@
                                 <span style="font-size: 18px; text-align: center;">业绩排行榜</span>
                             </div>
                             <div class="table-button">
-                                <el-button type="primary"
+                                <el-button v-for="(item, index) in dataStatus.dataStatusList"
+                                            size="small"
+                                           :key="index"
+                                           :type="dataStatus.status == item.value ? 'primary' : ''"
+                                           @click="search(item.value)">{{ item.label }}
+                                </el-button>
+                                <!-- <el-button type="primary"
                                            :plain="ranking.dataStatus == 1 ? false : true"
                                            @click="search(1)">周排行</el-button>
                                 <el-button type="primary"
                                            :plain="ranking.dataStatus == 2 ? false : true"
-                                           @click="search(2)">月排行</el-button>
+                                           @click="search(2)">月排行</el-button> -->
                             </div>
                             <div class="table-wrap">
                                 <el-table :data="ranking.list" style="width: 100%">
@@ -115,6 +121,20 @@ export default {
                 current_score:'',
                 latent_score:''
             },
+            dataStatus:{
+                status: 1,
+                dataStatusList: [
+                    {
+                        value: 1,
+                        label: '周排行'
+                    },
+                    {
+                        value: 2,
+                        label: '月排行'
+                    }
+                ],
+            },
+            
             ranking:{
                 dataStatus: 1,
                 list:[
@@ -169,6 +189,7 @@ export default {
         HomeApi.rank(postData).then(function (result) {
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.ranking=result.data;
+        // console.log(that.ranking)
         }).catch(error => {
             console.log('rank_error');
         })
@@ -181,10 +202,11 @@ export default {
         doSearch(){
             var that = this;
             var postData = {
-                type: this.ranking.dataStatus,
+                type: this.dataStatus.status,
                 page: this.ranking.pageNum,
                 size: 10,
             };
+            // console.log(postData)
             HomeApi.rank(postData).then(function (result) {
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.ranking=result.data;
@@ -208,9 +230,9 @@ export default {
         },
         search(status){
             this.ranking.pageNum = 1;
-            this.ranking.dataStatus = status;
+            // this.ranking.dataStatus = status;
+            this.dataStatus.status = status;
             this.doSearch();
-
         }
     }
 };
@@ -269,7 +291,15 @@ export default {
                 .table-button{
                     padding: 0 10px;
                     .el-button{
-                        width: 120px;
+                        width: 88px;
+                        &:nth-child(1){
+                            border-top-left-radius: 50px;
+                            border-bottom-left-radius: 50px;
+                        }
+                        &:nth-child(2){
+                            border-top-right-radius: 50px;
+                            border-bottom-right-radius: 50px;
+                        }
                     }
                 }
                 .table-wrap{
