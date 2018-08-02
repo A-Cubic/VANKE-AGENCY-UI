@@ -68,7 +68,8 @@
                         </el-table-column>
                         <el-table-column label="操作">
                             <template scope="scope">
-                                <el-button size="mini" type="text" @click="auditItem(scope.row)">审核</el-button>
+                                <!--<el-button size="mini" type="text" @click="auditItem(scope.row)">审核</el-button>-->
+                                <el-button size="mini"  type="danger" :disabled="scope.row.state == '0' ? false : true"  @click="auditItem(scope.row)">审核</el-button>
                                 <!-- <el-button size="mini" type="text" @click="putPass(scope.row)">通过</el-button>
                                 <el-button size="mini" type="text" @click="unPassHandel(scope.row)">不通过
                                 </el-button> -->
