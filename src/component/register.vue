@@ -136,12 +136,12 @@
 
             submitForm(formName) {
                 var that = this;
-
+                if(this.addRegister.registerForm.password.trim()==''){
+                    that.addRegister.registerForm.password=='123456';
+                }
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        if(this.addRegister.registerForm.password.trim()==''){
-                            that.addRegister.registerForm.password='123456';
-                        }
+
                         var postData = this.addRegister.registerForm;
                         RegisterApi.registerSubmit(postData).then(function (result) {
                             if(typeof(result) != "object"){result = JSON.parse(result)}

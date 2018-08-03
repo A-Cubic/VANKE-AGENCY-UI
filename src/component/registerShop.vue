@@ -8,25 +8,26 @@
                     </div>
                     <el-form label-position="left"
                              label-width="100px"
-                             :model="addRegister.registerForm"
-                             :rules="addRegister.ruleForm"
+                             :model="registerForm"
+                             :rules="ruleForm"
                              ref="registerForm">
 
-                        <el-form-item label="门店名称:" prop="username">
-                            <el-input v-model="addRegister.registerForm.username"  placeholder="门店名称（必填）"></el-input>
+                        <el-form-item label="门店名称:" prop="storeName">
+                            <el-input v-model="registerForm.storeName"  placeholder="门店名称（必填）"></el-input>
                         </el-form-item>
-                        <el-form-item label="门店地址:" prop="relname" >
-                            <el-input v-model="addRegister.registerForm.relname" placeholder="门店地址（必填）"></el-input>
+                        <el-form-item label="门店地址:" prop="storeAdress" >
+                            <el-input v-model="registerForm.storeAdress" placeholder="门店地址（必填）"></el-input>
                         </el-form-item>
-                        <el-form-item label="门店范围:" prop="roleId">
-                            <el-select v-model="addRegister.registerForm.roleId" multiple placeholder="请选择范围（必填）">
-                                <el-option
-                                        v-for="item in addRegister.roleList"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.id">
-                                </el-option>
-                            </el-select>
+                        <el-form-item label="门店范围:" prop="streetId">
+                            <el-tree
+                                    :data="regionTree"
+                                    node-key="value"
+                                    ref="tree"
+                                    show-checkbox
+                                    accordion
+                                    :props="defaultProps"
+                                    >
+                            </el-tree>
                         </el-form-item>
                     </el-form>
                     <div class="register-button">
@@ -42,7 +43,7 @@
 </template>
 
 <script>
-    import RegisterApi from '../api/api_register.js';
+    import RegisterShopApi from '../api/api_registerShop.js';
     import Vue from 'vue';
     import { Message } from 'element-ui';
     export default {
@@ -52,50 +53,30 @@
         name: "register",
         data(){
             return{
-                addRegister:{
-                    registerForm:{
-                        relname: '',
-                        phone: '',
-                        username: '',
-                        password: '',
-                        roleId: '',
-                        store_id: '',
-                    },
-                    roleList: [
-                        {
-                          id: '1',
-                          name: '西岗区门店'
-                        }, {
-                          id: '2',
-                          name: '高新园门店'
-                        }, {
-                          id: '3',
-                          name: '中山区门店'
-                        }
+                registerForm:{
+                    storeName: '',
+                    storeAdress: '',
+                    streetId: [],
+                },
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+                regionTree: [
+
+                ],
+
+
+                ruleForm: {
+                    storeName: [
+                        { required: true, message: '请输入门店名称', trigger: 'blur' },
                     ],
-                    storesList: [
-                        {
-                            id: '',
-                            storeName: '',
-                        }
+                    storeAdress: [
+                        { required: true, message: '请输入门店地址', trigger: 'blur' },
                     ],
-                    ruleForm: {
-                        relname: [
-                            { required: true, message: '请输入真实姓名', trigger: 'blur' },
-                        ],
-                        username: [
-                            { required: true, message: '请输入注册账号', trigger: 'blur' },
-                        ],
-                        roleId: [
-                            { required: true, message: '请选择角色', trigger: 'change' }
-                        ],
-                        store_id: [
-                            { required: true, message: '请选择门店', trigger: 'change' }
-                        ],
-                        password: [
-                            { min: 6, max: 15, message: '密码长度6-15位', trigger: 'blur' }
-                        ],
-                    }
+                    streetId: [
+                        { required: true, message: '请选择门店覆盖范围', trigger: 'blur' }
+                    ]
                 }
             }
         },
@@ -103,59 +84,48 @@
             this.doSearch();
         },
         methods:{
-
             doSearch(){
                 var that = this;
                 var postData = {
 
                 };
-                RegisterApi.storeList(postData).then(function (result) {
+                RegisterShopApi.regionslist(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
-                    that.addRegister.storesList=result.data;
+                    that.regionTree=result.data;
                 }).catch(error => {
-                    console.log('storeList_error');
-                });
-
-                RegisterApi.roleList(postData).then(function (result) {
-                    if(typeof(result) != "object"){result = JSON.parse(result)}
-                    that.addRegister.roleList=result.data;
-                }).catch(error => {
-                    console.log('roleList_error');
+                    console.log('regionslist_error');
                 });
             },
 
             submitForm(formName) {
-                var that = this;
-
+                this.registerForm.streetId = this.$refs.tree.getCheckedKeys(true);
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        if(this.addRegister.registerForm.password.trim()==''){
-                            that.addRegister.registerForm.password='123456';
-                        }
-                        var postData = this.addRegister.registerForm;
-                        RegisterApi.registerSubmit(postData).then(function (result) {
+                        var that = this;
+                        var postData = that.registerForm;
+                        RegisterShopApi.insertStore(postData).then(function (result) {
                             if(typeof(result) != "object"){result = JSON.parse(result)}
                             if(result.data=='0'){
-                                Message.error('账号已存在');
+                                Message.error('门店已存在');
                             }else if(result.data=='1'){
                                 that.resetForm(formName);
-                                Message({message: '注册用户成功!', type: 'success'});
+                                Message({message: '门店注册成功!', type: 'success'});
                             }else {
                                 Message.error('注册失败！');
                             }
 
                         }).catch(error => {
-                            console.log('registerSubmit_error');
+                            console.log('insertStore_error');
                         });
-
                     } else {
-                        Message.error('请填写完整信息!');
-                        return false;
+                        // Message.error('请填写完整信息!');
+                        // return false;
                     }
                 });
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+                this.$refs.tree.setCheckedKeys([]);
             }
         }
 

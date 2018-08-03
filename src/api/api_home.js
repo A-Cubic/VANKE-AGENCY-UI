@@ -20,4 +20,9 @@ export default {
         return API.POST('house/listIsfine', params)
     },
 
+    //新增房源
+    addhouseList: params => {
+        return API.POST('home/user/newHouseList', params)
+    },
+
 }

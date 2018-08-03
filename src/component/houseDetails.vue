@@ -102,15 +102,15 @@
                                     <div>维护</div>
                                     <div class="radius-data">{{ radiusForm.recordrelName==''|| radiusForm.recordrelName==null?"暂无": radiusForm.recordrelName}}</div>
                                 </div>
-                                <div :class="houseDataForm.examineState=='0' || houseDataForm.explorationTimeType=='1' || radiusForm.explorationrelName!='暂无'?'radius-block ':'radius-block radius-data-btn'">
+
+                                <div :class="houseDataForm.examineState=='0' ? 'radius-block ' :(houseDataForm.explorationTimeType=='1'&& user_type=='0') ? 'radius-block ' : (radiusForm.explorationrelName!=null && radiusForm.explorationrelName!='')? 'radius-block ' : 'radius-block radius-data-btn'">
                                     <div><i class="iconfont icon-xiangji"></i></div>
                                     <div>实勘</div>
                                     <div class="radius-data">{{ radiusForm.explorationrelName=='' || radiusForm.explorationrelName==null?"暂无": radiusForm.explorationrelName}}</div>
                                     <el-button type="text"
                                                size="small"
                                                icon="el-icon-plus"
-
-                                               v-show="houseDataForm.examineState=='0' || houseDataForm.explorationTimeType=='1' || radiusForm.explorationrelName!='暂无'?false:true"
+                                               v-show="houseDataForm.examineState=='0' ? false :(houseDataForm.explorationTimeType=='1'&& user_type=='0') ? false : (radiusForm.explorationrelName!=null && radiusForm.explorationrelName!='')? false : true"
                                                @click="examineHandel">
                                     </el-button>
                                 </div>
@@ -675,6 +675,7 @@
                 id: this.id
             };
             HouseApi.housedetail(postData).then(function (result) {
+                console.log(result)
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.houseDataForm=result.data;
                 that.otherForm=result.data;

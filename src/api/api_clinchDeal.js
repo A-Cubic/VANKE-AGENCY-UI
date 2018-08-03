@@ -24,7 +24,7 @@ export default {
         return API.POST('house/transaction/insert', params)
     },
     //业绩分配-查看详情
-    achievementList: params => {
+    achievementDetailList: params => {
         return API.POST('achievement/detailList', params)
     },
     //业绩分配-查看
@@ -38,6 +38,15 @@ export default {
     },
     searchUser: params => {
         return API.POST('house/listUser', params)
+    },
+
+    //补缴-添加
+    repairInsert: params => {
+        return API.POST('house/transaction/repair/insert', params)
+    },
+    //补缴记录
+    repairList: params => {
+        return API.POST('house/transaction/repair/list', params)
     },
 
 }

@@ -67,6 +67,9 @@
                                     <el-form-item prop="code" label="客源（点击跳转详情）">
                                         <span> <el-button size="mini" type="text" @click="linkGuest(props.row)">查看客源</el-button></span>
                                     </el-form-item>
+                                    <el-form-item prop="code" label="补缴记录（点击详情）">
+                                        <span> <el-button size="mini" type="text" @click="linkOverPay(props.row)">查看补缴记录</el-button></span>
+                                    </el-form-item>
                                 </el-form>
                             </template>
                         </el-table-column>
@@ -78,8 +81,8 @@
                         <el-table-column prop="type" label="缴费状态">
                             <template slot-scope="scope">
                                 <el-tag
-                                        :type="scope.row.type === '0' ? 'danger' : 'success'"
-                                        disable-transitions>{{scope.row.state== '0'?'欠缴':'已缴清'}}</el-tag>
+                                        :type="scope.row.type == '0' ? 'danger' : 'success'"
+                                        disable-transitions>{{scope.row.type== '0'?'欠缴':'已缴清'}}</el-tag>
                             </template>
                         </el-table-column>
                         <el-table-column prop="state" label="成交状态">
@@ -91,7 +94,9 @@
                         </el-table-column>
                         <el-table-column label="操作">
                             <template scope="scope">
-                                <el-button size="mini" type="text" @click="allotHandle(scope.row)">业绩分配</el-button>
+                                <el-button size="mini" type="danger" icon="el-icon-plus" v-show="scope.row.state== '1'?true:false" @click="allotHandle(scope.row)">分配</el-button>
+                                <el-button size="mini" type="danger" icon="el-icon-view" v-show="scope.row.state!= '1'?true:false" @click="allotDetailHandle(scope.row)">业绩</el-button>
+                                <el-button size="mini" type="danger" icon="el-icon-edit" v-show="scope.row.type== '0'?true:false" @click="overpayHandle(scope.row)">补缴</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -427,7 +432,7 @@
                                 <div v-else>{{scope.row.proportion}}</div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="price" label="金额"></el-table-column>
+                        <el-table-column prop="price" label="金额（元）"></el-table-column>
                         <el-table-column label="操作">
                             <template scope="scope">
                                 <el-button size="mini"
@@ -504,6 +509,90 @@
                                  :key="index">
                         </el-form-item>
                     </el-form>
+                </div>
+            </el-dialog>
+
+            <el-dialog title="分配详情" :visible.sync="allotFormDetail.allotFormDetailVisible" width="60%">
+                <div class="table-template">
+                    <el-table :data="allotFormDetail.allotDetailList" >
+                        <el-table-column prop="userrelname" label="姓名"></el-table-column>
+                        <el-table-column prop="rolenum" label="角色">
+                            <template slot-scope="scope">
+                                <el-tag
+                                        :type="scope.row.rolenum=='1'?'':scope.row.rolenum=='2'?'success':scope.row.rolenum=='3'?'warning':scope.row.rolenum=='4'?'info':scope.row.rolenum=='5'?'info':scope.row.rolenum=='6'?'danger':'danger'"
+                                        disable-transitions>{{scope.row.rolenum=='1'?'录入':scope.row.rolenum=='2'?'维护':scope.row.rolenum=='3'?'钥匙':scope.row.rolenum=='4'?'实勘':scope.row.rolenum=='5'?'独家':scope.row.rolenum=='6'?'促成':'合作'}}</el-tag>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="proportion" label="占比（%）" >
+                            <template slot-scope="scope" >
+                                <el-input size="mini"
+                                          v-if="scope.row.sign==0"
+                                          v-model="scope.row.proportion"
+                                          placeholder="合作人占比">
+                                    <i slot="suffix" class="el-input__icon el-icon-check" @click="proportionChange(scope.row,scope.$index)"></i>
+                                </el-input>
+
+                                <div v-else>{{scope.row.proportion}}</div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="price" label="金额（元）"></el-table-column>
+                    </el-table>
+                </div>
+            </el-dialog>
+
+            <el-dialog title="补缴" :visible.sync="overpayForm.overpayFormVisible" width="60%">
+                <el-form :model="overpayForm.overpayFormData"
+                         status-icon
+                         ref="overpayFormData"
+                         label-width="120px"
+                         label-position="left"
+                         class="demo-ruleForm"
+                         style="margin-top: 10px">
+
+                    <el-row :gutter="10">
+                        <el-col :span="10">
+                            <el-form-item label="买家服务费:" prop="buyIntermediaryPayment">
+                                <el-input v-model="overpayForm.overpayFormData.buyIntermediaryPayment" placeholder="本次补缴金额">
+                                    <template slot="append">应补{{overpayForm.overpayFormData.buyIntermediaryLack}}</template>
+                                </el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-row :gutter="10">
+                        <el-col :span="10">
+                            <el-form-item label="卖家服务费:" prop="sellIntermediaryPayment">
+                                <el-input v-model="overpayForm.overpayFormData.sellIntermediaryPayment" placeholder="本次补缴金额">
+                                    <template slot="append">应补{{overpayForm.overpayFormData.sellIntermediaryLack}}</template>
+                                </el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-row :gutter="10">
+                        <el-col :span="10">
+                            <el-form-item label="买家贷款费:" prop="buyLoanPayment">
+                                <el-input v-model="overpayForm.overpayFormData.buyLoanPayment" placeholder="本次补缴金额">
+                                    <template slot="append">应补{{overpayForm.overpayFormData.buyLoanLack}}</template>
+                                </el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button  @click="overpayForm.overpayFormVisible=false">取消</el-button>
+                    <el-button type="danger" @click="submitOverPay">提 交</el-button>
+                </span>
+            </el-dialog>
+
+            <el-dialog title="补缴记录" :visible.sync="overpayDetailForm.overpayDetailVisible" width="60%">
+                <div class="table-template">
+                    <el-table :data="overpayDetailForm.overpayDetailList" >
+                        <el-table-column prop="createTime" label="补缴日期"></el-table-column>
+                        <el-table-column prop="buyIntermediaryPayment" label="买家服务费" ></el-table-column>
+                        <el-table-column prop="sellIntermediaryPayment" label="卖家服务费"></el-table-column>
+                        <el-table-column prop="buyLoanPayment" label="买家贷款费"></el-table-column>
+                    </el-table>
                 </div>
             </el-dialog>
         </el-row>
@@ -745,13 +834,88 @@ export default {
                     addUserList:[],
                 }
             },
+
+            allotFormDetail: {
+                allotFormDetailVisible: false,
+                allotDetailList: [
+                ],
+            },
+            overpayForm: {
+                overpayFormVisible: false,
+                overpayFormData:{
+                    transactionId:'',
+                    buyIntermediaryLack:'',
+                    buyLoanLack:'',
+                    sellIntermediaryLack:'',
+                    buyIntermediaryPayment:'',
+                    sellIntermediaryPayment:'',
+                    buyLoanPayment:'',
+                },
+            },
+            overpayDetailForm:{
+                overpayDetailVisible: false,
+                overpayDetailList:[
+
+                ],
+            },
         };
     },
     created(){
         this.doSearch();
     },
     methods: {
-
+        //补缴
+        overpayHandle(row){
+            this.overpayForm.overpayFormVisible = true;
+            this.overpayForm.overpayFormData.transactionId=row.id;
+            this.overpayForm.overpayFormData.buyIntermediaryLack=row.buyIntermediaryLack;
+            this.overpayForm.overpayFormData.buyLoanLack=row.buyLoanLack;
+            this.overpayForm.overpayFormData.sellIntermediaryLack=row.sellIntermediaryLack;
+        },
+        submitOverPay(){
+            if(this.overpayForm.overpayFormData.buyIntermediaryPayment=='' && this.overpayForm.overpayFormData.sellIntermediaryPayment=='' && this.overpayForm.overpayFormData.buyLoanPayment==''){
+                Message.error("请输入补缴金额！");
+                return;
+            }
+            var that = this;
+            var postData = {
+                transactionId: that.overpayForm.overpayFormData.transactionId,
+                buyIntermediaryPayment:that.overpayForm.overpayFormData.buyIntermediaryPayment,
+                sellIntermediaryPayment:that.overpayForm.overpayFormData.sellIntermediaryPayment,
+                buyLoanPayment:that.overpayForm.overpayFormData.buyLoanPayment
+            };
+            ClinchDealApi.repairInsert(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                if(result.data=='1'){
+                    Message({
+                        message: '补缴成功!',
+                        type: 'success'
+                    });
+                    that.overpayForm.overpayFormData.buyIntermediaryPayment='';
+                    that.overpayForm.overpayFormData.sellIntermediaryPayment='';
+                    that.overpayForm.overpayFormData.buyLoanPayment='';
+                    that.overpayForm.overpayFormVisible = false;
+                    that.doSearch();
+                }
+            }).catch(error => {
+                console.log('repairInsert_error');
+            });
+        },
+        //分配详情
+        allotDetailHandle(row){
+            this.allotFormDetail.allotFormDetailVisible = true;
+            var that = this;
+            var id = row.id;
+            var postData = {
+                id: id
+            };
+            ClinchDealApi.achievementDetailList(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.allotFormDetail.allotDetailList=result.data;
+            }).catch(error => {
+                console.log('achievementDetailList_error');
+            });
+        },
         closeHandle(){
             this.allotForm.isEdit = false;
         },
@@ -1008,11 +1172,11 @@ export default {
         },
         // 业绩分配
         allotHandle(row){
+            var id = row.id;
             this.allotForm.allotFormVisible=true;
             this.allotForm.backData.transactionId =id;
             this.allotForm.backData.houseId = row.houseId;
             var that = this;
-            var id = row.id;
 
             var postData = {
                 transactionId: id,
@@ -1023,7 +1187,7 @@ export default {
                 that.allotForm.allotList=result.data;
 
             }).catch(error => {
-                console.log('achievementList_error'+error);
+                console.log('getAchievement_error'+error);
             });
         },
         // 业绩分配确定
@@ -1045,7 +1209,6 @@ export default {
                     that.doSearch();
                     that.allotForm.allotFormVisible=false;
                 }
-
             }).catch(error => {
                 console.log('achievementInsert_error'+error);
             });
@@ -1080,6 +1243,7 @@ export default {
             this.tableForm.pageNum = val;
             this.doSearch();
         },  //分页change
+
         linkImg(item){
             this.popUpImg.popUpImgVisible = true;
             this.popUpImg.contractImgList = item.contractImgList;
@@ -1097,6 +1261,21 @@ export default {
             let routeData = this.$router.resolve({ path: '/admin/passengerDetails/'+item.guestId});
             window.open(routeData.href, '_blank');
         },
+        linkOverPay(item){
+            this.overpayDetailForm.overpayDetailVisible = true;
+            var that = this;
+            var postData = {
+                transactionId: item.id,
+            };
+            ClinchDealApi.repairList(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.overpayDetailForm.overpayDetailList = result.data;
+            }).catch(error => {
+                console.log('repairList_error');
+            });
+
+        },
+
         compileIt(item) {
             var that = this;
             var postData = {

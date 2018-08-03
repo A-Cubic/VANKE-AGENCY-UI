@@ -94,9 +94,9 @@
                             </div>
                         </el-card>
                         <el-card class="box-card" shadow="always">
-                            <div slot="header" class="clearfix">最新资讯</div>
-                            <div v-for="(item, index) in newsList" :key="index" class="text item">
-                                {{ item.news }}
+                            <div slot="header" class="clearfix">最新房源</div>
+                            <div v-for="(item, index) in newsList" :key="index" class="text item highQuality">
+                                <router-link tag="a" target="_blank" :to="'/admin/houseDetails/'+item.id">{{ item.xiaoquName }}</router-link>
                             </div>
                         </el-card>
                     </div>
@@ -152,14 +152,14 @@ export default {
 
             goodHouseList:[
                 {
-                    id: 0,
+                    id: '',
                     xiaoquName: ''
                 }
             ],
             newsList:[
                 {
-                    id: 0,
-                    news: '暂无'
+                    id: '',
+                    xiaoquName: ''
                 },
 
             ],
@@ -179,6 +179,13 @@ export default {
             that.goodHouseList=result.data;
         }).catch(error => {
             console.log('goodHouseList_error');
+        });
+
+        HomeApi.addhouseList().then(function (result) {
+            if(typeof(result) != "object"){result = JSON.parse(result)}
+            that.newsList=result.data;
+        }).catch(error => {
+            console.log('addhouseList_error');
         });
 
         var postData = {
