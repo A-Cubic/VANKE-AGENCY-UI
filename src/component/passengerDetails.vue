@@ -24,14 +24,7 @@
                                 </el-rate>
                             </div>
 
-                            <el-button type="primary"
-                                       size="small"
-                                       icon="el-icon-upload2"
-                                       style="float:right"
-                                       v-show="formUser.isshare=='1'?true:false"
-                                       @click="updateIsShareGuest">
-                                升级成为维护人
-                            </el-button>
+
 
                         </li>
                         <li>
@@ -184,14 +177,16 @@
 
 
                 <el-col :span="6">
-                    <ul class="maintain-content">
+                    <ul class="maintain-content" v-show="formUser.isshare=='1'?false:true">
                         <li>
                             <div class="maintain-content-header">联系</div>
                             <el-popover
                                     title="联系电话"
                                     width="200"
                                     trigger="click"
-                                    :content="formUser.phone">
+                                    :content="formUser.phone"
+                                    :disabled="formUser.isshare=='1'?true:false"
+                                    >
                                 <div class="maintain-content-mes" slot="reference">查看电话</div>
                             </el-popover>
                         </li>
@@ -208,6 +203,16 @@
                             <div class="maintain-content-mes"></div>
                         </li> -->
                     </ul>
+                    <div class="maintain-content" v-show="formUser.isshare=='1'?true:false">
+                        <el-button type="primary"
+                                   size="small"
+                                   icon="el-icon-upload2"
+                                   style="margin-left: 30%; margin-top: 20%;"
+                                   v-show="formUser.isshare=='1'?true:false"
+                                   @click="updateIsShareGuest">
+                            升级成为维护人
+                        </el-button>
+                    </div>
                 </el-col>
             </el-row>
 
@@ -499,6 +504,30 @@
         },
         methods: {
             updateIsShareGuest(){
+                this.$confirm('此操作将维护人更改为当前用户, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var that = this;
+                    var gid = this.id;
+                    var postData = {
+                        id: gid
+                    };
+                    GuestApi.updateIsshareUser(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.doSearch();
+                        Message({
+                            type: 'success',
+                            message: '你已成为此客源维护人'
+                        });
+                    }).catch(error => {
+                        console.log('updateIsshareUser_error'+error);
+                    });
+
+                }).catch(() => {
+
+                });
 
             },
             doSearch(){
@@ -512,7 +541,7 @@
                 };
 
                 GuestApi.guestDetail(postData).then(function (result) {
-                    console.log(result);
+                    // console.log(result);
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     if(result.data==0){
                         that.pageVisbaleEmpty=true;
@@ -521,7 +550,7 @@
                     }
                     that.formUser=result.data;
                     that.needForm=result.data;
-                    console.log(result.data);
+                    // console.log(result.data);
                 }).catch(error => {
                     console.log('guestDetail_error');
                 });
@@ -604,6 +633,10 @@
                 });
             },
             transferHandel(){
+                if(this.formUser.isshare=='1'){
+                    Message.error("此客源是共享客源，不能转让!")
+                    return;
+                }
                 this.transferForm.usertext = '';
                 this.transferForm.personList = [];
                 this.transferForm.chooseName = '';
@@ -660,6 +693,10 @@
 
             },  //确定选择
             stateHandel(){
+                if(this.formUser.isshare=='1'){
+                    Message.error("此客源是共享客源，不能修改状态!")
+                    return;
+                }
                 var that = this;
                 var gid = this.id;
                 var isData = this.formUser.iskey;

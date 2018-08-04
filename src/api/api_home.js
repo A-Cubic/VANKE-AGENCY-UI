@@ -25,4 +25,14 @@ export default {
         return API.POST('home/user/newHouseList', params)
     },
 
+    //通讯录
+    bookTreeList: params => {
+        return API.POST('user/storeUser', params)
+    },
+
+    //消息
+    messageList: params => {
+        return API.POST('message/list', params)
+    },
+
 }

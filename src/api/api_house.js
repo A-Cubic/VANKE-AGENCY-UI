@@ -110,5 +110,9 @@ export default {
         return API.POST('house/updateIsShare', params)
     },
 
+    // 查看电话地址记录
+    getHistory: params => {
+        return API.POST('house/clicklog/list', params)
+    },
 
 }

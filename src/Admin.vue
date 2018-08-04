@@ -33,12 +33,46 @@
             </nav>
             <span class="identity">{{basic.relname+' · '+basic.desc}}</span>
             <span class="f22">
-                <i class="el-icon-tickets " @click="addressBook.visible = true"></i>
+                <el-popover
+                        placement="bottom-start"
+                        width="300"
+                        transition="el-zoom-in-center"
+                        title="通讯录"
+                        trigger="click">
+                     <el-tree
+                             :data="addressBook.bookTree"
+                             :props="addressBook.defaultProps"
+                             accordion >
+                      </el-tree>
+                    <i class="el-icon-tickets " slot="reference" @click="getBookTree"></i>
+                </el-popover>
             </span>
             <span class="f22">
-                <el-badge v-bind:value="Noticebadge" class="item ">
-                    <i class="el-icon-bell " @click="inform.visible = true"></i>
-                </el-badge>
+                <el-popover
+                        placement="bottom-start"
+                        width="400"
+                        transition="el-zoom-in-center"
+                        trigger="click">
+                    <div class="table-template">
+                        <el-table :data="message.list">
+                            <el-table-column prop="create_time" label="消息时间"></el-table-column>
+                            <el-table-column prop="content" label="消息内容" show-overflow-tooltip></el-table-column>
+                        </el-table>
+                    </div>
+                    <div class="table-pagination">
+                    <el-pagination
+                            layout="prev, pager, next, jumper, total"
+                            :page-size="message.pageSize"
+                            :current-page.sync="message.pageNum"
+                            :total ="message.total"
+                            @current-change="handleCurrentChangeSearch">
+                    </el-pagination>
+                </div>
+                    <el-badge v-bind:value="Noticebadge" class="item " slot="reference">
+                        <i class="el-icon-bell " @click="getNotice"></i>
+                    </el-badge>
+            </el-popover>
+
              </span>
              <span class="logout" @click="userLogout">退出</span>
         </header>
@@ -48,47 +82,26 @@
             </nav> -->
             <router-view class="view router"></router-view>
         </section>
-        <aside class="alert">
-            <el-dialog
-                title="通讯录"
-                :visible.sync="addressBook.visible"
-                width="800px"
-                :before-close="handleCloseAddressBook">
-                <el-table :data="addressBook.addressList" border size="mini" max-height="320" style="width: 100%">
-                    <el-table-column prop="name" label="姓名"></el-table-column>
-                    <el-table-column prop="phone" label="电话"></el-table-column>
-                </el-table>
-                <span slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="addressBook.visible = false">关 闭</el-button>
-                </span>
-            </el-dialog>
-        </aside>
-        <aside class="inform">
-            <el-dialog
-                title="通知"
-                :visible.sync="inform.visible"
-                width="800px">
-                <el-table :data="inform.informList" 
-                          size="mini"
-                          :show-header="false"
-                          max-height="320"
-                          style="width: 100%">
-                    <el-table-column prop="message" label="内容"></el-table-column>
-                </el-table>
-                <span slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="inform.visible = false">关 闭</el-button>
-                </span>
-            </el-dialog>
-        </aside>
+        <!--<aside class="inform">-->
+            <!--<el-popover-->
+                    <!--placement="bottom-start"-->
+                    <!--width="300"-->
+                    <!--transition="el-zoom-in-center"-->
+                    <!--title="通知"-->
+                    <!--trigger="click">-->
+
+                <!--<i class="el-icon-tickets " slot="reference" @click="getNotice"></i>-->
+            <!--</el-popover>-->
+        <!--</aside>-->
     </section>
     
 </template>
 <script>
 import HomeApi from './api/api_home.js';
 import LoginApi from './api/api_user';
-import { setRole, setToken } from './util/global'
+import { setRole, setToken } from './util/global';
     // import Default from './component/default'
-    import { getToken, WsCall, addWsCall, clearWsCall }               from './util/global'
+    import { getToken, WsCall, addWsCall, clearWsCall }               from './util/global';
 export default {
     name: 'app',
     ws: null,
@@ -112,46 +125,21 @@ export default {
                 latent_score:''
             },
             addressBook:{
-                visible: false,
-                formLabelWidth: '120px',
-                addressList: [
-                    {
-                        name: '王小虎',
-                        phone: '1234567'
-                    },
-                    {
-                        name: '王小虎',
-                        phone: '1234567'
-                    },
-                    {
-                        name: '王小虎',
-                        phone: '1234567'
-                    },
-                    {
-                        name: '王小虎',
-                        phone: '1234567'
-                    },
-                    {
-                        name: '王小虎',
-                        phone: '1234567'
-                    },
-                    {
-                        name: '王小虎',
-                        phone: '1234567'
-                    },
-                    {
-                        name: '王小虎',
-                        phone: '1234567'
-                    }
-                ]
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+                bookTree:[
+
+                ],
             },
 
-            inform: {
-                visible: false,
-                informList: [
-                    {
-                        message: '今天下午两点半，有客户要去看房，请注意。'
-                    },
+            message: {
+                pageSize: 5,
+                pageNum: 1,
+                total: 0,
+                list: [
+
                 ]
             },
 
@@ -160,16 +148,45 @@ export default {
         };
     },
     created() {
-        this.initWebsocket()
-        this.getUserIdentity()
-        addWsCall('Notice', this.wsNotice)
+        this.initWebsocket();
+        this.getUserIdentity();
+        addWsCall('Notice', this.wsNotice);
     },
     destroyed() {
-        this.vankeWebsocket.close()
-        clearWsCall()
+        this.vankeWebsocket.close();
+        clearWsCall();
     },
     methods: {
-
+        handleCurrentChangeSearch(val){
+            this.message.pageNum = val;
+            this.doSearchNotice();
+        },
+        doSearchNotice(){
+            var that = this;
+            var postData = {
+                page: that.message.pageNum,
+                size: 5
+            };
+            HomeApi.messageList(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.message=result.data;
+            }).catch(error => {
+                console.log('messageList_error');
+            });
+        },
+        getNotice(){
+            this.message.pageNum = 1;
+            this.doSearchNotice();
+        },
+        getBookTree(){
+            var that = this;
+            HomeApi.bookTreeList().then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.addressBook.bookTree=result.data;
+            }).catch(error => {
+                console.log('bookTreeList_error');
+            });
+        },
         userLogout(){
             setRole('');
             setToken('');
@@ -222,14 +239,7 @@ export default {
             }
             this.Noticebadge = data
         },
-    	handleCloseAddressBook(done) {
-    		this.addressBook.visible = false
-            // this.$confirm('确认关闭？')
-            //   .then(_ => {
-            //     done();
-            //   })
-            //   .catch(_ => {});
-        },
+
         loginHidden(){
             this.header = true;
             this.$router.push({path: '/log'});
@@ -312,7 +322,7 @@ export default {
         .none{display:none}
         .this_section{
             .identity{
-                color:#fff;
+                color:#C0C4CC;
                 font-size:15px;
                 margin-right:1.5em;
             }

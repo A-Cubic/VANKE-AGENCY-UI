@@ -72,6 +72,28 @@
                                          <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div>
                                         <div>房主信息:
                                             <span class="span" @click="ownerHandle">查看</span>
+                                            <el-popover
+                                                    placement="right"
+                                                    width="600"
+                                                    transition="el-zoom-in-center"
+                                                    trigger="click">
+                                                <div class="table-template">
+                                                    <el-table :data="ownerHistoryData.list">
+                                                        <el-table-column prop="createTime" label="查看时间"></el-table-column>
+                                                        <el-table-column prop="clickRelName" label="查看人"></el-table-column>
+                                                    </el-table>
+                                                </div>
+                                                <div  style="padding: 0 20px 20px;text-align: right;">
+                                                    <el-pagination
+                                                            layout="prev, pager, next, jumper, total"
+                                                            :page-size="ownerHistoryData.pageSize"
+                                                            :current-page.sync="ownerHistoryData.pageNum"
+                                                            :total ="ownerHistoryData.total"
+                                                            @current-change="ownerHistoryChangeSearch">
+                                                    </el-pagination>
+                                                </div>
+                                                <span class="span" @click="ownerHistoryHandle" slot="reference">点击记录</span>
+                                            </el-popover>
                                         </div>
                                     </div>
                                     <div class="other-mes">
@@ -79,6 +101,28 @@
                                         <div>房屋等级: <span>{{ houseDataForm.grade }}</span></div>
                                         <div>地址:
                                             <span class="span" @click="placeHandle">查看</span>
+                                            <el-popover
+                                                    placement="right"
+                                                    width="600"
+                                                    transition="el-zoom-in-center"
+                                                    trigger="click">
+                                                <div class="table-template">
+                                                    <el-table :data="placeHistoryData.list">
+                                                        <el-table-column prop="createTime" label="查看时间"></el-table-column>
+                                                        <el-table-column prop="clickRelName" label="查看人"></el-table-column>
+                                                    </el-table>
+                                                </div>
+                                                <div style="padding: 0 20px 20px;text-align: right;">
+                                                    <el-pagination
+                                                            layout="prev, pager, next, jumper, total"
+                                                            :page-size="placeHistoryData.pageSize"
+                                                            :current-page.sync="placeHistoryData.pageNum"
+                                                            :total ="placeHistoryData.total"
+                                                            @current-change="placeHistoryChangeSearch">
+                                                    </el-pagination>
+                                                </div>
+                                                <span class="span" @click="placeHistoryHandle" slot="reference">点击记录</span>
+                                            </el-popover>
                                         </div>
                                     </div>
                                     <div class="other-mes" style="margin-top:10px">
@@ -508,6 +552,23 @@
             return {
                 editableTabsValue:'1',
                 bigImgVisble:false,
+
+                ownerHistoryData:{
+                    pageNum: 1,
+                    pageSize: 5,
+                    total: 0,
+                    list: [
+
+                    ],
+                },
+                placeHistoryData:{
+                    pageNum: 1,
+                    pageSize: 5,
+                    total: 0,
+                    list: [
+
+                    ],
+                },
                 houseDataForm: {
                     number:'',
                     imgurl:[],
@@ -727,6 +788,55 @@
         filter:{
         },
         methods: {
+            searchownerHistory(){
+                var that = this;
+                var postData = {
+                    houseId: this.id,
+                    type:'1',
+                    page:this.ownerHistoryData.pageNum,
+                    size:this.ownerHistoryData.pageSize,
+                };
+
+                HouseApi.getHistory(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.ownerHistoryData = result.data;
+                }).catch(error => {
+                    console.log('getHistory_error'+error);
+                });
+            },
+            searchplaceHistory(){
+                var that = this;
+                var postData = {
+                    houseId: this.id,
+                    type:'1',
+                    page:this.placeHistoryData.pageNum,
+                    size:this.placeHistoryData.pageSize,
+                };
+
+                HouseApi.getHistory(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.placeHistoryData = result.data;
+                }).catch(error => {
+                    console.log('getHistory_error'+error);
+                });
+            },
+            ownerHistoryHandle(){
+                this.ownerHistoryData.pageNum=1;
+                this.searchownerHistory();
+            },
+            placeHistoryHandle(){
+                this.placeHistoryData.pageNum=1;
+                this.searchplaceHistory();
+            },
+            ownerHistoryChangeSearch(val){
+                this.ownerHistoryData.pageNum=val;
+                this.searchownerHistory();
+            },
+            placeHistoryChangeSearch(val){
+                this.placeHistoryData.pageNum=val;
+                this.searchplaceHistory();
+            },
+
             coverHandel(index){
                 this.coverUrl = this.houseDataForm.imgurl[index];
             },  //走马灯切换
