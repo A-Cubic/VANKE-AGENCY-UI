@@ -9,29 +9,33 @@
                         </div>
                         <div class="user-mes">
                             <div class="user_name">
-                                {{basic.relname}}
+                                <span class="spanlabel">编号：</span>
+                                <span class="spancolor"> {{basic.user_no}}</span>
                             </div>
                             <div class="user_name">
-                                {{basic.user_no}}
+                                <span class="spanlabel">姓名：</span>
+                                <span class="spancolor"> {{basic.relname}}</span>
                             </div>
                             <div class="user_name">
-                                {{basic.store_name}}
+                                <span class="spanlabel">门店：</span>
+                                <span class="spancolor"> {{basic.store_name}}</span>
                             </div>
                             <div class="user_name">
-                                {{basic.desc}}
+                                <span class="spanlabel">角色：</span>
+                                <span class="spancolor"> {{basic.desc}}</span>
                             </div>
                         </div>
                     </div>
                 </el-col>
                 <el-col :span="8">
                     <div class="grid-content-col8">
-                        <div class="title">当前业绩</div>
+                        <div class="title" style="font-size: 18px;">当前业绩</div>
                         <div class="number">{{basic.current_score}}</div>
                     </div>
                 </el-col>
                 <el-col :span="8">
                     <div class="grid-content-col8">
-                        <div class="title">潜在业绩</div>
+                        <div class="title" style="font-size: 18px;">潜在业绩</div>
                         <div class="number">{{basic.latent_score}}</div>
                     </div>
                 </el-col>
@@ -88,13 +92,13 @@
                 <el-col :span="6">
                     <div class="grid-content">
                         <el-card class="box-card" shadow="always">
-                            <div slot="header" class="clearfix">优质房源</div>
+                            <div slot="header" class="clearfix" style="font-size: 18px;">优质房源</div>
                             <div v-for="(item, index) in goodHouseList" :key="index" class="text item highQuality">
                                 <router-link tag="a" target="_blank" :to="'/admin/houseDetails/'+item.id">{{ item.xiaoquName }}</router-link>
                             </div>
                         </el-card>
                         <el-card class="box-card" shadow="always">
-                            <div slot="header" class="clearfix">最新房源</div>
+                            <div slot="header" class="clearfix" style="font-size: 18px;">最新房源</div>
                             <div v-for="(item, index) in newsList" :key="index" class="text item highQuality">
                                 <router-link tag="a" target="_blank" :to="'/admin/houseDetails/'+item.id">{{ item.xiaoquName }}</router-link>
                             </div>
@@ -247,6 +251,15 @@ export default {
 <style lang="less">
 @import "../assets/css/element.less";
 .home {
+    .spanlabel{
+        color:#c51010;
+        display:inline-block;
+        /*width:50px;*/
+    }
+    .spancolor{
+        color: #909399;
+    }
+
     /*border:1px solid red;*/
     .home-template{
         width: 100%;

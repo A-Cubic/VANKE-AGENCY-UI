@@ -60,6 +60,9 @@ export default {
         return API.POST('guest/updateState', params)
     },
 
-
+    // 修改维护人（共享池）
+    updateIsshareUser: params => {
+        return API.POST('guest/updateIsshareUser', params)
+    },
 
 }

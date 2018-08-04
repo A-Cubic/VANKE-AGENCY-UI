@@ -24,14 +24,14 @@
                     <el-menu-item index="/admin/achievements">业绩</el-menu-item>
                     <el-menu-item index="/admin/personal">个人</el-menu-item>
                     <el-menu-item index="/admin/audit">审核</el-menu-item>
-                    <el-menu-item index="/admin/register">注册</el-menu-item>
-                    <el-menu-item index="/admin/achievementsT">业绩2</el-menu-item>
-                    <el-menu-item index="/admin/registerShop">注册门店</el-menu-item>
+                    <el-menu-item index="/admin/register">账号注册</el-menu-item>
+                    <el-menu-item index="/admin/achievementsT">业绩统计</el-menu-item>
+                    <el-menu-item index="/admin/registerShop">门店注册</el-menu-item>
                    
                 </el-menu>
 
             </nav>
-            <span class="identity">{{basic.relname+' | '+basic.desc}}</span>
+            <span class="identity">{{basic.relname+' · '+basic.desc}}</span>
             <span class="f22">
                 <i class="el-icon-tickets " @click="addressBook.visible = true"></i>
             </span>
@@ -171,20 +171,22 @@ export default {
     methods: {
 
         userLogout(){
-            const that = this;
-            let postData={};
-            LoginApi.logout(postData).then(function (result) {
-                            console.log(result)
-                            if(typeof(result) != "object"){result = JSON.parse(result)}
-                                console.log('~~',result);
-                                that.$message.success({showClose: true, message:'退出成功！', duration: 2000});
-                            //  登出成功 后 清空角色和token 跳转
-                                setRole('');
-                                setToken('');
-                                that.$router.push({path: '/admin/default.vue'});
-                        }).catch(error => {
-                            console.log('login_error');
-                        })
+            setRole('');
+            setToken('');
+            this.$router.push({path: '/admin/default.vue'});
+//            const that = this;
+//            let postData={};
+//            LoginApi.logout(postData).then(function (result) {
+//                            console.log(result)
+//                            if(typeof(result) != "object"){result = JSON.parse(result)}
+//                                that.$message.success({showClose: true, message:'退出成功！', duration: 2000});
+//                            //  登出成功 后 清空角色和token 跳转
+//                                setRole('');
+//                                setToken('');
+//                                that.$router.push({path: '/admin/default.vue'});
+//                        }).catch(error => {
+//                            console.log('login_error');
+//                        })
         },
         getUserIdentity(){
             var that = this;
@@ -215,7 +217,6 @@ export default {
 
         },
         wsNotice(data) {
-            console.log('Notice', data)
             if(data === 0){
                 data = undefined
             }
@@ -234,10 +235,10 @@ export default {
             this.$router.push({path: '/log'});
         },
         handleOpen(key, keyPath) {
-            console.log(key, keyPath);
+//            console.log(key, keyPath);
         },
         handleClose(key, keyPath) {
-            console.log(key, keyPath);
+//            console.log(key, keyPath);
         },
         // view_application(item){
         //     this.$refs.viewRequisition.$emit('start', this.copy(item));

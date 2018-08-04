@@ -11,14 +11,14 @@ const whiteList = ['/default']
 
 router.beforeEach((to, from, next) => {
   if (getToken()) {
-      console.log('123213213123213')
+      // console.log('123213213123213')
       if (hasPermission(getRole(), to.meta.roles)) {
           next()//
       } else {
           next({ path: '/401', replace: true, query: { noGoBack: true }})
       }
   } else {
-      console.log('33333333333333')
+      // console.log('33333333333333')
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {

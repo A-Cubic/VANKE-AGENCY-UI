@@ -23,6 +23,16 @@
                                         :score-template="formUser.guestgrade">
                                 </el-rate>
                             </div>
+
+                            <el-button type="primary"
+                                       size="small"
+                                       icon="el-icon-upload2"
+                                       style="float:right"
+                                       v-show="formUser.isshare=='1'?true:false"
+                                       @click="updateIsShareGuest">
+                                升级成为维护人
+                            </el-button>
+
                         </li>
                         <li>
                             <span class="user-title">客源编号： </span>
@@ -35,12 +45,15 @@
                             <span class="user-mes">{{formUser.createTime}}</span>
                         </li>
                         <li>
-                            <span class="user-title">标签：</span>
-                            <el-tag type="success">
+                            <!--<span class="user-title">标签：</span>-->
+                            <el-tag type="success" v-show="formUser.label==null || formUser.label==''?false:true">
                                 {{ formUser.label }}
                             </el-tag>
                             <el-tag v-show="formUser.iskey=='1'?true:false" type="danger">
                                 无效客源
+                            </el-tag>
+                            <el-tag v-show="formUser.isshare=='1'?true:false">
+                                共享池
                             </el-tag>
                         </li>
                     </ul>
@@ -393,20 +406,21 @@
                     recordTime: '',
                     createTime: '',
                     label: '',//自定义标签
-                    phone: "",  //联系电话
-                    phonetow: "",//备用电话
+                    phone: '',  //联系电话
+                    phonetow: '',//备用电话
+                    isshare:'',
                 },
                 needForm:{
-                    type: "",  //客源类型(0:买,1:租)
-                    heartprice: "",  //心里价位
-                    remarks: "",  //备注简介
-                    areas: "",  //需求面积
-                    position: "",//位置
-                    huxingshi: "",  //需求几室
-                    huxingting: "",  //需求几厅
-                    huxingwei: "",  //需求几卫
-                    huxingchu: "",  //需求几厨
-                    purpose: "",  //目的用途
+                    type: '',  //客源类型(0:买,1:租)
+                    heartprice: '',  //心里价位
+                    remarks: '',  //备注简介
+                    areas: '',  //需求面积
+                    position: '',//位置
+                    huxingshi: '',  //需求几室
+                    huxingting: '',  //需求几厅
+                    huxingwei: '',  //需求几卫
+                    huxingchu: '',  //需求几厨
+                    purpose: '',  //目的用途
                 },
                 remarkForm:{
                     pageSize: 10,
@@ -484,6 +498,9 @@
             this.doSearch();
         },
         methods: {
+            updateIsShareGuest(){
+
+            },
             doSearch(){
                 var that = this;
                 var gid = this.id;
@@ -495,6 +512,7 @@
                 };
 
                 GuestApi.guestDetail(postData).then(function (result) {
+                    console.log(result);
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     if(result.data==0){
                         that.pageVisbaleEmpty=true;

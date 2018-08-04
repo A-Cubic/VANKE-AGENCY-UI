@@ -124,15 +124,12 @@
             //     });
             // },
             handleLoginReal(){
-                console.log()
                 let that = this;
                 this.$refs.loginForm.validate((valid) => {
-                    console.log(valid)
                     if (valid) {
                         this.logining = true;
                         var postData = {"username": that.loginForm.code, "password": that.loginForm.checkPass};
                         LoginApi.login(postData).then(function (result) {
-                            console.log(result)
                             if(typeof(result) != "object"){result = JSON.parse(result)}
                             that.logining = false;
                             if(result.code == 701){

@@ -105,5 +105,10 @@ export default {
         return API.POST('house/updateImg', params)
     },
 
+    // 修改维护人
+    updateIsShare: params => {
+        return API.POST('house/updateIsShare', params)
+    },
+
 
 }
