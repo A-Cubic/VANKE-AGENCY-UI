@@ -21,7 +21,7 @@
                                 <!--</el-upload>-->
                                 <div v-show="houseDataForm.imgurl ==null || houseDataForm.imgurl.length == 0" class="blockCover" >暂无图片</div>
                                 <div v-show="houseDataForm.imgurl !=null || houseDataForm.imgurl.length > 0" class="imgCover">
-                                    <img :src="coverUrl" alt="暂无图片">
+                                    <img :src="coverUrl" @click="bigClick" alt="暂无图片">
                                 </div>
                                 <el-carousel v-show="houseDataForm.imgurl !=null && houseDataForm.imgurl.length > 0"
                                              class="carousel-wrap"
@@ -29,10 +29,9 @@
                                              :interval="5000"
                                              type="card"
                                              height="110px"
-                                             @change="coverHandel"
-                                             >
+                                             @change="coverHandel">
                                     <el-carousel-item v-for="(item, index) in houseDataForm.imgurl" :key="index">
-                                        <img @click="carouselClick" :src="item" alt="" >
+                                        <img :src="item" alt="" >
                                     </el-carousel-item>
                                 </el-carousel>
                             </div>
@@ -524,15 +523,43 @@
                     <!--</span>-->
                 </el-dialog>
 
+                <el-dialog :visible.sync="bigImgVisble" width="0" top="68px">
+                    <div style="position: fixed;top: 0;left: 0;bottom: 0;right: 0;z-index: 1000;">
+                        <div style="position: absolute;top: 10%;bottom: 19%;left: 0;right: 0;text-align: center;">
+                            <div style="height: 100%;width:100%">
+                                <div style="position: absolute;top: 0;right:0px;height: 100%;width: 50%;cursor: pointer;" @click="nextBig">
+                                    <img src="http://cubic-vanke.oss-cn-qingdao.aliyuncs.com/home/jiantou.png" style="position:absolute;top:30%;right:20px;width:150px ">
+                                </div>
+                                <div style="position: absolute;top: 0;left: 0;height: 100%;width: 50%;cursor: pointer;" @click="preBig">
+                                    <img src="http://cubic-vanke.oss-cn-qingdao.aliyuncs.com/home/jiantou.png" style="position:absolute;top:27%;left:20px;transform: rotate(180deg);width:150px">
+                                </div>
+                                <div  class="imgCover">
+                                    <img :src="coverUrlBig" @click="bigClick" style="width:800px;height:600px" alt="暂无图片">
+                                </div>
+                            </div>
+                            <div style="position: absolute;right: 30px;top: 0px;user-select: none;cursor: pointer;background: url('http://cubic-vanke.oss-cn-qingdao.aliyuncs.com/home/cha.png') 0% 0% / 33px 33px no-repeat;display: inline-block;width: 33px;height: 33px;"
+                                 @click="bigImgVisble=false"></div>
 
-                <el-dialog :visible.sync="bigImgVisble" width="100%">
-                    <el-carousel autoplay="false" arrow="always"
-                                 @change="coverHandel1">
-                        <el-carousel-item v-for="(item, index) in houseDataForm.imgurl" :key="index">
-                            <img :src="item" alt="">
-                        </el-carousel-item>
-                    </el-carousel>
+                        <!--<el-carousel :autoplay="false" arrow="never" type="card"-->
+                                     <!--@change="coverHandel1"  indicator-position="none" >-->
+                            <!--<el-carousel-item v-for="(item, index) in houseDataForm.imgurl" :key="index">-->
+                                <!--<img :src="item" alt="">-->
+                            <!--</el-carousel-item>-->
+                        <!--</el-carousel>-->
+                        </div>
+                        <div style=" position: absolute;left: 50%;bottom: 0;margin-left: -500px;width: 1000px;">
+                            <el-row type="flex" class="row-bg" style="text-align: center;margin-bottom: 25px;overflow: hidden;white-space: nowrap;font-size: 0;">
+                                <el-col :span="24" >
+                                    <img :src="item"
+                                         v-for="(item, index) in houseDataForm.imgurl"
+                                         :key="index" :class="coverBigIndex==index?'smallImg1':'smallImg2'"
+                                        @click="smallClick(index)">
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </div>
                 </el-dialog>
+
             </el-row>
         </div>
     </section>
@@ -608,6 +635,9 @@
                 uploadData:{},  //提交postData
                 curToken: {Authorization: getToken()},
                 coverUrl: '',
+                coverIndex:0,
+                coverUrlBig:'',
+                coverBigIndex:0,
                 carouselList:[
                     {
                         imgUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2604583878,933342668&fm=27&gp=0.jpg'
@@ -840,9 +870,38 @@
 
             coverHandel(index){
                 this.coverUrl = this.houseDataForm.imgurl[index];
+                this.coverIndex = index;
             },  //走马灯切换
-            carouselClick(index){
-              console.log(index);
+            bigClick(index){
+                this.bigImgVisble=true;
+                var that = this;
+                that.coverUrlBig=this.coverUrl;
+                that.coverBigIndex = this.coverIndex;
+
+//                console.log("bigClick"+index);
+            },
+            nextBig(){
+                var that = this;
+                var index = that.coverBigIndex+1;
+                 if(index==this.houseDataForm.imgurl.length){
+                     index=this.coverBigIndex;
+                 }
+                that.coverBigIndex=index;
+                that.coverUrlBig = this.houseDataForm.imgurl[index];
+            },
+            preBig(){
+                var that = this;
+                var index = that.coverBigIndex-1;
+                if(index<0){
+                    index=0;
+                }
+                that.coverBigIndex=index;
+                that.coverUrlBig = this.houseDataForm.imgurl[index];
+            },
+            smallClick(index){
+                var that = this;
+                that.coverBigIndex=index;
+                that.coverUrlBig = this.houseDataForm.imgurl[index];
             },
             coverHandel1(index){
                 this.coverUrl = this.houseDataForm.imgurl[index];
@@ -1522,6 +1581,21 @@
 </script>
 <style lang="less">
     @import "../assets/css/element.less";
+    .smallImg1 {
+         text-align: center;
+         width:100px;
+         height:80px;
+         margin-left:10px;
+         cursor: pointer;
+         border: 2px solid red
+     }
+    .smallImg2 {
+        text-align: center;
+        width:100px;
+        height:80px;
+        margin-left:10px;
+        cursor: pointer;
+    }
     .house-details {
         /*border:1px solid red;*/
         .house-template{
