@@ -111,7 +111,7 @@ const routes= [
             {   path: 'houseResource',          component: HouseResource,       name: '房源',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},
             {   path: 'passengerOrigin',        component: PassengerOrigin,     name: '客源',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},
             {   path: 'clinchDeal',             component: ClinchDeal,          name: '成交' ,meta: {defaultShow: true, roles: ['ROLE_USER']}},
-            {   path: 'achievements',           component: Achievements,        name: '业绩',meta: {defaultShow: true, roles: ['ROLE_MANAGER','ROLE_USER','ROLE_SEC']}},
+            {   path: 'achievements',           component: Achievements,        name: '业绩',meta: {defaultShow: true, roles: ['ROLE_MANAGER','ROLE_USER']}},
             {   path: 'personal',               component: Personal,            name: '个人',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER','ROLE_SEC']}},
             {   path: 'audit',                  component: Audit,               name: '审核',meta: {defaultShow: true, roles: ['ROLE_MANAGER','ROLE_SEC']}},
             {   path: 'register',               component: Register,            name: '账号注册',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_SEC']}},

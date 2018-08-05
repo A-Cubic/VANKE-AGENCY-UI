@@ -1,8 +1,6 @@
 <template>
     <section class="passengerDetails">
-        <div v-show="pageVisbaleEmpty">你已无权查看此页</div>
-
-        <div v-show="pageVisbaleData" class="detail-template">
+        <div class="detail-template">
             <!-- 这条信息的id是{{id}} -->
 
             <el-row :gutter="25">
@@ -70,7 +68,7 @@
                                     <el-col :span="1"></el-col>
                                     <el-col :span="10">
                                         <span class="spanlabel">心里价位： </span>
-                                        <span>¥{{needForm.heartprice}}</span>
+                                        <span>{{needForm.heartprice}}¥</span>
                                     </el-col>
                                     <el-col :span="3"></el-col>
                                 </el-row>
@@ -176,8 +174,8 @@
                 </el-col>
 
 
-                <el-col :span="6">
-                    <ul class="maintain-content" v-show="formUser.isshare=='1'?false:true">
+                <el-col :span="6" >
+                    <ul class="maintain-content" v-show="formUser.isshare=='1' || formUser.user_type=='0'?false:true">
                         <li>
                             <div class="maintain-content-header">联系</div>
                             <el-popover
@@ -414,6 +412,7 @@
                     phone: '',  //联系电话
                     phonetow: '',//备用电话
                     isshare:'',
+                    user_type:''
                 },
                 needForm:{
                     type: '',  //客源类型(0:买,1:租)

@@ -36,7 +36,7 @@
                 </el-menu>
 
             </nav>
-            <span class="identity">{{basic.relname+' · '+basic.desc}}</span>
+            <span class="identity">{{basic.store_name + ' · ' + basic.desc + ' · ' + basic.relname }}</span>
             <span class="f22">
                 <el-popover
                         placement="bottom-start"
@@ -227,7 +227,7 @@ export default {
         },
         initWebsocket() {
             // this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
-            this.vankeWebsocket = new WebSocket('ws://172.16.10.103:9999/vanke/com/ws/?token=' + getToken());
+            this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
             this.vankeWebsocket.onopen = this.wsOnOpen;
             this.vankeWebsocket.onmessage = this.wsOnMessage;
             this.vankeWebsocket.onclose = this.wsOnClose;

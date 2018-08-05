@@ -92,7 +92,7 @@
                                                             @current-change="ownerHistoryChangeSearch">
                                                     </el-pagination>
                                                 </div>
-                                                <span class="span" @click="ownerHistoryHandle" slot="reference">点击记录</span>
+                                                <span class="span" @click="ownerHistoryHandle" slot="reference">历史记录</span>
                                             </el-popover>
                                         </div>
                                     </div>
@@ -121,13 +121,13 @@
                                                             @current-change="placeHistoryChangeSearch">
                                                     </el-pagination>
                                                 </div>
-                                                <span class="span" @click="placeHistoryHandle" slot="reference">点击记录</span>
+                                                <span class="span" @click="placeHistoryHandle" slot="reference">历史记录</span>
                                             </el-popover>
                                         </div>
                                     </div>
                                     <div class="other-mes" style="margin-top:10px">
-                                        <span><el-tag v-show="houseDataForm.isshare=='1'?true:false" >共享池</el-tag></span>
-                                        <span><el-tag v-show="otherForm.isspecial=='1'?true:false" type="warning">特殊房源</el-tag></span>
+                                        <span><el-tag v-show="houseDataForm.isshare=='1'?true:false">共享池</el-tag></span>
+                                        <span><el-tag v-show="otherForm.isspecial=='1'?true:false" type="warning" >特殊房源</el-tag></span>
                                         <span><el-tag v-show="otherForm.isfine=='1'?true:false" type="success">优质房源</el-tag></span>
                                         <span><el-tag v-show="otherForm.state=='1'?true:false" type="danger">无效房源</el-tag></span>
                                     </div>
@@ -154,14 +154,14 @@
                                     </el-button>
                                 </div>
 
-                                <div :class="houseDataForm.examineState=='0' ? 'radius-block ' :(houseDataForm.explorationTimeType=='1'&& user_type=='0') ? 'radius-block ' : (radiusForm.explorationrelName!=null && radiusForm.explorationrelName!='')? 'radius-block ' : 'radius-block radius-data-btn'">
+                                <div :class="houseDataForm.examineState=='0' ? 'radius-block ' :(houseDataForm.explorationTimeType=='1'&& houseDataForm.user_type=='0') ? 'radius-block ' : (radiusForm.explorationrelName!=null && radiusForm.explorationrelName!='')? 'radius-block ' : 'radius-block radius-data-btn'">
                                     <div><i class="iconfont icon-xiangji"></i></div>
                                     <div>实勘</div>
                                     <div class="radius-data">{{ radiusForm.explorationrelName=='' || radiusForm.explorationrelName==null?"暂无": radiusForm.explorationrelName}}</div>
                                     <el-button type="text"
                                                size="small"
                                                icon="el-icon-plus"
-                                               v-show="houseDataForm.examineState=='0' ? false :(houseDataForm.explorationTimeType=='1'&& user_type=='0') ? false : (radiusForm.explorationrelName!=null && radiusForm.explorationrelName!='')? false : true"
+                                               v-show="houseDataForm.examineState=='0' ? false :(houseDataForm.explorationTimeType=='1'&& houseDataForm.user_type=='0') ? false : (radiusForm.explorationrelName!=null && radiusForm.explorationrelName!='')? false : true"
                                                @click="examineHandel">
                                     </el-button>
                                 </div>
@@ -306,7 +306,7 @@
                                          class="demo-ruleForm"
                                          label-position="left">
                                     <el-form-item label="特殊房源:">
-                                        <el-switch v-model="otherForm.isspecial==0 || otherForm.isspecial==2 || otherForm.isspecial==null?false:true"></el-switch>
+                                        <el-switch v-model="otherForm.isspecial==0 || otherForm.isspecial==2 || otherForm.isspecial==null?false:true" disabled></el-switch>
                                         <el-tag type="warning" v-show="otherForm.isspecial>1?true:false">等待审核中</el-tag>
                                         <el-button type="text" size="mini"
                                                    @click="isspecialHandel"
@@ -314,7 +314,7 @@
                                         </el-button>
                                     </el-form-item>
                                     <el-form-item label="无效房源:">
-                                        <el-switch v-model="otherForm.state==0 || otherForm.state==2 || otherForm.state==null?false:true"></el-switch>
+                                        <el-switch v-model="otherForm.state==0 || otherForm.state==2 || otherForm.state==null?false:true" disabled></el-switch>
                                         <el-tag type="warning" v-show="otherForm.state>1?true:false">等待审核中</el-tag>
                                         <el-button type="text" size="mini"
                                                    @click="stateHandel"
@@ -322,7 +322,7 @@
                                         </el-button>
                                     </el-form-item>
                                     <el-form-item label="优质房源:">
-                                        <el-switch v-model="otherForm.isfine==0 || otherForm.isfine==2 || otherForm.isfine==null?false:true"></el-switch>
+                                        <el-switch v-model="otherForm.isfine==0 || otherForm.isfine==2 || otherForm.isfine==null?false:true" disabled></el-switch>
                                         <el-tag type="warning" v-show="otherForm.isfine>1?true:false">等待审核中</el-tag>
                                         <el-button type="text" size="mini"
                                                    @click="isfineHandel"
@@ -378,9 +378,9 @@
                     </span>
                 </el-dialog>
 
-                <el-dialog title="实勘添加" :visible.sync="examineVisible" width="80%">
+                <el-dialog title="实勘添加" :visible.sync="examineVisible" width="80%"  >
                     <el-form :model="examineForm" ref="examineForm" label-width="60px"
-                             class="demo-ruleForm examine-form">
+                             class="demo-ruleForm examine-form" v-loading="examineLoading">
                         <el-form-item label="室:">
                             <el-upload
                                     action=""
@@ -550,6 +550,7 @@
         props: ['id'],
         data() {
             return {
+                examineLoading:false,
                 editableTabsValue:'1',
                 bigImgVisble:false,
 
@@ -926,7 +927,7 @@
             },  //查看地址信息
 
             examineHandel(){
-                if(houseDataForm.isshare=='1'){
+                if(this.houseDataForm.isshare=='1'){
                     Message.error("此房源是共享房源，不能添加实勘图！");
                     return;
                 }
@@ -978,7 +979,7 @@
                 });
             },//添加维护人（共享池状态）
             keyHandel(){
-                if(houseDataForm.isshare=='1'){
+                if(this.houseDataForm.isshare=='1'){
                     Message.error("此房源是共享房源，不能添加钥匙所有人！");
                     return;
                 }
@@ -1457,6 +1458,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
+                        that.examineLoading = true;
                         var shiImgList=[],tingImgList=[],weiImgList=[],chuImgList=[],huxingImgList=[],otherImgList=[];
 
                         for(let i=0;i<that.examineForm.bedroom.length;i++){
@@ -1483,12 +1485,29 @@
                             otherImgList: otherImgList,
                         };
                         HouseApi.updateImg(postData).then(function (result) {
-                            console.log(result);
+
                             if(typeof(result) != "object"){result = JSON.parse(result)}
-                            that.examineVisible = false;
+                            that.examineLoading = false;
                             Message({
                                 message: '提交成功，请等待审核',
                                 type: 'success'
+                            });
+                            that.examineVisible = false;
+                            var postData1 = {
+                                id: hid
+                            };
+                            HouseApi.housedetail(postData1).then(function (result) {
+                                if(typeof(result) != "object"){result = JSON.parse(result)}
+                                that.houseDataForm=result.data;
+                                that.otherForm=result.data;
+                                that.radiusForm=result.data;
+                                that.editForm = result.data;
+                                that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                                that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                                that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                                that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
+                            }).catch(error => {
+                                console.log('housedetail_error');
                             });
                         }).catch(error => {
                             console.log('updateImg_error');

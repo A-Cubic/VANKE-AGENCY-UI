@@ -12,7 +12,7 @@
                     </el-input>
                     <!--<el-input size="medium" v-model="formData.searchText" placeholder="请输入区域、街道或小区名找房源"></el-input>-->
                     <!--<el-button size="medium"  type="primary" icon="el-icon-search" @click="search">搜索</el-button>-->
-                    <el-button type="primary" icon="el-icon-plus" class="add_button" @click="alertAdd.visible=true" round>新增房源</el-button>
+                    <el-button type="primary" icon="el-icon-plus" class="add_button" @click="addHouseHandle" round>新增房源</el-button>
                 </div>
                 <div class="house_search_block">
                     <el-form :model="formData" ref="formData" class="form-wrap">
@@ -1038,16 +1038,19 @@ export default {
             console.log('regionslist_error');
         });
 
-        HouseApi.xiaoqulist().then(function (result) {
-            if(typeof(result) != "object"){result = JSON.parse(result)}
-            that.alertAdd.ruleForm.xiaoquOptions=result.data;
-        }).catch(error => {
-            console.log('xiaoqulist_error');
-        });
-
     },
 
     methods: {
+        addHouseHandle(){
+            this.alertAdd.visible=true;
+            var that = this;
+            HouseApi.xiaoqulist().then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.alertAdd.ruleForm.xiaoquOptions=result.data;
+            }).catch(error => {
+                console.log('xiaoqulist_error');
+            });
+        },
         querySearch(queryString, cb) {
             var restaurants = this.alertAdd.ruleForm.xiaoquOptions;
             var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
@@ -1074,7 +1077,7 @@ export default {
         },
 
         submitAdd(ruleForm){
-            var that = this;
+
         	if(this.alertAdd.active == 0){
         		  this.$refs[ruleForm].validate((valid) => {
                   if (valid) {
@@ -1083,8 +1086,13 @@ export default {
                           cancelButtonText: '取消',
                           type: 'warning'
                         }).then(() => {
-                            HouseApi.addhouse(this.alertAdd.ruleForm).then(function (result) {
+                            var that = this;
+                            HouseApi.addhouse(that.alertAdd.ruleForm).then(function (result) {
                                 if(typeof(result) != "object"){result = JSON.parse(result)}
+                                if(result.data=='0'){
+                                    Message.error("此房源已存在！");
+                                    return;
+                                }
                                 Message({
                                     message: "新增房源成功",
                                     type: 'success'
@@ -1092,20 +1100,19 @@ export default {
                                 that.alertAdd.visible=false;
                                 that.resetForm(ruleForm);
 
-                                var that = this;
                                 var postData = {
-                                    priceUp: this.formData.priceUp,
-                                    priceDown: this.formData.priceDown,
-                                    searchText: this.formData.searchText,
-                                    rangeType: this.formData.rangeType,
-                                    type: this.formData.type,
-                                    positionType: this.formData.positionType,
-                                    priceType: this.formData.priceType,
-                                    areaType: this.formData.areaType,
-                                    huxingType: this.formData.huxingType,
-                                    chaoxiangType: this.formData.chaoxiangType,
-                                    floorType: this.formData.floorType,
-                                    page: this.tableData.pageNum,
+                                    priceUp: that.formData.priceUp,
+                                    priceDown: that.formData.priceDown,
+                                    searchText: that.formData.searchText,
+                                    rangeType: that.formData.rangeType,
+                                    type: that.formData.type,
+                                    positionType: that.formData.positionType,
+                                    priceType: that.formData.priceType,
+                                    areaType: that.formData.areaType,
+                                    huxingType: that.formData.huxingType,
+                                    chaoxiangType: that.formData.chaoxiangType,
+                                    floorType: that.formData.floorType,
+                                    page: that.tableData.pageNum,
                                     size: 10
                                 }
                                 HouseApi.houselist(postData).then(function (result) {
@@ -1115,7 +1122,7 @@ export default {
                                     console.log('houselist_error');
                                 });
                             }).catch(error => {
-                                console.log('addhouse_error');
+                                console.log('addhouse_error'+error);
                             });
                         }).catch(() => {
                           // Message({
