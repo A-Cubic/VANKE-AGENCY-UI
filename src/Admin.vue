@@ -102,6 +102,7 @@ import LoginApi from './api/api_user';
 import { setRole, setToken } from './util/global';
     // import Default from './component/default'
     import { getToken, WsCall, addWsCall, clearWsCall }               from './util/global';
+import Vue from 'vue';
 export default {
     name: 'app',
     ws: null,
@@ -112,8 +113,8 @@ export default {
             activeIndex2: '1',
             // 获取用户信息名称 角色
             userIdentity:{
-                userName:'大魔头',
-                identity:'店长',
+                userName:'',
+                identity:'',
             },
             basic:{
                 avatar:'',
@@ -206,6 +207,7 @@ export default {
 //                        })
         },
         getUserIdentity(){
+            // console.log(this.$router.options.routes[0].children)
             var that = this;
             HomeApi.userinfo().then(function (result) {
                 if(typeof(result) != "object"){result = JSON.parse(result)}
@@ -215,7 +217,8 @@ export default {
             });
         },
         initWebsocket() {
-            this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
+            // this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
+            this.vankeWebsocket = new WebSocket('ws://172.16.10.103:9999/vanke/com/ws/?token=' + getToken());
             this.vankeWebsocket.onopen = this.wsOnOpen;
             this.vankeWebsocket.onmessage = this.wsOnMessage;
             this.vankeWebsocket.onclose = this.wsOnClose;
