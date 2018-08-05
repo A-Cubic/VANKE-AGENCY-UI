@@ -19,7 +19,7 @@
 
                     <template  v-for="(item) in $router.options.routes[0].children"
                                v-if="item.meta.defaultShow && (item.meta.roles.indexOf(getRole())>=0)">
-                        <el-menu-item :index="item.path">{{item.name}}</el-menu-item>
+                        <el-menu-item :index= "'/Admin/'+item.path">{{item.name}}</el-menu-item>
                     </template>
 
                     <!--<el-menu-item index="/admin/home">首页</el-menu-item>-->
