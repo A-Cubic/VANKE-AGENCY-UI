@@ -17,16 +17,21 @@
                     @open="handleOpen"
                     @close="handleClose">
 
-                    <el-menu-item index="/admin/home">首页</el-menu-item>
-                    <el-menu-item index="/admin/houseResource">房源</el-menu-item>
-                    <el-menu-item index="/admin/passengerOrigin">客源</el-menu-item>
-                    <el-menu-item index="/admin/clinchDeal">成交</el-menu-item>
-                    <el-menu-item index="/admin/achievements">业绩</el-menu-item>
-                    <el-menu-item index="/admin/personal">个人</el-menu-item>
-                    <el-menu-item index="/admin/audit">审核</el-menu-item>
-                    <el-menu-item index="/admin/register">账号注册</el-menu-item>
-                    <el-menu-item index="/admin/achievementsT">业绩统计</el-menu-item>
-                    <el-menu-item index="/admin/registerShop">门店注册</el-menu-item>
+                    <template  v-for="(item) in $router.options.routes[0].children"
+                               v-if="item.meta.defaultShow && (item.meta.roles.indexOf(getRole())>=0)">
+                        <el-menu-item :index="item.path">{{item.name}}</el-menu-item>
+                    </template>
+
+                    <!--<el-menu-item index="/admin/home">首页</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/houseResource">房源</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/passengerOrigin">客源</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/clinchDeal">成交</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/achievements">业绩</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/personal">个人</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/audit">审核</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/register">账号注册</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/achievementsT">业绩统计</el-menu-item>-->
+                    <!--<el-menu-item index="/admin/registerShop">门店注册</el-menu-item>-->
                    
                 </el-menu>
 
@@ -101,7 +106,8 @@ import HomeApi from './api/api_home.js';
 import LoginApi from './api/api_user';
 import { setRole, setToken } from './util/global';
     // import Default from './component/default'
-    import { getToken, WsCall, addWsCall, clearWsCall }               from './util/global';
+    import { getToken, getRole, WsCall, addWsCall, clearWsCall }               from './util/global';
+    import router from './router/router';
 import Vue from 'vue';
 export default {
     name: 'app',
@@ -158,6 +164,9 @@ export default {
         clearWsCall();
     },
     methods: {
+        getRole(){
+          return getRole();
+        },
         handleCurrentChangeSearch(val){
             this.message.pageNum = val;
             this.doSearchNotice();

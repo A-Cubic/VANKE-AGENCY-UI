@@ -103,19 +103,20 @@ const routes= [
 
     {   path: '/Admin',
         component: Admin,
+        meta: { },
         children:[
-            {   path: 'houseDetails/:id',       component: HouseDetails,        name: '房源详情',  props: true,meta: {roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},// 房源详情
-            {   path: 'passengerDetails/:id',   component: passengerDetails,    name: '客源详情',  props: true,meta: {roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},// 客源详情
-            {   path: 'home',                   component: Home,                name: '首页',meta: {roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER','ROLE_SEC']}},
-            {   path: 'houseResource',          component: HouseResource,       name: '房源',meta: {roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},
-            {   path: 'passengerOrigin',        component: PassengerOrigin,     name: '客源',meta: {roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},
-            {   path: 'clinchDeal',             component: ClinchDeal,          name: '成交' ,meta: {roles: ['ROLE_USER']}},
-            {   path: 'achievements',           component: Achievements,        name: '业绩',meta: {roles: ['ROLE_MANAGER','ROLE_USER','ROLE_SEC']}},
-            {   path: 'personal',               component: Personal,            name: '个人',meta: {roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER','ROLE_SEC']}},
-            {   path: 'audit',                  component: Audit,               name: '审核',meta: {roles: ['ROLE_MANAGER','ROLE_SEC']}},
-            {   path: 'register',               component: Register,            name: '账号注册',meta: {roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_SEC']}},
-            {   path: 'achievementsT',           component: AchievementsT,        name: '业绩统计',meta: {roles: ['ROLE_ADMIN','ROLE_LEADER']}},
-            {   path: 'registerShop',           component: RegisterShop,        name: '门店注册',meta: {roles: ['ROLE_ADMIN']}},
+            {   path: 'houseDetails/:id',       component: HouseDetails,        name: '房源详情',  props: true,meta: {defaultShow: false, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},// 房源详情
+            {   path: 'passengerDetails/:id',   component: passengerDetails,    name: '客源详情',  props: true,meta: {defaultShow: false, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},// 客源详情
+            {   path: 'home',                   component: Home,                name: '首页',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER','ROLE_SEC']}},
+            {   path: 'houseResource',          component: HouseResource,       name: '房源',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},
+            {   path: 'passengerOrigin',        component: PassengerOrigin,     name: '客源',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER']}},
+            {   path: 'clinchDeal',             component: ClinchDeal,          name: '成交' ,meta: {defaultShow: true, roles: ['ROLE_USER']}},
+            {   path: 'achievements',           component: Achievements,        name: '业绩',meta: {defaultShow: true, roles: ['ROLE_MANAGER','ROLE_USER','ROLE_SEC']}},
+            {   path: 'personal',               component: Personal,            name: '个人',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_MANAGER','ROLE_USER','ROLE_SEC']}},
+            {   path: 'audit',                  component: Audit,               name: '审核',meta: {defaultShow: true, roles: ['ROLE_MANAGER','ROLE_SEC']}},
+            {   path: 'register',               component: Register,            name: '账号注册',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_SEC']}},
+            {   path: 'achievementsT',           component: AchievementsT,        name: '业绩统计',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER']}},
+            {   path: 'registerShop',           component: RegisterShop,        name: '门店注册',meta: {defaultShow: true, roles: ['ROLE_ADMIN']}},
         ] },
 
     {	path: '/default',				component: Default, 			name: '默认首页'},
