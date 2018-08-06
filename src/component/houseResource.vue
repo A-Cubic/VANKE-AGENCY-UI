@@ -157,7 +157,7 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="价钱" prop="price">
-                            <el-input v-model="alertAdd.ruleForm.price" placeholder="房屋价格（必填）"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.price" placeholder="房屋价格（必填）" @change="handleInput"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="7">
@@ -1080,6 +1080,16 @@ export default {
     },
 
     methods: {
+        handleInput(vl){
+            let reg = /^[1-9]\d*$/;
+//            this.alertAdd.ruleForm.price=e.target.value.replace(/[^\d]/g,'');
+            if (vl) {
+                if ( new RegExp(reg).test(vl) == false) {
+                    this.alertAdd.ruleForm.price='';
+                    Message.error("只能输入数字");
+                }
+            }
+        },
         addHouseHandle(){
             this.alertAdd.visible=true;
             var that = this;

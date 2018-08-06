@@ -167,7 +167,7 @@ export default {
                 size: this.tableForm.pageSize
             };
             AchTApi.listAchievementTow(postData).then(function (result) {
-                console.log(result)
+//                console.log(result)
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.tableForm=result.data;
             }).catch(error => {
