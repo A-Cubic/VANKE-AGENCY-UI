@@ -96,7 +96,7 @@
                                         </div>
                                     </div>
                                     <div class="other-mes">
-                                        <div>维护人: <span>{{ houseDataForm.recordrelName==''?"暂无": radiusForm.recordrelName }}</span></div>
+                                        <div>维护人: <span>{{ houseDataForm.recordrelName==''?"暂无": radiusForm.recordrelName+('('+ (radiusForm.recordUesrPhone==''?'无电话': radiusForm.recordUesrPhone) +')') }}</span></div>
                                         <div>房屋等级: <span>{{ houseDataForm.grade }}</span></div>
                                         <div>地址:
                                             <span class="span" @click="placeHandle">查看</span>
@@ -616,7 +616,8 @@
                     likeType:'',
                     user_type:'',
                     examineState:'',
-                    explorationTimeType:''
+                    explorationTimeType:'',
+                    recordUesrPhone:'',
                 },  //左侧头部数据
 
                 ownerVisible: false, //房主信息dialog
@@ -744,6 +745,26 @@
                         label: '西北',
                         value: '8',
                     },
+                    {
+                        label: '东西',
+                        value: '9',
+                    },
+                    {
+                        label: '南北',
+                        value: '10',
+                    },
+                    {
+                        label: '东南北',
+                        value: '11',
+                    },
+                    {
+                        label: '西南北',
+                        value: '12',
+                    },
+                    {
+                        label: '东西南北',
+                        value: '13',
+                    },
                 ],
                 //修改
                 otherForm: {
@@ -839,7 +860,7 @@
                 var that = this;
                 var postData = {
                     houseId: this.id,
-                    type:'1',
+                    type:'2',
                     page:this.placeHistoryData.pageNum,
                     size:this.placeHistoryData.pageSize,
                 };

@@ -146,7 +146,7 @@
         <el-dialog
           title="新增房源"
           :visible.sync="alertAdd.visible"
-          width="80%"
+          width="70%"
           >
           <div >
 
@@ -179,6 +179,11 @@
                                 <el-option label="西南" value="6"></el-option>
                                 <el-option label="东北" value="7"></el-option>
                                 <el-option label="西北" value="8"></el-option>
+                                <el-option label="东西" value="9"></el-option>
+                                <el-option label="南北" value="10"></el-option>
+                                <el-option label="东南北" value="11"></el-option>
+                                <el-option label="西南北" value="12"></el-option>
+                                <el-option label="东西南北" value="13"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -263,7 +268,7 @@
                 <el-row type="flex" class="row-bg" >
                   <el-col :span="1" >
                   </el-col>
-                  <el-col :span="10">
+                  <el-col :span="7">
 		              <el-form-item label="大连市" prop="addressSelectedOptions">
 		                <el-cascader
 		                	style="width: 100%;"
@@ -277,19 +282,24 @@
 									  </el-cascader>
 		              </el-form-item>
 			          </el-col>
-			          <el-col :span="10" >
-		              <el-form-item label="小区名称" prop="xiaoquName">
-		                <el-autocomplete
-                        style="width: 100%;"
-                          class="inline-input"
-                          v-model="alertAdd.ruleForm.xiaoquName"
-                          :fetch-suggestions="querySearch"
-                          placeholder="请输入小区名称（必填）"
-                            @select="handleSelect"
-                        ></el-autocomplete>
+			          <el-col :span="7" >
+                          <el-form-item label="小区名称" prop="xiaoquName">
+                            <el-autocomplete
+                            style="width: 100%;"
+                              class="inline-input"
+                              v-model="alertAdd.ruleForm.xiaoquName"
+                              :fetch-suggestions="querySearch"
+                              placeholder="请输入小区名称（必填）"
+                                @select="handleSelect">
+                            </el-autocomplete>
 
-		              </el-form-item>
+                          </el-form-item>
 		              </el-col>
+                    <el-col :span="7" >
+                        <el-form-item label="行政街" prop="address">
+                            <el-input v-model="alertAdd.ruleForm.address" placeholder="请输入行政街（必填）"></el-input>
+                        </el-form-item>
+                    </el-col>
                   <el-col :span="3" >
                   </el-col>
                 </el-row>
@@ -312,17 +322,17 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
-                        <el-form-item label="层 /" label-width="50px" prop="maxfloor">
-                            <el-input v-model="alertAdd.ruleForm.maxfloor" placeholder="（必填）"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-form-item label="层(顶层)" label-width="80px" prop="numhousehold">
+                        <el-form-item label="层" label-width="50px" prop="numhousehold">
                             <el-input v-model="alertAdd.ruleForm.numhousehold" placeholder="（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
                         号
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="总楼层" label-width="80px" prop="maxfloor">
+                            <el-input v-model="alertAdd.ruleForm.maxfloor" placeholder="（必填）"></el-input>
+                        </el-form-item>
                     </el-col>
                     <el-col :span="3" >
                     </el-col>
@@ -730,6 +740,31 @@ export default {
                         id: 8,
                         choosed: false,
                     },
+                    {
+                        name: '东西',
+                        id: '9',
+                        choosed: false,
+                    },
+                    {
+                        name: '南北',
+                        id: '10',
+                        choosed: false,
+                    },
+                    {
+                        name: '东南北',
+                        id: '11',
+                        choosed: false,
+                    },
+                    {
+                        name: '西南北',
+                        id: '12',
+                        choosed: false,
+                    },
+                    {
+                        name: '东西南北',
+                        id: '13',
+                        choosed: false,
+                    },
                     // {
                     //     name: '南北',
                     //     id: 9,
@@ -819,6 +854,7 @@ export default {
                     phone: '',  //房主电话*
                     owner1: '',  //房主姓名
                     phone1: '',  //房主姓名
+                    address:''   //行政街
                 },
                 rules: {
                     price: [
@@ -880,6 +916,9 @@ export default {
                     ],
                     phone:[
                       { required: true, message: '请添加房主电话', trigger: 'blur' },
+                    ],
+                    address:[
+                        { required: true, message: '请添加行政街', trigger: 'blur' },
                     ]
                 },
                 examineForm:{

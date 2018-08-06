@@ -138,7 +138,7 @@
                                         max-height="320"
                                         style="width: 100%;margin-top: 0px;padding: 20px;box-shadow: 0px 0px 10px #e3e3e3;">
                                     <el-table-column prop="createTime" label="看房时间"></el-table-column>
-                                    <el-table-column prop="houseName" label="房屋位置"></el-table-column>
+                                    <el-table-column prop="houseName" label="房源编号"></el-table-column>
                                     <el-table-column prop="feedback" label="反馈结果"></el-table-column>
                                 </el-table>
                                 <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
@@ -834,6 +834,12 @@
             finishLookDetail(){
                 this.addLookDetail();
                 this.lookDetailVisible = false;
+                this.addLookForm.xiaoquName='';
+                this.addLookForm.number='';
+                this.lookTableData.pageNum=1;
+                this.lookTableData.pageSize=10;
+                this.lookTableData.total=0;
+                this.lookTableData.list=[];
             },  //添加带看房源 完毕
             delLooked(item){
                 this.LookedList.forEach((items) => {
@@ -916,6 +922,7 @@
                 GuestApi.houseListGuest(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     that.lookTableData=result.data;
+
                 }).catch(error => {
                     console.log('houseListGuest_error');
                 });

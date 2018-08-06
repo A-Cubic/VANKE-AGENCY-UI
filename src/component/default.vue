@@ -25,7 +25,7 @@
 							</el-form-item>
 							<el-form-item class="login-form-item">
 								<span>
-									万科有家  情系万家
+									万科有家  美好万家
 								</span>
 							</el-form-item>
 						</el-form>
