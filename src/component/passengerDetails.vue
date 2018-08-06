@@ -191,7 +191,7 @@
                         <li>
                             <div class="maintain-content-header">维护</div>
                             <div class="maintain-content-mes" @click="remarkVisible = true">录跟进</div>
-                            <div class="maintain-content-mes" @click="lookVisible = true">录带看</div>
+                            <div class="maintain-content-mes" @click="lookVisible = true" @close="addLookClose">录带看</div>
                             <div class="maintain-content-mes" @click="stateHandel">{{formUser.iskey=='0'?'无效客源申请':formUser.iskey=='1'?'取消无效客源申请':formUser.iskey=='2'?'无效客源审核中':'取消无效客源审核中'}}</div>
                             <div class="maintain-content-mes" @click="transferHandel">客源转让</div>
                             <!-- <div class="maintain-content-mes">发起合作</div> -->
@@ -250,7 +250,7 @@
                         <!--</el-card>-->
                         <ul class="look-data-template">
                             <li>
-                                <img :src="item.titleimg" alt="无法查看">
+                                <img style="width:100px;height:80px;" :src="item.titleimg" alt="无法查看">
                             </li>
                             <li>{{item.number}}</li>
                             <li>{{item.xiaoquName}}</li>
@@ -276,7 +276,7 @@
                 </span>
             </el-dialog>
 
-            <el-dialog title="添加带看房源" :visible.sync="lookDetailVisible" width="80%">
+            <el-dialog title="添加带看房源" :visible.sync="lookDetailVisible" width="80%" >
                 <div class="look-detail-wrap">
                     <div class="look-detail-wrap-header">
                         <el-input placeholder="请输入小区名称" v-model="addLookForm.xiaoquName" clearable></el-input>
@@ -297,11 +297,14 @@
                             <el-table-column prop="price" label="价格"></el-table-column>
                             <el-table-column label="操作">
                                 <template scope="scope">
-                                    <el-checkbox v-model="scope.row.checked"
-                                                 :disabled="scope.row.disabled"
-                                                 @change="checkLookDetail(scope.row)">选择
-                                    </el-checkbox>
+                                    <el-button type="danger" icon="el-icon-check" circle @click="addLookDetail(scope.row)"></el-button>
                                 </template>
+                                <!--<template scope="scope">-->
+                                    <!--<el-checkbox v-model="scope.row.checked"-->
+                                                 <!--:disabled="scope.row.disabled"-->
+                                                 <!--@change="checkLookDetail(scope.row)">选择-->
+                                    <!--</el-checkbox>-->
+                                <!--</template>-->
                             </el-table-column>
                         </el-table>
                         <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
@@ -316,8 +319,8 @@
                     </div>
                 </div>
                 <span slot="footer" class="dialog-footer">
-                    <el-button @click="addLookDetail">添 加</el-button>
-                    <el-button type="primary" @click="finishLookDetail">完 毕</el-button>
+                    <!--<el-button @click="addLookDetail">添 加</el-button>-->
+                    <el-button type="primary" @click="finishLookDetail">完 成</el-button>
                 </span>
             </el-dialog>
 
@@ -775,43 +778,47 @@
             LookDetailHandel(){
                 var that = this;
                 this.lookDetailVisible = true;
-                this.lookTableCheckedList = [];
-                that.lookTableData.list.forEach((item) => {
-                    var item1 = item;
-                    item1.checked = false;
-                    item1.disabled = false;
-                    that.LookedList.forEach((item2) => {
-                        if(item1.houseId == item2.houseId){
-                            item1.checked = true;
-                            item1.disabled = true;
-                            return;
-                        }
-                    });
-                })
+//                this.lookTableCheckedList = [];
+//                that.lookTableData.list.forEach((item) => {
+//                    var item1 = item;
+//                    item1.checked = false;
+//                    item1.disabled = false;
+//                    that.LookedList.forEach((item2) => {
+//                        if(item1.houseId == item2.houseId){
+//                            item1.checked = true;
+//                            item1.disabled = true;
+//                            return;
+//                        }
+//                    });
+//                })
 
                 // _.find(that.lookTableData,function (item) {
                 //     return item.id === that.LookedList?that.LookedList[item.id]:''
                 // }).checked.disabled = true;
             },
             checkLookDetail(item){
+                console.log(item)
                 var that = this;
-                if(item.checked == true){
-                    that.lookTableCheckedList.push(item);
-                } else{
-                    this.lookTableCheckedList.forEach((items) => {
-                        if(item.id == items.id){
-                            that.lookTableCheckedList.splice(that.lookTableCheckedList.indexOf(items), 1);
-                        };
-                    });
-                }
+//                if(item.checked == true){
+//                    that.lookTableCheckedList.push(item);
+//                } else{
+//                    this.lookTableCheckedList.forEach((items) => {
+//                        if(item.id == items.id){
+//                            that.lookTableCheckedList.splice(that.lookTableCheckedList.indexOf(items), 1);
+//                        };
+//                    });
+//                }
                 // console.log(that.lookTableCheckedList);
             },  //带看详情 选择房源
-            addLookDetail(){
+            addLookClose(){
+                this.LookedList = [];
+            },
+            addLookDetail(item){
                 var that = this;
                 var gid = this.id;
-                this.lookTableCheckedList.forEach((item) => {
-                    item.disabled = true;
-                    that.LookedList.push({
+//                this.lookTableCheckedList.forEach((item) => {
+//                    item.disabled = true;
+                this.LookedList.push({
                         houseId: item.id,
                         guestId: gid,
                         number:item.number,
@@ -821,23 +828,23 @@
                         areas: item.areas,
                         price: item.price,
                         floor: item.floor,
-                        checked: item.checked,
-                        disabled: item.disabled,
+                        checked: 1,
                         createTime: '',
                         endtime: '',
                         feedback: '',
                     });
-                });
+                this.lookTableData.list.splice(this.lookTableData.list.indexOf(item), 1)
+//                });
                 // console.log(this.LookedList)
-                this.lookTableCheckedList = [];
+//                this.lookTableCheckedList = [];
             },
             finishLookDetail(){
-                this.addLookDetail();
+//                this.addLookDetail();
                 this.lookDetailVisible = false;
                 this.addLookForm.xiaoquName='';
                 this.addLookForm.number='';
                 this.lookTableData.pageNum=1;
-                this.lookTableData.pageSize=10;
+                this.lookTableData.pageSize=5;
                 this.lookTableData.total=0;
                 this.lookTableData.list=[];
             },  //添加带看房源 完毕
@@ -905,26 +912,34 @@
             },
             searchHouseList(){
                 var xiaoquName=this.addLookForm.xiaoquName;
-                var number=this.addLookForm.number;
-                if(xiaoquName.trim()=='' && number.trim()==''){
-                    Message.error("查询条件不允许都为空");
-                    return;
-                }
-                var that = this;
-                that.lookTableData.pageNum=1;
-                var postData = {
-                    xiaoquName: this.addLookForm.xiaoquName,
-                    number: this.addLookForm.number,
-                    page: this.lookTableData.pageNum,
-                    size: 5
-                };
+                    var number=this.addLookForm.number;
+                    if(xiaoquName.trim()=='' && number.trim()==''){
+                        Message.error("查询条件不允许都为空");
+                        return;
+                    }
+                    var that = this;
+                    that.lookTableData.pageNum=1;
+                    var postData = {
+                        xiaoquName: this.addLookForm.xiaoquName,
+                        number: this.addLookForm.number,
+                        page: this.lookTableData.pageNum,
+                        size: 5
+                    };
 
-                GuestApi.houseListGuest(postData).then(function (result) {
-                    if(typeof(result) != "object"){result = JSON.parse(result)}
-                    that.lookTableData=result.data;
+                    GuestApi.houseListGuest(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.lookTableData=result.data;
+                        that.LookedList.forEach((item1) => {
+                            that.lookTableData.list.forEach((item) => {
+                                if(item.id==item1.houseId){
+                                    that.lookTableData.list.splice(that.lookTableData.list.indexOf(item), 1)
+                                }
+                            });
+                        })
+
 
                 }).catch(error => {
-                    console.log('houseListGuest_error');
+                    console.log('houseListGuest_error'+error);
                 });
 
             },
@@ -1074,8 +1089,8 @@
                             box-shadow: 0px 0px 10px #e3e3e3;
                             li{
                                 width: 14%;
-                                height: 13vw;
-                                line-height: 13vw;
+                                height: 6vw;
+                                line-height: 6vw;
                                 /*border-right: 1px solid #f2f2f2;*/
                                 float: left;
                                 text-align: center;
@@ -1083,9 +1098,10 @@
                                     border-right: none;
                                 }
                                 img{
-                                    padding: 10px;
-                                    width: 100%;
-                                    height: 100%;
+                                    /*padding: 10px;*/
+                                    /*width: 100%;*/
+                                    /*height: 100%;*/
+                                    margin-top:15px;
                                 }
                             }
                         }

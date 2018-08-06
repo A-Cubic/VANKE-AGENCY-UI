@@ -41,7 +41,7 @@
                             <el-tab-pane label="我维护的房源">
 
                                 <div class="house_table">
-                                    <el-table :data="maintainData.list"  size="medium" style="width: 100%">
+                                    <el-table :data="maintainData.list"  size="medium" style="width: 100%" @row-click="examineById">
                                         <el-table-column fixed label="标题图" width="180">
                                             <template scope="scope">
                                                 <img class="imageUrl" :src="scope.row.titleimg" alt="">
@@ -69,7 +69,7 @@
                             </el-tab-pane>
                             <el-tab-pane label="我关注的房源">
                                 <div class="house_table">
-                                    <el-table :data="attentionData.list"  size="medium" style="width: 100%">
+                                    <el-table :data="attentionData.list"  size="medium" style="width: 100%" @row-click="examineById">
                                         <el-table-column fixed label="标题图" width="180">
                                             <template scope="scope">
                                                 <img class="imageUrl" :src="scope.row.titleimg" alt="">
@@ -269,6 +269,10 @@ export default {
         });
     },
     methods: {
+        examineById(row){
+            let routeData = this.$router.resolve({ path: '/admin/houseDetails/'+row.id});
+            window.open(routeData.href, '_blank');
+        },
         passHandle(){
             this.dialogVisible = true;
         },
