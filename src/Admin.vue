@@ -226,8 +226,8 @@ export default {
             });
         },
         initWebsocket() {
-            // this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
-            this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
+//             this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
+            this.vankeWebsocket = new WebSocket('ws://home.vanke.com/vanke/com/ws/?token=' + getToken());
             this.vankeWebsocket.onopen = this.wsOnOpen;
             this.vankeWebsocket.onmessage = this.wsOnMessage;
             this.vankeWebsocket.onclose = this.wsOnClose;

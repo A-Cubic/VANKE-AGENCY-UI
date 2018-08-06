@@ -2,7 +2,8 @@
 const TOKEN = 'Admin-Token';
 const ROLE = 'User-Role';
 
-export const BASE_API = 'http://vanke.a-cubic.com/vanke'
+// export const BASE_API = 'http://localhost:8888/vanke'
+export const BASE_API = ''
 
 export let WsCall = {
 }
@@ -25,7 +26,7 @@ export function setRole(role) {
 
 export function addWsCall(current, f) {
     WsCall[current] = f
-    console.log(WsCall)
+    // console.log(WsCall)
 }
 
 export function removeWsCall(current, f) {
