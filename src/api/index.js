@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {BASE_API, setToken, getToken} from "../util/global";
+import {BASE_API, setToken, getToken, setRole} from "../util/global";
 
 const request = axios.create({
     baseURL: BASE_API,
@@ -13,22 +13,32 @@ request.interceptors.request.use(config => {
     }
     return config
 }, error => {
-    console.log(error)
+    // console.log("request"+error)
     Promise.reject(error)
 })
 // 响应拦截器
 request.interceptors.response.use(function (response) {
   // Do something with response data
   if (response.data && response.data.errcode) {
-    if (parseInt(response.data.errcode) === 400) {
-        setToken('')
+    if (parseInt(response.data.errcode) === 400 || parseInt(response.data.errcode) === 401) {
+        setToken('');
+        setRole('');
       //未登录
-        this.$router.push({ path: '/' });
+       this.$router.push({ path: '/' });
     }
   }
   return response;
-}, function (error) {
-  // Do something with response error
+},
+function (error) {
+    var er = error.toString();
+
+    if(er.indexOf("401")!=-1){
+        setToken('');
+        setRole('');
+        location.reload()
+    }
+
+
   return Promise.reject(error);
 });
 

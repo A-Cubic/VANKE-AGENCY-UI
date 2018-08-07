@@ -409,6 +409,9 @@
 
         methods: {
             handleSelectMenu(key, keyPath) {
+                if (this.$refs['ruleForm']!==undefined) {
+                    this.$refs['ruleForm'].resetFields();
+                }
                 this.menuActive=key;
                 if(this.menuActive=='1'){
                     this.searchType(0, this.formData.typeList);

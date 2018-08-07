@@ -296,12 +296,12 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="5">
-                        <el-form-item label="厅" label-width="40px" prop="huxingwei">
+                        <el-form-item label="厅" label-width="40px" prop="huxingchu">
                             <el-input v-model="alertAdd.ruleForm.huxingchu" placeholder="几厨（必填）"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="5">
-                        <el-form-item label="厨" label-width="40px" prop="huxingchu">
+                        <el-form-item label="厨" label-width="40px" prop="huxingwei">
                             <el-input v-model="alertAdd.ruleForm.huxingwei" placeholder="几卫（必填）"></el-input>
                         </el-form-item>
                     </el-col>
@@ -983,6 +983,13 @@ export default {
                     layout:[
                         { required: true, message: '请选择装修情况', trigger: 'change' },
                     ],
+//                    keyStoreId:[
+//                        { required: true,validator:validatekeyStoreId, trigger: 'change' },
+//                    ],
+//                    keyNumber:[
+//                        { required: true,validator:validatekeyNumber, trigger: 'blur' },
+//                    ],
+
                 },
                 examineForm:{
                     bedroom: [
@@ -1137,10 +1144,12 @@ export default {
     },
 
     methods: {
+
         handleSelectMenu(key, keyPath) {
             // this.resetForm('ruleForm');
-
-            // this.$refs.form.resetFields();
+            if (this.$refs['ruleForm']!==undefined) {
+                this.$refs['ruleForm'].resetFields();
+            }
 
             this.menuActive=key;
             if(this.menuActive=='1'){
@@ -1211,10 +1220,19 @@ export default {
         },
 
         submitAdd(ruleForm){
-
         	if(this.alertAdd.active == 0){
         		  this.$refs[ruleForm].validate((valid) => {
                   if (valid) {
+                      if(this.alertAdd.ruleForm.iskey=='1'){
+                          if(this.alertAdd.ruleForm.keyNumber=='' || this.alertAdd.ruleForm.keyStoreId==''){
+                              Message.error("有钥匙的情况下，请填写钥匙编号和存放门店！");
+                              return;
+                          }
+                      }
+                      if(parseInt(this.alertAdd.ruleForm.floor)>parseInt(this.alertAdd.ruleForm.maxfloor)){
+                          Message.error("当前楼层高于顶楼");
+                          return;
+                      }
                         this.$confirm('确定新增该房源?', '提示', {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',

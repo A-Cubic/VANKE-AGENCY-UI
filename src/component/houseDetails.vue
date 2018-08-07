@@ -62,13 +62,13 @@
                                     </div>
                                     <div class="basis-mes">
                                         <div>楼层</div>
-                                        <div>{{ houseDataForm.floor }}</div>
+                                        <div>{{ houseDataForm.floor }} / {{ houseDataForm.maxfloor }}</div>
                                     </div>
                                 </div>
                                 <div class="house-other-mes">
                                     <div class="other-mes">
                                         <div>挂牌时间: <span>{{ houseDataForm.createTime }}</span></div>
-                                         <div>有无钥匙: <span>{{ houseDataForm.iskey==1?"有":"无" }}</span></div>
+                                         <div>装修情况: <span>{{ houseDataForm.layout=='无'|| houseDataForm.layout==null?"无":houseDataForm.layout }}</span></div>
                                         <div>房主信息:
                                             <span class="span" @click="ownerHandle">查看</span>
                                             <el-popover
@@ -124,6 +124,30 @@
                                             </el-popover>
                                         </div>
                                     </div>
+                                    <div class="other-mes">
+
+                                            <div>钥匙信息:
+                                                <span v-show="houseDataForm.iskey=='0'?true:false">暂无</span>
+                                                <el-popover
+                                                        placement="right"
+                                                        width="300"
+                                                        transition="el-zoom-in-center"
+                                                        title="钥匙信息"
+                                                        trigger="click">
+                                                    <div>钥匙编号：<span >{{houseDataForm.keyNumber}}</span></div>
+                                                    <div>存放门店：<span >{{houseDataForm.ketStoreName}}</span></div>
+                                                    <!--<div class="row">-->
+                                                        <!--<span>姓名：</span>-->
+                                                        <!--<span>{{ ownerForm.owner }}</span>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="row">-->
+                                                        <!--<span>电话：</span>-->
+                                                        <!--<span>{{ ownerForm.phone }}</span>-->
+                                                    <!--</div>-->
+                                                    <span class="span"  slot="reference" v-show="houseDataForm.iskey=='1'?true:false">查看</span>
+                                                </el-popover>
+                                            </div>
+                                    </div>
                                     <div class="other-mes" style="margin-top:10px">
                                         <span><el-tag v-show="houseDataForm.isshare=='1'?true:false">共享池</el-tag></span>
                                         <span><el-tag v-show="otherForm.isspecial=='1'?true:false" type="warning" >特殊房源</el-tag></span>
@@ -164,13 +188,14 @@
                                                @click="examineHandel">
                                     </el-button>
                                 </div>
-                                <div class="radius-block radius-data-btn" >
+                                <div :class="(houseDataForm.iskey=='1' && houseDataForm.keyUserType=='0')? 'radius-block ': 'radius-block radius-data-btn'">
                                     <div><i class="iconfont icon-method-draw-image"></i></div>
                                     <div>钥匙</div>
                                     <div class="radius-data">{{ radiusForm.keyrelName==''|| radiusForm.keyrelName==null?"暂无": radiusForm.keyrelName}}</div>
                                     <el-button type="text"
                                                size="small"
-                                               icon="el-icon-plus"
+                                               :icon="(houseDataForm.iskey=='1' && houseDataForm.keyUserType=='1')?'el-icon-minus':'el-icon-plus'"
+                                               v-show="(houseDataForm.iskey=='1' && houseDataForm.keyUserType=='0')?false:true"
                                                @click="keyHandel">
                                     </el-button>
                                 </div>
@@ -230,7 +255,7 @@
                             <el-tab-pane :disabled = "houseDataForm.user_type=='0'?true:false" label="修改" name="3" >
                                 <el-form :model="editForm" ref="editForm" label-width="45px" class="demo-ruleForm">
                                     <el-form-item label="价格:">
-                                        <el-input placeholder="请输入" v-model="editForm.price"></el-input>
+                                        <el-input placeholder="请输入价格" v-model="editForm.price"></el-input>
                                     </el-form-item>
                                     <el-row :gutter="1">
                                         <el-col :span="1">
@@ -249,17 +274,17 @@
                                         </el-col>
                                         <el-col :span="5">
                                             <el-form-item label="厅" label-width="30px">
-                                                <el-input placeholder="请输入卫" v-model="editForm.huxingwei"></el-input>
+                                                <el-input placeholder="请输入厨" v-model="editForm.huxingchu"></el-input>
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="5">
-                                            <el-form-item label="卫" label-width="30px">
-                                                <el-input placeholder="请输入厨" v-model="editForm.huxingchu"></el-input>
+                                            <el-form-item label="厨" label-width="30px">
+                                                <el-input placeholder="请输入卫" v-model="editForm.huxingwei"></el-input>
                                             </el-form-item>
                                         </el-col>
 
                                         <span style="text-align: center; line-height: 40px">
-                                            厨
+                                            卫
                                         </span>
                                     </el-row>
                                     <!-- <el-form-item label="户型:">
@@ -277,11 +302,11 @@
                                         </el-col>
                                     </el-form-item> -->
                                     <el-form-item label="面积:">
-                                        <el-input placeholder="请输入" v-model="editForm.areas"></el-input>
+                                        <el-input placeholder="请输入面积" v-model="editForm.areas"></el-input>
                                     </el-form-item>
                                     <el-form-item label="朝向:">
                                         <!-- <el-input placeholder="请输入" v-model="editForm.chaoxiang"></el-input> -->
-                                        <el-select v-model="editForm.chaoxiang" placeholder="请选择" style="width:100%">
+                                        <el-select v-model="editForm.chaoxiang" placeholder="请选择朝向" style="width:100%">
                                             <el-option
                                                 v-for="item in chaoxiangList"
                                                 :key="item.value"
@@ -291,7 +316,27 @@
                                         </el-select>
                                     </el-form-item>
                                     <el-form-item label="楼层:">
-                                        <el-input placeholder="请输入" v-model="editForm.floor"></el-input>
+                                        <el-input placeholder="请输入楼层" v-model="editForm.floor"></el-input>
+                                    </el-form-item>
+
+                                    <el-form-item label="装修:">
+                                        <el-select v-model="editForm.layout" placeholder="请选择装修情况" style="width:100%">
+                                            <el-option
+                                                    v-for="item in layoutList"
+                                                    :key="item.value"
+                                                    :label="item.label"
+                                                    :value="item.value">
+                                            </el-option>
+                                        </el-select>
+
+                                    </el-form-item>
+
+                                    <el-form-item label="房主:">
+                                        <el-input placeholder="请输入房主姓名" v-model="editForm.owner"></el-input>
+                                    </el-form-item>
+
+                                    <el-form-item label="电话:">
+                                        <el-input placeholder="请输入房主电话" v-model="editForm.phone"></el-input>
                                     </el-form-item>
                                     <div style="text-align: right">
                                         <el-button type="primary" size="mini" @click="editSubmit">提交</el-button>
@@ -564,6 +609,23 @@
                     </div>
                 </el-dialog>
 
+                <el-dialog title="添加钥匙信息" :visible.sync="keyInfoData.keyInfoVisible" width="30%">
+                    <div>钥匙编号： <el-input style="width:50%;" v-model="keyInfoData.keyNumber" placeholder="请输入钥匙编号"></el-input></div>
+                    <div style="margin-top:20px;">存放门店：
+                        <el-select v-model="keyInfoData.keyStoreId" placeholder="请选择钥匙存放门店" style="width:50%;">
+                            <el-option
+                                    v-for="item in keyInfoData.keyStoreList"
+                                    :key="item.id"
+                                    :label="item.storeName"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="keyInfoData.keyInfoVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="updateKeyNo">确 定</el-button>
+                    </span>
+                </el-dialog>
             </el-row>
         </div>
     </section>
@@ -581,6 +643,13 @@
         props: ['id'],
         data() {
             return {
+                keyInfoData:{
+                    keyInfoVisible:false,
+                    keyStoreId:'',
+                    keyNumber:'',
+                    keyStoreList:[],
+                },
+
                 examineLoading:false,
                 editableTabsValue:'1',
                 bigImgVisble:false,
@@ -622,6 +691,10 @@
                     examineState:'',
                     explorationTimeType:'',
                     recordUesrPhone:'',
+                    ketStoreName:'',
+                    keyNumber:'',
+                    layout:'',
+                    keyUserType:'0',
                 },  //左侧头部数据
 
                 ownerVisible: false, //房主信息dialog
@@ -713,9 +786,29 @@
                     huxingchu: '',  //需求几厨
                     areas: '',
                     chaoxiang: '',
-
                     floor: '',
+                    layout:'',
+                    owner:'',
+                    phone:'',
                 },
+                layoutList:[
+                    {
+                        label: '毛坯房',
+                        value: '毛坯房',
+                    },
+                    {
+                        label: '简装修',
+                        value: '简装修',
+                    },
+                    {
+                        label: '精装修',
+                        value: '精装修',
+                    },
+                    {
+                        label: '豪华装修',
+                        value: '豪华装修',
+                    },
+                ],
                 chaoxiangList: [
                     {
                         label: '正南',
@@ -1015,6 +1108,10 @@
                     Message.error("此房源是共享房源，不能添加实勘图！");
                     return;
                 }
+                if(this.houseDataForm.state=='1'){
+                    Message.error("此房源是无效房源，不能添加实勘图！");
+                    return;
+                }
                 this.examineVisible = true;
             },  //实勘填图
 
@@ -1067,35 +1164,116 @@
                     Message.error("此房源是共享房源，不能添加钥匙所有人！");
                     return;
                 }
+                if(this.houseDataForm.state=='1'){
+                    Message.error("此房源是无效房源，不能添加钥匙所有人！");
+                    return;
+                }
+                var that = this;
+                var hid= this.id;
+                if(this.houseDataForm.iskey=='1' && this.houseDataForm.keyUserType=='1'){
+                    this.$confirm('此操作将你钥匙所有人的身份撤销, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        var postData = {
+                            id: hid
+                        };
+                        HouseApi.updateCancelKey(postData).then(function (result) {
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            Message({
+                                type: 'success',
+                                message: '身份撤销成功!'
+                            });
+                            var postData1 = {
+                                id: hid
+                            };
+                            HouseApi.housedetail(postData1).then(function (result) {
+                                if(typeof(result) != "object"){result = JSON.parse(result)}
+                                that.houseDataForm=result.data;
+                                that.otherForm=result.data;
+                                that.radiusForm=result.data;
+                                that.editForm = result.data;
+                                that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                                that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                                that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                                that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
+                            }).catch(error => {
+                                console.log('housedetail_error');
+                            });
+                        }).catch(error => {
+                            console.log('updateKey_error'+error);
+                        });
+
+                    }).catch(() => {
+
+                    });
+                }
+
+                if(this.houseDataForm.iskey=='0'){
+                    HouseApi.getAllStore().then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.keyInfoData.keyStoreList=result.data;
+                        that.keyInfoData.keyInfoVisible=true;
+                    }).catch(error => {
+                        console.log('getAllStore_error');
+                    });
+                }
+
+            },  //修改钥匙所有人
+            updateKeyNo(){
+                if(this.keyInfoData.keyStoreId=='' || this.keyInfoData.keyNumber==''){
+                    Message.error("请填写完整钥匙信息！");
+                    return;
+                }
                 this.$confirm('此操作将钥匙所有人更改为当前用户, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
                     var that = this;
+                    var hid = this.id;
                     var postData = {
-                        id: this.id
+                        id: hid,
+                        keyNumber:this.keyInfoData.keyNumber,
+                        keyStoreId:this.keyInfoData.keyStoreId,
                     };
                     HouseApi.updateKey(postData).then(function (result) {
                         if(typeof(result) != "object"){result = JSON.parse(result)}
-                        that.houseDataForm.iskey = "1";
-                        that.radiusForm.keyrelName=result.data;
+                        var postData1 = {
+                            id: hid
+                        };
+                        HouseApi.housedetail(postData1).then(function (result) {
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            that.houseDataForm=result.data;
+                            that.otherForm=result.data;
+                            that.radiusForm=result.data;
+                            that.editForm = result.data;
+                            that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                            that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                            that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                            that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
+                        }).catch(error => {
+                            console.log('housedetail_error');
+                        });
                         Message({
                             type: 'success',
-                            message: '更改成功!'
+                            message: '更改身份成功!'
                         });
+                        that.keyInfoData.keyStoreId='';
+                        that.keyInfoData.keyNumber='';
+                        that.keyInfoData.keyInfoVisible=false;
                     }).catch(error => {
                         console.log('updateKey_error'+error);
                     });
 
                 }).catch(() => {
-                    Message({
-                        type: 'info',
-                        message: '已取消更改!'
-                    });
+//                    Message({
+//                        type: 'info',
+//                        message: '已取消更改!'
+//                    });
                 });
-            },  //修改钥匙所有人
-
+            },
             editSubmit(){
                 var that = this;
                 var hid = this.id;
@@ -1108,7 +1286,10 @@
                     huxingwei: this.editForm.huxingwei,
                     areas: this.editForm.areas,
                     chaoxiang: this.editForm.chaoxiang,
-                    floor: this.editForm.floor
+                    floor: this.editForm.floor,
+                    owner: this.editForm.owner,
+                    phone: this.editForm.phone,
+                    layout: this.editForm.layout
                 };
                 HouseApi.updateHouse(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}

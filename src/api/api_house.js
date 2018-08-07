@@ -54,6 +54,12 @@ export default {
     updateKey: params => {
         return API.POST('house/updateKey', params)
     },
+    // 撤回钥匙人
+    updateCancelKey: params => {
+        return API.POST('house/updateCancelKey', params)
+    },
+
+
 
     // 新增跟进
     insertRecord: params => {
