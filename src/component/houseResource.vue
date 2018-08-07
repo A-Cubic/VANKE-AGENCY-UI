@@ -1,9 +1,31 @@
 <template>
     <section class="houseResource">
+
         <!--<el-row class="wrap" :gutter="24">-->
             <!--<el-col :span="24" class="warp-breadcrum">-->
         <div class="house_template">
-            <div class="house_search">
+            <el-menu
+                    :default-active="menuActive"
+                    class="el-menu-demo"
+                    mode="horizontal"
+                    @select="handleSelectMenu"
+                    background-color="#FFFAFA"
+                    style="margin-top: -25px">
+                <el-menu-item index="1" style="margin-left:40%;">
+                    <el-button :type="menuActive=='1'?'primary':''">
+                        买卖
+                    </el-button>
+                </el-menu-item>
+                <el-menu-item index="2" style="margin-left:40px;">
+                    <el-button :type="menuActive=='2'?'primary':''">
+                        租赁
+                    </el-button>
+                </el-menu-item>
+            </el-menu>
+            <div style="margin-top: 20px">
+                房源搜索条件
+            </div>
+            <div class="house_search" style="margin-top: 20px">
                 <div class="house_search_header">
                     <el-input
                             placeholder="请输入区域、街道或小区名搜索房源"
@@ -25,14 +47,14 @@
                             </el-button>
                         </el-form-item>
 
-                        <el-form-item label="类型:">
-                            <el-button :type="item.choosed == false ? '' : 'primary'"
-                                       size="mini"
-                                       v-for="(item, index) in formData.typeList"
-                                       @click="searchType(index, formData.typeList)">
-                                {{ item.name }}
-                            </el-button>
-                        </el-form-item>
+                        <!--<el-form-item label="类型:">-->
+                            <!--<el-button :type="item.choosed == false ? '' : 'primary'"-->
+                                       <!--size="mini"-->
+                                       <!--v-for="(item, index) in formData.typeList"-->
+                                       <!--@click="searchType(index, formData.typeList)">-->
+                                <!--{{ item.name }}-->
+                            <!--</el-button>-->
+                        <!--</el-form-item>-->
 
                         <el-form-item label="位置:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
@@ -121,7 +143,7 @@
                     <el-table-column prop="xiaoquName" label="楼盘名称" width="180"></el-table-column>
                     <el-table-column prop="huxing" label="户型"></el-table-column>
                     <el-table-column prop="areas" label="面积"></el-table-column>
-                    <el-table-column prop="price" label="价格"></el-table-column>
+                    <el-table-column prop="priceText" label="价格"></el-table-column>
                     <el-table-column prop="floor" label="楼层"></el-table-column>
                     <el-table-column prop="chaoxiang" label="朝向"></el-table-column>
                     <el-table-column prop="recordrelName" label="维护人"></el-table-column>
@@ -151,157 +173,41 @@
           <div >
 
             <el-form :model="alertAdd.ruleForm" :rules="alertAdd.rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
-
-                <el-row type="flex" class="row-bg">
-                    <el-col :span="1" >
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="价钱" prop="price">
-                            <el-input v-model="alertAdd.ruleForm.price" placeholder="房屋价格（必填）" @change="handleInput"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="7">
-                        <el-form-item label="面积" prop="areas">
-                            <el-input v-model="alertAdd.ruleForm.areas" placeholder="房屋面积（必填）"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="1" style="text-align: center; line-height: 40px">
-                        m2
-                    </el-col>
-                    <el-col :span="6">
-                        <el-form-item label="朝向" prop="chaoxiang">
-                            <el-select v-model="alertAdd.ruleForm.chaoxiang" style="width: 100%;" placeholder="请选择房屋朝向（必填）">
-                                <el-option label="正南" value="1"></el-option>
-                                <el-option label="正北" value="2"></el-option>
-                                <el-option label="正东" value="3"></el-option>
-                                <el-option label="正西" value="4"></el-option>
-                                <el-option label="东南" value="5"></el-option>
-                                <el-option label="西南" value="6"></el-option>
-                                <el-option label="东北" value="7"></el-option>
-                                <el-option label="西北" value="8"></el-option>
-                                <el-option label="东西" value="9"></el-option>
-                                <el-option label="南北" value="10"></el-option>
-                                <el-option label="东南北" value="11"></el-option>
-                                <el-option label="西南北" value="12"></el-option>
-                                <el-option label="东西南北" value="13"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3" >
-                    </el-col>
-                </el-row>
                 <el-row type="flex" class="row-bg" >
                     <el-col :span="1" >
                     </el-col>
                     <el-col :span="6">
-                        <el-form-item label="户型" prop="huxingshi">
-                            <el-input v-model="alertAdd.ruleForm.huxingshi" placeholder="几室（必填）"></el-input>
+                        <el-form-item label="大连市" prop="addressSelectedOptions">
+                            <el-cascader
+                                    style="width: 100%;"
+                                    placeholder="地市街道（必填）"
+                                    :options="alertAdd.ruleForm.addressOptions"
+                                    v-model="alertAdd.ruleForm.addressSelectedOptions"
+                                    @change="handleChange"
+                                    filterable>
+                            </el-cascader>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="5">
-                        <el-form-item label="室" label-width="40px" prop="huxingting">
-                            <el-input v-model="alertAdd.ruleForm.huxingting" placeholder="几厅（必填）"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="5">
-                        <el-form-item label="厅" label-width="40px" prop="huxingwei">
-                            <el-input v-model="alertAdd.ruleForm.huxingwei" placeholder="几卫（必填）"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="5">
-                        <el-form-item label="卫" label-width="40px" prop="huxingchu">
-                            <el-input v-model="alertAdd.ruleForm.huxingchu" placeholder="几厨（必填）"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="1" style="text-align: center; line-height: 40px">
-                        厨
-                    </el-col>
-                    <el-col :span="3" >
-                    </el-col>
-                </el-row>
-                <el-row type="flex" class="row-bg">
-                    <el-col :span="1" >
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="有无钥匙" prop="iskey">
-                            <el-select v-model="alertAdd.ruleForm.iskey" style="width: 100%;" placeholder="请选择有无钥匙（必填）">
-                                <el-option label="有钥匙" value="1"></el-option>
-                                <el-option label="无钥匙" value="0"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="9">
-                        <el-form-item label="隐藏面积" prop="hiddenarea">
-                            <el-input v-model="alertAdd.ruleForm.hiddenarea" placeholder="请输入隐藏面积（必填）"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="1" style="text-align: center; line-height: 40px">
-                        m2
-                    </el-col>
-                    <el-col :span="3" >
-                    </el-col>
-                </el-row>
-                <el-row type="flex" class="row-bg">
-                    <el-col :span="1" >
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="房屋等级" prop="grade">
-                            <el-select v-model="alertAdd.ruleForm.grade" style="width: 100%;" placeholder="请选择房屋等级（必填）">
-                                <el-option label="A" value="1"></el-option>
-                                <el-option label="B" value="2"></el-option>
-                                <el-option label="C" value="3"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="10">
-                        <el-form-item label="房屋类型" prop="type">
-                            <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择房屋类型（必填）">
-                                <el-option label="买卖" value="1"></el-option>
-                                <el-option label="租赁" value="2"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="3" >
-                    </el-col>
-                </el-row>
-
-                <el-row type="flex" class="row-bg" >
-                  <el-col :span="1" >
-                  </el-col>
-                  <el-col :span="7">
-		              <el-form-item label="大连市" prop="addressSelectedOptions">
-		                <el-cascader
-		                	style="width: 100%;"
-                            placeholder="请选择地市街道（必填）"
-									    :options="alertAdd.ruleForm.addressOptions"
-									    v-model="alertAdd.ruleForm.addressSelectedOptions"
-                            @change="handleChange"
-                            filterable
-
-									    >
-									  </el-cascader>
-		              </el-form-item>
-			          </el-col>
-			          <el-col :span="7" >
-                          <el-form-item label="小区名称" prop="xiaoquName">
+                    <el-col :span="7" >
+                        <el-form-item label="小区" prop="xiaoquName">
                             <el-autocomplete
-                            style="width: 100%;"
-                              class="inline-input"
-                              v-model="alertAdd.ruleForm.xiaoquName"
-                              :fetch-suggestions="querySearch"
-                              placeholder="请输入小区名称（必填）"
-                                @select="handleSelect">
+                                    style="width: 100%;"
+                                    class="inline-input"
+                                    v-model="alertAdd.ruleForm.xiaoquName"
+                                    :fetch-suggestions="querySearch"
+                                    placeholder="小区名称（必填）"
+                                    @select="handleSelect">
                             </el-autocomplete>
-
-                          </el-form-item>
-		              </el-col>
+                        </el-form-item>
+                    </el-col>
                     <el-col :span="7" >
                         <el-form-item label="行政街" prop="address">
-                            <el-input v-model="alertAdd.ruleForm.address" placeholder="请输入行政街（必填）"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.address" placeholder="行政街（必填）"></el-input>
                         </el-form-item>
                     </el-col>
-                  <el-col :span="3" >
-                  </el-col>
+
+                    <el-col :span="3" >
+                    </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
                     <el-col :span="1" >
@@ -337,6 +243,156 @@
                     <el-col :span="3" >
                     </el-col>
                 </el-row>
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <!--<el-col :span="6">-->
+                        <!--<el-form-item label="房屋类型" prop="type">-->
+                            <!--<el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择房屋类型（必填）">-->
+                                <!--<el-option label="买卖" value="1"></el-option>-->
+                                <!--<el-option label="租赁" value="2"></el-option>-->
+                            <!--</el-select>-->
+                        <!--</el-form-item>-->
+                    <!--</el-col>-->
+                    <el-col :span="6">
+                        <el-form-item label="价钱" prop="price">
+                            <el-input v-model="alertAdd.ruleForm.price" placeholder="房屋价格（必填）" @change="handleInput"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="1" style="text-align: center; line-height: 40px">
+                        {{alertAdd.ruleForm.type=='1'?'万元':'元/月'}}
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="面积" prop="areas">
+                            <el-input v-model="alertAdd.ruleForm.areas" placeholder="房屋面积（必填）"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="1" style="text-align: center; line-height: 40px">
+                        m2
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="隐藏面积" prop="hiddenarea">
+                            <el-input v-model="alertAdd.ruleForm.hiddenarea" placeholder="请输入隐藏面积（选填）"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="1" style="text-align: center; line-height: 40px">
+                        m2
+                    </el-col>
+
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+                <el-row type="flex" class="row-bg" >
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="户型" prop="huxingshi">
+                            <el-input v-model="alertAdd.ruleForm.huxingshi" placeholder="几室（必填）"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="5">
+                        <el-form-item label="室" label-width="40px" prop="huxingting">
+                            <el-input v-model="alertAdd.ruleForm.huxingting" placeholder="几厅（必填）"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="5">
+                        <el-form-item label="厅" label-width="40px" prop="huxingwei">
+                            <el-input v-model="alertAdd.ruleForm.huxingchu" placeholder="几厨（必填）"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="5">
+                        <el-form-item label="厨" label-width="40px" prop="huxingchu">
+                            <el-input v-model="alertAdd.ruleForm.huxingwei" placeholder="几卫（必填）"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="1" style="text-align: center; line-height: 40px">
+                        卫
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="房屋等级" prop="grade">
+                            <el-select v-model="alertAdd.ruleForm.grade" style="width: 100%;" placeholder="请选择房屋等级（必填）">
+                                <el-option label="A" value="1"></el-option>
+                                <el-option label="B" value="2"></el-option>
+                                <el-option label="C" value="3"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="朝向" prop="chaoxiang">
+                            <el-select v-model="alertAdd.ruleForm.chaoxiang" style="width: 100%;" placeholder="请选择房屋朝向（必填）">
+                                <el-option label="正南" value="1"></el-option>
+                                <el-option label="正北" value="2"></el-option>
+                                <el-option label="正东" value="3"></el-option>
+                                <el-option label="正西" value="4"></el-option>
+                                <el-option label="东南" value="5"></el-option>
+                                <el-option label="西南" value="6"></el-option>
+                                <el-option label="东北" value="7"></el-option>
+                                <el-option label="西北" value="8"></el-option>
+                                <el-option label="东西" value="9"></el-option>
+                                <el-option label="南北" value="10"></el-option>
+                                <el-option label="东南北" value="11"></el-option>
+                                <el-option label="西南北" value="12"></el-option>
+                                <el-option label="东西南北" value="13"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="装修" prop="layout">
+                            <el-select v-model="alertAdd.ruleForm.layout" style="width: 100%;" placeholder="请选择装修情况（必填）">
+                                <el-option label="毛坯房" value="毛坯房"></el-option>
+                                <el-option label="简装修" value="简装修"></el-option>
+                                <el-option label="精装修" value="精装修"></el-option>
+                                <el-option label="豪华装修" value="豪华装修"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+
+                <el-row type="flex" class="row-bg">
+                    <el-col :span="1" >
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="有无钥匙" prop="iskey">
+                            <el-select v-model="alertAdd.ruleForm.iskey" style="width: 100%;" placeholder="请选择有无钥匙（必填）">
+                                <el-option label="有钥匙" value="1"></el-option>
+                                <el-option label="无钥匙" value="0"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="8" v-show="alertAdd.ruleForm.iskey=='0'?false:true">
+                        <el-form-item label="钥匙编号" prop="keyNumber">
+                            <el-input v-model="alertAdd.ruleForm.keyNumber" placeholder="请填写钥匙编号（必填）"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" v-show="alertAdd.ruleForm.iskey=='0'?false:true">
+                        <el-form-item label="存放门店" prop="keyStoreId">
+                            <el-select v-model="alertAdd.ruleForm.keyStoreId" placeholder="钥匙存放门店（必填）">
+                                <el-option
+                                        v-for="item in alertAdd.ruleForm.addStoreList"
+                                        :key="item.id"
+                                        :label="item.storeName"
+                                        :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="3" >
+                    </el-col>
+                </el-row>
+
+
+
 
                 <el-row type="flex" class="row-bg">
                     <el-col :span="1" >
@@ -406,7 +462,7 @@ export default {
     },
     data() {
         return {
-
+            menuActive:'1',
             formData :{
                 searchText: '',  //搜索框
                 rangeTypeList:[
@@ -813,11 +869,11 @@ export default {
                     price: '',
                     floor: '',
                     chaoxiang: '',
-                    recordrelName: ''
+                    recordrelName: '',
+                    priceText:'',
                 }
                 ],
             },
-
             alertAdd:{
                 active:0,
                 visible:false,
@@ -829,10 +885,10 @@ export default {
                     huxingting: '',
                     huxingwei: '',
                     huxingchu: '',
-                    iskey: '',
+                    iskey: '0',
                     hiddenarea: '',
-                    grade: '',
-                    type: '',
+                    grade: '2',
+                    type: '1',
                 	addressOptions:[{
                 		value: '',
 					          label: '',
@@ -854,7 +910,11 @@ export default {
                     phone: '',  //房主电话*
                     owner1: '',  //房主姓名
                     phone1: '',  //房主姓名
-                    address:''   //行政街
+                    address:'',   //行政街
+                    keyStoreId:'',
+                    keyNumber:'',
+                    layout:'',
+                    addStoreList:[],
                 },
                 rules: {
                     price: [
@@ -881,9 +941,9 @@ export default {
                     iskey: [
                       { required: true, message: '请选择有无钥匙', trigger: 'change' },
                     ],
-                    hiddenarea: [
-                      { required: true, message: '请输入隐藏面积', trigger: 'blur' },
-                    ],
+                    // hiddenarea: [
+                    //   { required: true, message: '请输入隐藏面积', trigger: 'blur' },
+                    // ],
                     grade: [
                       { required: true, message: '请选择房屋等级', trigger: 'change' },
                     ],
@@ -919,7 +979,10 @@ export default {
                     ],
                     address:[
                         { required: true, message: '请添加行政街', trigger: 'blur' },
-                    ]
+                    ],
+                    layout:[
+                        { required: true, message: '请选择装修情况', trigger: 'change' },
+                    ],
                 },
                 examineForm:{
                     bedroom: [
@@ -1058,7 +1121,6 @@ export default {
     mounted:function(){
         var that = this;
         var postData = {
-
             page: 1,
             size: 10,
             type: '1'
@@ -1070,16 +1132,27 @@ export default {
             console.log('houselist_error');
         });
 
-        HouseApi.regionslist().then(function (result) {
-            if(typeof(result) != "object"){result = JSON.parse(result)}
-            that.alertAdd.ruleForm.addressOptions=result.data;
-        }).catch(error => {
-            console.log('regionslist_error');
-        });
+
 
     },
 
     methods: {
+        handleSelectMenu(key, keyPath) {
+            // this.resetForm('ruleForm');
+
+            // this.$refs.form.resetFields();
+
+            this.menuActive=key;
+            if(this.menuActive=='1'){
+                this.searchType(0, this.formData.typeList);
+                this.alertAdd.ruleForm.type='1';
+            }else{
+                this.searchType(1, this.formData.typeList);
+                this.alertAdd.ruleForm.type='2';
+            }
+
+            // console.log(key, keyPath);
+        },
         handleInput(vl){
             let reg = /^[1-9]\d*$/;
 //            this.alertAdd.ruleForm.price=e.target.value.replace(/[^\d]/g,'');
@@ -1093,11 +1166,23 @@ export default {
         addHouseHandle(){
             this.alertAdd.visible=true;
             var that = this;
+            HouseApi.regionslist().then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.alertAdd.ruleForm.addressOptions=result.data;
+            }).catch(error => {
+                console.log('regionslist_error');
+            });
             HouseApi.xiaoqulist().then(function (result) {
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.alertAdd.ruleForm.xiaoquOptions=result.data;
             }).catch(error => {
                 console.log('xiaoqulist_error');
+            });
+            HouseApi.getAllStore().then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.alertAdd.ruleForm.addStoreList=result.data;
+            }).catch(error => {
+                console.log('getAllStore_error');
             });
         },
         querySearch(queryString, cb) {

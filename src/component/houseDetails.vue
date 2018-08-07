@@ -389,7 +389,8 @@
                                     :on-change="handleChangeImg1"
                                     :on-remove="handleRemove1"
                                     :on-exceed="handleExceed"
-                                    :http-request="uploadImg">
+                                    :http-request="uploadImg"
+                                    :disabled="examineForm.shilimit==0?true:false">
                                 <i class="el-icon-plus"></i>
                             </el-upload>
                             <el-dialog :visible.sync="examineForm.dialogVisible">
@@ -415,7 +416,8 @@
                                     :on-change="handleChangeImg2"
                                     :on-remove="handleRemove2"
                                     :on-exceed="handleExceed"
-                                    :http-request="uploadImg">
+                                    :http-request="uploadImg"
+                                    :disabled="examineForm.tinglimit==0?true:false">
                                 <i class="el-icon-plus"></i>
                             </el-upload>
                             <el-dialog :visible.sync="examineForm.dialogVisible">
@@ -431,7 +433,8 @@
                                     :on-change="handleChangeImg3"
                                     :on-remove="handleRemove3"
                                     :on-exceed="handleExceed"
-                                    :http-request="uploadImg">
+                                    :http-request="uploadImg"
+                                    :disabled="examineForm.weilimit==0?true:false">
                                 <i class="el-icon-plus"></i>
                             </el-upload>
                             <el-dialog :visible.sync="examineForm.dialogVisible">
@@ -447,7 +450,8 @@
                                     :on-change="handleChangeImg4"
                                     :on-remove="handleRemove4"
                                     :on-exceed="handleExceed"
-                                    :http-request="uploadImg">
+                                    :http-request="uploadImg"
+                                    :disabled="examineForm.chulimit==0?true:false">
                                 <i class="el-icon-plus"></i>
                             </el-upload>
                             <el-dialog :visible.sync="examineForm.dialogVisible">

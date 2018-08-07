@@ -1,7 +1,20 @@
 <template>
     <section class="passengerOrigin">
         <div class="passenger_template">
-            <div class="passenger_search">
+            <el-menu
+                    :default-active="menuActive"
+                    class="el-menu-demo"
+                    mode="horizontal"
+                    @select="handleSelectMenu"
+                    background-color="#FFFAFA"
+                    style="margin-top: -25px">
+                <el-menu-item index="1" style="margin-left:40%;"><el-button :type="menuActive=='1'?'primary':''">买卖</el-button></el-menu-item>
+                <el-menu-item index="2" style="margin-left:40px;"><el-button :type="menuActive=='2'?'primary':''">租赁</el-button></el-menu-item>
+            </el-menu>
+            <div style="margin-top: 20px">
+               客源搜索条件
+            </div>
+            <div class="passenger_search" style="margin-top: 20px">
                 <div class="passenger_search_header">
                     <el-input
                             placeholder="请输入客户姓名搜索客源"
@@ -23,15 +36,15 @@
                                 <!-- <span v-show="index != 0">({{ item.number }})</span> -->
                             </el-button>
                         </el-form-item>
-                        <el-form-item label="类型:">
-                            <el-button :type="item.choosed == false ? '' : 'primary'"
-                                       size="mini"
-                                       v-for="(item, index) in formData.typeList"
-                                       @click="searchType(index, formData.typeList)">
-                                <span>{{ item.name }}</span>
-                                <!-- <span v-show="index != 0">({{ item.number }})</span> -->
-                            </el-button>
-                        </el-form-item>
+                        <!--<el-form-item label="类型:">-->
+                            <!--<el-button :type="item.choosed == false ? '' : 'primary'"-->
+                                       <!--size="mini"-->
+                                       <!--v-for="(item, index) in formData.typeList"-->
+                                       <!--@click="searchType(index, formData.typeList)">-->
+                                <!--<span>{{ item.name }}</span>-->
+                                <!--&lt;!&ndash; <span v-show="index != 0">({{ item.number }})</span> &ndash;&gt;-->
+                            <!--</el-button>-->
+                        <!--</el-form-item>-->
 
                         <el-form-item label="星级:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
@@ -148,35 +161,38 @@
                         <span style="font-size: 18px;">需求意向</span>
                     </div>
                     <div  class="text item">
+                        <!--<el-row type="flex" class="row-bg" :gutter="20">-->
+                            <!--<el-col :span="1"></el-col>-->
+                            <!--<el-col :span="10">-->
+                                <!--<el-form-item label="房屋类型" prop="type">-->
+                                    <!--<el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择类型（必填）">-->
+                                        <!--<el-option label="买卖" value="0"></el-option>-->
+                                        <!--<el-option label="租赁" value="1"></el-option>-->
+                                    <!--</el-select>-->
+                                <!--</el-form-item>-->
+                            <!--</el-col>-->
+                            <!--<el-col :span="3"></el-col>-->
+                        <!--</el-row>-->
                         <el-row type="flex" class="row-bg" :gutter="20">
                             <el-col :span="1"></el-col>
-                            <el-col :span="10">
-                                <el-form-item label="房屋类型" prop="type">
-                                    <el-select v-model="alertAdd.ruleForm.type" style="width: 100%;" placeholder="请选择类型（必填）">
-                                        <el-option label="买卖" value="0"></el-option>
-                                        <el-option label="租赁" value="1"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="10">
+                            <el-col :span="6">
                                 <el-form-item label="心里价位" prop="heartprice" >
                                     <el-input v-model="alertAdd.ruleForm.heartprice" placeholder="心里价位"></el-input>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="3"></el-col>
-                        </el-row>
-                        <el-row type="flex" class="row-bg" :gutter="20">
-                            <el-col :span="1"></el-col>
-                            <el-col :span="10">
+                            <el-col :span="8">
                                 <el-form-item label="目的用途" prop="purpose">
                                     <el-input v-model="alertAdd.ruleForm.purpose" placeholder="自己住或门头店面等"></el-input>
                                 </el-form-item>
                             </el-col>
 
-                            <el-col :span="10">
-                                <el-form-item label="面积" prop="areas">
+                            <el-col :span="6">
+                                <el-form-item label="期望面积" prop="areas">
                                     <el-input v-model="alertAdd.ruleForm.areas" placeholder="面积"></el-input>
                                 </el-form-item>
+                            </el-col>
+                            <el-col :span="1" style="text-align: center; line-height: 40px">
+                                m2
                             </el-col>
                             <el-col :span="3"></el-col>
                         </el-row>
@@ -195,17 +211,17 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="5">
-                                <el-form-item label="厅" label-width="40px" prop="huxingwei">
-                                    <el-input v-model="alertAdd.ruleForm.huxingwei"  placeholder="几卫"></el-input>
+                                <el-form-item label="厅" label-width="40px" prop="huxingchu">
+                                    <el-input v-model="alertAdd.ruleForm.huxingchu"  placeholder="几厨"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="5">
-                                <el-form-item label="卫" label-width="40px" prop="huxingchu">
-                                    <el-input v-model="alertAdd.ruleForm.huxingchu" placeholder="几厨"></el-input>
+                                <el-form-item label="厨" label-width="40px" prop="huxingwei">
+                                    <el-input v-model="alertAdd.ruleForm.huxingwei" placeholder="几卫"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="1" style="text-align: center; line-height: 40px">
-                                厨
+                                卫
                             </el-col>
                             <el-col :span="3" >
                             </el-col>
@@ -265,6 +281,7 @@
         },
         data() {
             return {
+                menuActive:'1',
                 formData :{
                     searchText: '',
                     isShare:0,
@@ -352,7 +369,7 @@
                         guestname: "",  //客源姓名
                         sex: "",  //客源性别
                         guestgrade: "",  //客源星级(A,B,C)
-                        type: "",  //客源类型(0:买,1:租)
+                        type: "0",  //客源类型(0:买,1:租)
                         heartprice: "",  //心里价位
                         phone: "",  //联系电话
                         phonetow: "",//备用电话
@@ -391,6 +408,16 @@
         },
 
         methods: {
+            handleSelectMenu(key, keyPath) {
+                this.menuActive=key;
+                if(this.menuActive=='1'){
+                    this.searchType(0, this.formData.typeList);
+                    this.alertAdd.ruleForm.type='0';
+                }else{
+                    this.searchType(1, this.formData.typeList);
+                    this.alertAdd.ruleForm.type='1';
+                }
+            },
             doSearch(){
                 var that = this;
                 var postData = {

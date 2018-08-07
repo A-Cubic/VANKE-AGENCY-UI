@@ -115,4 +115,9 @@ export default {
         return API.POST('house/clicklog/list', params)
     },
 
+    // 查看电话地址记录
+    getAllStore: params => {
+        return API.POST('store/listStore', params)
+    },
+
 }
