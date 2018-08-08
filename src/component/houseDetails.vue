@@ -469,23 +469,6 @@
                                 <img width="100%" :src="examineForm.dialogImageUrl" alt="">
                             </el-dialog>
                         </el-form-item>
-                        <el-form-item label="卫:">
-                            <el-upload
-                                    action=""
-                                    list-type="picture-card"
-                                    :limit="examineForm.weilimit"
-                                    :auto-upload="false"
-                                    :on-change="handleChangeImg3"
-                                    :on-remove="handleRemove3"
-                                    :on-exceed="handleExceed"
-                                    :http-request="uploadImg"
-                                    :disabled="examineForm.weilimit==0?true:false">
-                                <i class="el-icon-plus"></i>
-                            </el-upload>
-                            <el-dialog :visible.sync="examineForm.dialogVisible">
-                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
-                            </el-dialog>
-                        </el-form-item>
                         <el-form-item label="厨:">
                             <el-upload
                                     action=""
@@ -497,6 +480,23 @@
                                     :on-exceed="handleExceed"
                                     :http-request="uploadImg"
                                     :disabled="examineForm.chulimit==0?true:false">
+                                <i class="el-icon-plus"></i>
+                            </el-upload>
+                            <el-dialog :visible.sync="examineForm.dialogVisible">
+                                <img width="100%" :src="examineForm.dialogImageUrl" alt="">
+                            </el-dialog>
+                        </el-form-item>
+                        <el-form-item label="卫:">
+                            <el-upload
+                                    action=""
+                                    list-type="picture-card"
+                                    :limit="examineForm.weilimit"
+                                    :auto-upload="false"
+                                    :on-change="handleChangeImg3"
+                                    :on-remove="handleRemove3"
+                                    :on-exceed="handleExceed"
+                                    :http-request="uploadImg"
+                                    :disabled="examineForm.weilimit==0?true:false">
                                 <i class="el-icon-plus"></i>
                             </el-upload>
                             <el-dialog :visible.sync="examineForm.dialogVisible">
@@ -1707,8 +1707,8 @@
                     +this.examineForm.tinglimit
                     +this.examineForm.weilimit
                     +this.examineForm.chulimit
-                    +this.examineForm.huxinglimit
-                    +this.examineForm.otherlimit;
+                    +this.examineForm.huxinglimit;
+//                    +this.examineForm.otherlimit;
                 var pcount = this.examineForm.bedroom.length
                     +this.examineForm.sittingRoom.length
                     +this.examineForm.toilet.length

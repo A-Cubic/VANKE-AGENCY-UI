@@ -4,28 +4,28 @@
 			<el-col :span="24" class="main">
 				<div class="login-container">
 					<div class="title">
-						<i class="el-icon-location-outline"></i>
-						万科有家·ERP管理平台
+						<i class="el-icon-share"></i>
+						账号密码登录
 					</div>
 					<div class="demo-ruleForm">
 						<el-form :model="loginForm" :rules="rules" ref="loginForm" status-icon label-position="left" label-width="0px">
 							<!--账号-->
 							<el-form-item prop="code"  class="login-form-item">
-								<el-input type="text" v-model="loginForm.code" placeholder="账号" auto-complete="off"  prefix-icon="icon-user1 iconfont">
+								<el-input type="text" v-model="loginForm.code" placeholder="系统账号" auto-complete="off"  prefix-icon="icon-user1 iconfont">
 								</el-input>
 							</el-form-item>
 							<!--密码-->
 							<el-form-item prop="pass" class="login-form-item">
-								<el-input type="password" v-model="loginForm.checkPass" placeholder="密码" auto-complete="off" prefix-icon="icon-mima iconfont"
+								<el-input type="password" v-model="loginForm.checkPass" placeholder="登录密码" auto-complete="off" prefix-icon="icon-mima iconfont"
 										  @keyup.enter.native="handleLoginReal">
 								</el-input>
 							</el-form-item>
 							<el-form-item class="login-form-item">
-								<el-button type="primary" class="common" @click.native.prevent="handleLoginReal" :loading="logining">登录</el-button>
+								<el-button type="primary" class="common" @click.native.prevent="handleLoginReal" :loading="logining">登 录</el-button>
 							</el-form-item>
 							<el-form-item class="login-form-item">
 								<span>
-									万科有家  美好万家
+									没有CEO 只有邻居
 								</span>
 							</el-form-item>
 						</el-form>
@@ -50,10 +50,10 @@
                 },
                 rules: {
                     code: [
-                        { required: true, message: '请输入账号', trigger: 'blur' },
+                        { required: true, message: '请输入系统账号', trigger: 'blur' },
                     ],
                     checkPass: [
-                        { required: true, message: '请输入密码', trigger: 'blur' },
+                        { required: true, message: '请输入登录密码', trigger: 'blur' },
                     ]
                 },
                 checked: true
@@ -189,7 +189,7 @@
 					border-radius: 4px;
 					position: absolute;
 					top: 180px;
-					right: 270px;
+					right: 470px;
 					background-color: #ffffff;
 					.title{
 						width: 100%;

@@ -95,37 +95,37 @@
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achshiImglist"
-                                 :key="index">
+                                 :key="index" @click="bigimgClick(img)">
                         </el-form-item>
                         <el-form-item label="厅">
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achtingImglist"
-                                 :key="index">
+                                 :key="index" @click="bigimgClick(img)">
+                        </el-form-item>
+                        <el-form-item label="厨" >
+                            <img :src="img"
+                                 alt=""
+                                 v-for="(img, index) in auditForm.achchuImglist"
+                                 :key="index" @click="bigimgClick(img)">
                         </el-form-item>
                         <el-form-item label="卫">
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achweiImglist"
-                                 :key="index">
+                                 :key="index" @click="bigimgClick(img)">
                         </el-form-item>
-                        <el-form-item label="厨">
-                            <img :src="img"
-                                 alt=""
-                                 v-for="(img, index) in auditForm.achchuImglist"
-                                 :key="index">
-                        </el-form-item>
-                        <el-form-item label="户型">
+                        <el-form-item label="户型" >
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achhuxingImglist"
-                                 :key="index">
+                                 :key="index" @click="bigimgClick(img)">
                         </el-form-item>
-                        <el-form-item label="其他">
+                        <el-form-item label="其他" >
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achotherImglist"
-                                 :key="index">
+                                 :key="index" @click="bigimgClick(img)">
                         </el-form-item>
                     </el-form>
                 </div>
@@ -163,6 +163,10 @@
                 </div>
             </el-dialog>
 
+            <el-dialog :visible.sync="bigimgVisible">
+                <img width="100%" :src="bigimgUrl" alt="">
+            </el-dialog>
+
             <!-- <el-dialog title="原因: " :visible.sync="unPassForm.unPassVisible" width="40%">
                 <el-input
                         type="textarea"
@@ -187,6 +191,9 @@ export default {
     },
     data() {
         return {
+            bigimgVisible:false,
+            bigimgUrl:'',
+
             searchForm: {
                 type: '',
                 typeOption: [
@@ -329,6 +336,10 @@ export default {
         this.doSearch();
     },
     methods: {
+        bigimgClick(url){
+            this.bigimgVisible=true;
+            this.bigimgUrl=url;
+        },
         doSearch(){
             var that = this;
             var postData = {
