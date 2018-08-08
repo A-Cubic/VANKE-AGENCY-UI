@@ -27,9 +27,14 @@
             </div>
             <div class="house_search" style="margin-top: 20px">
                 <div class="house_search_header">
+
                     <el-input
-                            placeholder="请输入区域、街道或小区名搜索房源"
+                            :placeholder="formData.searchType=='1'?'请输入区域、街道或小区名搜索房源':'请输入经纪人全名或后6位编号'"
                             v-model="formData.searchText" style="width: 500px;"  size="large" @keyup.enter.native="search">
+                        <el-select v-model="formData.searchType" slot="prepend" >
+                            <el-option label="位置" value="1"></el-option>
+                            <el-option label="经纪人" value="2"></el-option>
+                        </el-select>
                         <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
                     </el-input>
                     <!--<el-input size="medium" v-model="formData.searchText" placeholder="请输入区域、街道或小区名找房源"></el-input>-->
@@ -256,7 +261,7 @@
                     <!--</el-col>-->
                     <el-col :span="6">
                         <el-form-item label="价钱" prop="price">
-                            <el-input v-model="alertAdd.ruleForm.price" placeholder="房屋价格（必填）" @change="handleInput"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.price" placeholder="房屋价格（必填）"  @change="handleInput"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -464,6 +469,7 @@ export default {
         return {
             menuActive:'1',
             formData :{
+                searchType:'1',
                 searchText: '',  //搜索框
                 rangeTypeList:[
                     {
@@ -1163,14 +1169,18 @@ export default {
             // console.log(key, keyPath);
         },
         handleInput(vl){
-            let reg = /^[1-9]\d*$/;
-//            this.alertAdd.ruleForm.price=e.target.value.replace(/[^\d]/g,'');
-            if (vl) {
-                if ( new RegExp(reg).test(vl) == false) {
-                    this.alertAdd.ruleForm.price='';
-                    Message.error("只能输入数字");
-                }
+            var newVl = vl;
+            var reValue='';
+            reValue = newVl.replace(/[^\d.]/g,""); //先把非数字的都替换掉，除了数字和.
+            reValue = reValue.replace(/^\./g,""); //必须保证第一个为数字而不是.
+            reValue = reValue.replace(/\.{2,}/g,"."); //保证只有出现一个.而没有多个.
+            reValue = reValue.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+
+            if (reValue.endsWith('.')) {
+                reValue = reValue.slice(0,reValue.length-1);
             }
+            this.alertAdd.ruleForm.price = reValue;
+
         },
         addHouseHandle(){
             this.alertAdd.visible=true;
@@ -1293,6 +1303,7 @@ export default {
         search(){
             var that = this;
             var postData = {
+                searchType:this.formData.searchType,
                 priceUp: this.formData.priceUp,
                 priceDown: this.formData.priceDown,
                 searchText: this.formData.searchText,
@@ -1478,7 +1489,7 @@ export default {
                 position: relative;
 
                 .el-input{
-                    width: 220px;
+                    width: 100px;
                 }
                 .add_button{
                     position: absolute;

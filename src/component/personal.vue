@@ -50,18 +50,18 @@
                                         <el-table-column prop="xiaoquName" label="楼盘名称" width="180"></el-table-column>
                                         <el-table-column prop="huxing" label="户型"></el-table-column>
                                         <el-table-column prop="areas" label="面积"></el-table-column>
-                                        <el-table-column prop="price" label="价格"></el-table-column>
+                                        <el-table-column prop="priceText" label="价格"></el-table-column>
                                         <el-table-column prop="floor" label="楼层"></el-table-column>
                                         <el-table-column prop="chaoxiang" label="朝向"></el-table-column>
                                         <el-table-column prop="recordrelName" label="维护人"></el-table-column>
                                     </el-table>
                                     <div class="table-pagination">
                                         <el-pagination
-                                        layout="prev, pager, next, jumper, total"
-                                        :page-size="maintainData.pageSize"
-                                        :current-page.sync="maintainData.pageNum"
-                                        :total ="maintainData.total"
-                                        @current-change="handleCurrentChangeSearch1">
+                                            layout="prev, pager, next, jumper, total"
+                                            :page-size="maintainData.pageSize"
+                                            :current-page.sync="maintainData.pageNum"
+                                            :total ="maintainData.total"
+                                            @current-change="handleCurrentChangeSearch1">
                                         </el-pagination>
                                     </div>
                                 </div>
@@ -78,7 +78,7 @@
                                         <el-table-column prop="xiaoquName" label="楼盘名称" width="180"></el-table-column>
                                         <el-table-column prop="huxing" label="户型"></el-table-column>
                                         <el-table-column prop="areas" label="面积"></el-table-column>
-                                        <el-table-column prop="price" label="价格"></el-table-column>
+                                        <el-table-column prop="priceText" label="价格"></el-table-column>
                                         <el-table-column prop="floor" label="楼层"></el-table-column>
                                         <el-table-column prop="chaoxiang" label="朝向"></el-table-column>
                                         <el-table-column prop="recordrelName" label="维护人"></el-table-column>
@@ -399,9 +399,9 @@ export default {
 
         handleCurrentChangeSearch1(val){
             var that = this;
-            this.maintainData.pageNum = val;
+            that.maintainData.pageNum = val;
             var postData = {
-                page: maintainData.pageNum,
+                page: that.maintainData.pageNum,
                 size: 10,
             };
             PersonalApi.myRecordHouseList(postData).then(function (result) {
@@ -413,9 +413,9 @@ export default {
         },
         handleCurrentChangeSearch2(val){
             var that = this;
-            this.attentionData.pageNum = val;
+            that.attentionData.pageNum = val;
             var postData = {
-                page: attentionData.pageNum,
+                page: that.attentionData.pageNum,
                 size: 10,
             };
             PersonalApi.myLikeHouseList(postData).then(function (result) {

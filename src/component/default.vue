@@ -170,8 +170,9 @@
 			top: 0px;
 			bottom: 0px;
 			width: 100%;
-			background: url("https://cubic-vanke.oss-cn-qingdao.aliyuncs.com/home/bgpic.jpg") 0 0 no-repeat/cover;
-			/*background-size: 100% 100%;*/
+			height:100%;
+			background: url("https://cubic-vanke.oss-cn-qingdao.aliyuncs.com/home/bgpic.jpg") no-repeat  center center;
+			background-size: 100% 100%;
 			.main {
 				display: -webkit-box;
 				display: -webkit-flex;
