@@ -1315,8 +1315,8 @@ export default {
                 huxingType: this.formData.huxingType,
                 chaoxiangType: this.formData.chaoxiangType,
                 floorType: this.formData.floorType,
-                page: 1,
-                size: 10
+                page: this.tableData.pageNum,
+                size: this.tableData.pageSize
             }
             HouseApi.houselist(postData).then(function (result) {
                 if(typeof(result) != "object"){result = JSON.parse(result)}
@@ -1440,28 +1440,8 @@ export default {
         },
 
         handleCurrentChangeSearch(val){
-            var that = this;
-            var postData = {
-                priceUp: this.formData.priceUp,
-                priceDown: this.formData.priceDown,
-                searchText: this.formData.searchText,
-                rangeType: this.formData.rangeType,
-                type: this.formData.type,
-                positionType: this.formData.positionType,
-                priceType: this.formData.priceType,
-                areaType: this.formData.areaType,
-                huxingType: this.formData.huxingType,
-                chaoxiangType: this.formData.chaoxiangType,
-                floorType: this.formData.floorType,
-                page: this.tableData.pageNum,
-                size: 10
-            }
-            HouseApi.houselist(postData).then(function (result) {
-                if(typeof(result) != "object"){result = JSON.parse(result)}
-                that.tableData=result.data;
-            }).catch(error => {
-                console.log('houselist_error');
-            });
+            this.tableData.pageNum = val;
+            this.search();
         },
 
         examineById(row){

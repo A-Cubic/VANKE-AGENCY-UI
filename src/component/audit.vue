@@ -6,7 +6,7 @@
                     <span>类型: </span>
                     <el-select v-model="searchForm.type" placeholder="请选择类型">
                         <el-option
-                                v-for="item in searchForm.typeOption"
+                                v-for="item in (role=='ROLE_SEC'?searchForm.typeOption1:searchForm.typeOption)"
                                 :key="item.value"
                                 :label="item.label"
                                 :value="item.value">
@@ -88,28 +88,33 @@
                 </div>
             </el-col>
 
-            <el-dialog title="审核: " :visible.sync="auditForm.auditVisible" width="80%">
+            <el-dialog title="审核实勘图" :visible.sync="auditForm.auditVisible" width="80%">
                 <div class="audit-dialog-template" v-show="auditForm.aduitStatus == '4'">
-                    <el-form :model="auditForm" label-width="120px" class="demo-ruleForm">
-                        <el-form-item label="室">
+                    <el-card class="box-card" style="width:90%">
+                        <div style="color:#c51010;">房源编号：<span style="color: #909399;">{{auditForm.number}}</span></div>
+                        <div style="color:#c51010;margin-top:5px;">房屋朝向：<span  style="color: #909399;">{{auditForm.chaoxiang}}</span></div>
+                    </el-card>
+
+                    <el-form :model="auditForm" label-width="120px" class="demo-ruleForm" style="margin-top: 20px;">
+                        <el-form-item :label="auditForm.huxingshi+'室'">
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achshiImglist"
                                  :key="index" @click="bigimgClick(img)">
                         </el-form-item>
-                        <el-form-item label="厅">
+                        <el-form-item :label="auditForm.huxingting+'厅'">
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achtingImglist"
                                  :key="index" @click="bigimgClick(img)">
                         </el-form-item>
-                        <el-form-item label="厨" >
+                        <el-form-item :label="auditForm.huxingchu+'厨'" >
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achchuImglist"
                                  :key="index" @click="bigimgClick(img)">
                         </el-form-item>
-                        <el-form-item label="卫">
+                        <el-form-item :label="auditForm.huxingwei+'卫'">
                             <img :src="img"
                                  alt=""
                                  v-for="(img, index) in auditForm.achweiImglist"
@@ -183,6 +188,7 @@
 </template>
 <script>
     import AuditApi from '../api/api_audit.js';
+    import { getRole }  from '../util/global';
     import Vue from 'vue';
     import { Message } from 'element-ui';
 export default {
@@ -193,7 +199,7 @@ export default {
         return {
             bigimgVisible:false,
             bigimgUrl:'',
-
+            role:'',
             searchForm: {
                 type: '',
                 typeOption: [
@@ -212,10 +218,6 @@ export default {
                     {
                         value: '3',
                         label: '无效房源'
-                    },
-                    {
-                        value: '4',
-                        label: '实勘图片'
                     },
                     {
                         value: '5',
@@ -240,6 +242,16 @@ export default {
                     {
                         value: '10',
                         label: '成交业绩审核'
+                    },
+                ],
+                typeOption1: [
+                    {
+                        value: '',
+                        label: '全部'
+                    },
+                    {
+                        value: '4',
+                        label: '实勘图片'
                     },
                 ],
                 status: '',
@@ -328,14 +340,23 @@ export default {
                     total: 0,
                     pageNum: 1,
                 },
-
+                chaoxiang: '',
+                number: '',
+                huxingshi: '',
+                huxingting: '',
+                huxingchu: '',
+                huxingwei: '',
             },
         };
     },
     created(){
         this.doSearch();
+        this.role = this.getRole();
     },
     methods: {
+        getRole(){
+            return getRole();
+        },
         bigimgClick(url){
             this.bigimgVisible=true;
             this.bigimgUrl=url;
@@ -398,6 +419,13 @@ export default {
             this.auditForm.achhuxingImglist = item.huxingImglist;
             this.auditForm.achotherImglist = item.otherImglist;
             this.auditForm.achAllId = item.houseId;
+            this.auditForm.chaoxiang = item.chaoxiang;
+            this.auditForm.number = item.number;
+            this.auditForm.huxingshi = item.huxingshi;
+            this.auditForm.huxingting = item.huxingting;
+            this.auditForm.huxingchu = item.huxingchu;
+            this.auditForm.huxingwei = item.huxingwei;
+
             var txt = this.typeFormatterFuc(stt);
             if(stt=='1' || stt=='2' ||stt=='3' ||stt=='6' ||stt=='7' ||stt=='8' ){
                 this.auditForm.achAllId = item.houseId;

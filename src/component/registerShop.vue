@@ -2,10 +2,36 @@
     <section class="registerShop">
         <el-row class="register-template" :gutter="0">
             <el-col class="register-content" :span="24">
-                <el-card class="box-card">
-                    <div slot="header" class="clearfix">
-                        <span>门店注册</span>
-                    </div>
+                <el-row class="achievements-template" :gutter="0">
+                    <el-col class="achievements-content" :span="24">
+                        <div class="search-header">
+                            <el-button type="primary" icon="el-icon-plus" @click="addStorePop">新增门店</el-button>
+                        </div>
+                        <div class="table-template">
+                            <el-table :data="resultData.list" border>
+                                <el-table-column prop="storeName" label="门店名称"></el-table-column>
+                                <el-table-column prop="storeAdress" label="门店地址"></el-table-column>
+                                <el-table-column label="操作">
+                                    <template scope="scope">
+                                        <el-button size="mini" type="danger" icon="el-icon-edit" circle @click="editItem(scope.row)"></el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                        <div class="table-pagination">
+                            <el-pagination
+                                    layout="prev, pager, next, jumper, total"
+                                    :page-size="resultData.pageSize"
+                                    :current-page.sync="resultData.pageNum"
+                                    :total ="resultData.total"
+                                    @current-change="handleCurrentChangeSearch">
+                            </el-pagination>
+                        </div>
+                    </el-col>
+                </el-row>
+
+
+                <el-dialog :title="addStoreSign==1?'新增门店':'修改门店'" :visible.sync="addStoreVisible" width="50%">
                     <el-form label-position="left"
                              label-width="100px"
                              :model="registerForm"
@@ -30,11 +56,12 @@
                             </el-tree>
                         </el-form-item>
                     </el-form>
-                    <div class="register-button">
-                        <el-button style="margin-right: 10px" @click="resetForm('registerForm')">重置</el-button>
-                        <el-button type="primary" @click="submitForm('registerForm')">确定</el-button>
-                    </div>
-                </el-card>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button style="margin-right: 10px" @click="resetForm('registerForm');addStoreVisible=false">取 消</el-button>
+                        <el-button type="primary" v-show="addStoreSign==1?true:false" @click="submitForm('registerForm')">确 定</el-button>
+                        <el-button type="primary" v-show="addStoreSign==2?true:false" @click="editForm('registerForm')">确 定</el-button>
+                    </span>
+                </el-dialog>
 
             </el-col>
         </el-row>
@@ -53,10 +80,22 @@
         name: "register",
         data(){
             return{
+                addStoreVisible:false,
+                addStoreSign:1,
+                storeId:0,
+                resultData:{
+                    list: [
+
+                    ],
+                    pageSize: 10,
+                    total: 0,
+                    pageNum: 1,
+                },
                 registerForm:{
                     storeName: '',
                     storeAdress: '',
                     streetId: [],
+                    storeRangeList:[],
                 },
                 defaultProps: {
                     children: 'children',
@@ -81,9 +120,57 @@
             }
         },
         created(){
+            this.doSearchResult();
             this.doSearch();
         },
         methods:{
+            addStorePop(){
+                var that = this;
+                that.addStoreSign=1;
+                that.addStoreVisible=true;
+                that.registerForm.storeName= '';
+                that.registerForm.storeAdress= '';
+                that.registerForm.streetId=[];
+                that.registerForm.storeRangeList=[];
+
+                this.$nextTick(() => {
+                    this.$refs.tree.setCheckedKeys([],true);
+                });
+            },
+            editItem(row){
+                var that = this;
+                that.addStoreSign=2;
+                that.addStoreVisible=true;
+                that.registerForm.storeName=row.storeName;
+                that.registerForm.storeAdress=row.storeAdress;
+                that.storeId=row.id;
+                var ids=[];
+                row.storeRangeList.forEach((item) => {
+                    that.registerForm.streetId.push(item.streetId);
+                    ids.push(item.streetId);
+                })
+                this.$nextTick(() => {
+                    this.$refs.tree.setCheckedKeys(ids,true);
+                });
+
+            },
+            handleCurrentChangeSearch(val){
+                this.resultData.pageNum = val;
+                this.doSearchResult();
+            },
+            doSearchResult(){
+                var that = this;
+                var postData = {
+                    page: this.resultData.pageNum,
+                    size: this.resultData.pageSize
+                };
+                RegisterShopApi.searchStore(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.resultData=result.data;
+                }).catch(error => {
+                    console.log('searchStore_error');
+                });
+            },
             doSearch(){
                 var that = this;
                 var postData = {
@@ -96,7 +183,36 @@
                     console.log('regionslist_error');
                 });
             },
-
+            editForm(formName) {
+                this.registerForm.streetId = this.$refs.tree.getCheckedKeys(true);
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        var that = this;
+                        var postData = {
+                            storeName: this.registerForm.storeName,
+                            storeAdress: this.registerForm.storeAdress,
+                            id: this.storeId,
+                            streetId: this.registerForm.streetId,
+                        };
+                        RegisterShopApi.updateStore(postData).then(function (result) {
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                           if(result.data=='1'){
+                                that.resetForm(formName);
+                                Message({message: '门店修改成功!', type: 'success'});
+                                that.addStoreVisible=false;
+                                that.doSearchResult();
+                            }else {
+                                Message.error('门店修改失败！');
+                            }
+                        }).catch(error => {
+                            console.log('insertStore_error');
+                        });
+                    } else {
+                        // Message.error('请填写完整信息!');
+                        // return false;
+                    }
+                });
+            },
             submitForm(formName) {
                 this.registerForm.streetId = this.$refs.tree.getCheckedKeys(true);
                 this.$refs[formName].validate((valid) => {
@@ -110,10 +226,11 @@
                             }else if(result.data=='1'){
                                 that.resetForm(formName);
                                 Message({message: '门店注册成功!', type: 'success'});
+                                that.addStoreVisible=false;
+                                that.doSearchResult();
                             }else {
                                 Message.error('注册失败！');
                             }
-
                         }).catch(error => {
                             console.log('insertStore_error');
                         });
@@ -134,6 +251,28 @@
 
 <style lang="less" >
     @import "../assets/css/element.less";
+    .table-template{
+        margin: 20px;
+        /*box-shadow: 0px 0px 10px #e3e3e3;*/
+        min-height: 100px;
+    }
+    .table-pagination{
+        padding: 0 20px 20px;
+        text-align: right;
+    }
+    .search-header{
+        border-bottom: 1px solid #f2f2f2;
+        padding: 20px;
+        span{
+            margin-left: 10px;
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+        .el-button{
+            margin-left: 10px;
+        }
+    }
     .registerShop {
         .register-template{
             width: 100%;

@@ -212,10 +212,27 @@
                 <el-col :span="9">
                     <div class="tab-content">
                         <el-tabs v-model="editableTabsValue" type="border-card" >
-                            <el-tab-pane label="跟进" name="1">
+
+                            <el-tab-pane label="带看" name="1">
+                                <el-table :data="lookForm.list" :show-header="false" style="width: 100%">
+                                    <el-table-column prop="createTime" label="日期"></el-table-column>
+                                    <el-table-column prop="userRelName" label="维护人"></el-table-column>
+                                </el-table>
+                                <div class="pagination-template">
+                                    <el-pagination
+                                            layout="prev, pager, next, jumper, total"
+                                            :page-size="lookForm.pageSize"
+                                            :current-page.sync="lookForm.pageNum"
+                                            :total ="lookForm.total"
+                                            @current-change="handleCurrentChangeSearch1">
+                                    </el-pagination>
+                                </div>
+                            </el-tab-pane>
+
+                            <el-tab-pane label="跟进" name="2">
                                 <el-table :data="traceForm.list"
                                           :show-header="false"
-                                          style="width: 100%"
+                                          style="width: 100%" :fit="true"
                                           @cell-mouse-enter="mouseEnter"
                                           @cell-mouse-leave="mouseLeave">
                                     <el-table-column label="置顶" width="60px" min-width="60px">
@@ -228,7 +245,11 @@
                                     </el-table-column>
                                     <el-table-column prop="createTime" label="日期" width="160px" min-width="100px"></el-table-column>
                                     <el-table-column prop="userRelName" label="维护人" width="80px" min-width="80px"></el-table-column>
-                                    <el-table-column prop="content" label="内容" show-overflow-tooltip></el-table-column>
+                                    <el-table-column label="内容" show-overflow-tooltip>
+                                        <template slot-scope="scope">
+                                            <span v-html="scope.row.content"></span>
+                                        </template>
+                                    </el-table-column>
                                     <el-table-column label="操作" width="100px" min-width="100px">
                                         <template scope="scope">
                                             <el-button size="mini"
@@ -258,28 +279,14 @@
                                 <div class="trace-template">
                                     <div class="trace-title">跟进</div>
                                     <div class="trace-textarea">
-                                        <el-input type="textarea" :rows="4" placeholder="请输入反馈" v-model="traceForm.textMes"></el-input>
+                                        <el-input type="textarea" :rows="8" placeholder="请输入反馈"  v-model="traceForm.textMes"></el-input>
                                     </div>
                                 </div>
                                 <div class="trace-button">
                                     <el-button type="primary" size="mini" @click="submitTrace">提交</el-button>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane label="带看" name="2">
-                                <el-table :data="lookForm.list" :show-header="false" style="width: 100%">
-                                    <el-table-column prop="createTime" label="日期"></el-table-column>
-                                    <el-table-column prop="userRelName" label="维护人"></el-table-column>
-                                </el-table>
-                                <div class="pagination-template">
-                                    <el-pagination
-                                            layout="prev, pager, next, jumper, total"
-                                            :page-size="lookForm.pageSize"
-                                            :current-page.sync="lookForm.pageNum"
-                                            :total ="lookForm.total"
-                                            @current-change="handleCurrentChangeSearch1">
-                                    </el-pagination>
-                                </div>
-                            </el-tab-pane>
+
                             <el-tab-pane :disabled = "houseDataForm.user_type=='0'?true:false" label="修改" name="3" >
                                 <el-form :model="editForm" ref="editForm" label-width="45px" class="demo-ruleForm">
                                     <el-form-item label="价格:">
@@ -1636,6 +1643,7 @@
                     houseId: hid,
                     content:this.traceForm.textMes
                 };
+                console.log(this.traceForm.textMes)
                 HouseApi.insertRecord(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     that.traceForm.textMes='';

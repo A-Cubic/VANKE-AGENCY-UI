@@ -241,7 +241,6 @@ export default {
     mounted:function(){
         var that = this;
         PersonalApi.userinfo().then(function (result) {
-            console.log(result)
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.form=result.data;
         }).catch(error => {
@@ -253,7 +252,6 @@ export default {
             size: 10,
         };
         PersonalApi.myRecordHouseList(postData).then(function (result) {
-            console.log(result)
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.maintainData=result.data;
         }).catch(error => {
@@ -261,7 +259,6 @@ export default {
         });
 
         PersonalApi.myLikeHouseList(postData).then(function (result) {
-            console.log(result)
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.attentionData=result.data;
         }).catch(error => {
@@ -306,7 +303,6 @@ export default {
             };
 
             PersonalApi.updateinfo(postData).then(function (result) {
-                console.log(result)
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.form.phone=uphone;
             }).catch(error => {
@@ -339,7 +335,6 @@ export default {
 
 
             PersonalApi.updatepwd(postData).then(function (result) {
-                console.log(result)
                 if(typeof(result) != "object"){ result = JSON.parse(result)}
                 var str = result.data;
                 if(str=='修改成功'){

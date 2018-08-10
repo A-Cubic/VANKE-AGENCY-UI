@@ -116,7 +116,7 @@ const routes= [
             {   path: 'audit',                  component: Audit,               name: '审核',meta: {defaultShow: true, roles: ['ROLE_MANAGER','ROLE_SEC']}},
             {   path: 'register',               component: Register,            name: '账号注册',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER','ROLE_SEC']}},
             {   path: 'achievementsT',           component: AchievementsT,        name: '业绩统计',meta: {defaultShow: true, roles: ['ROLE_ADMIN','ROLE_LEADER']}},
-            {   path: 'registerShop',           component: RegisterShop,        name: '门店注册',meta: {defaultShow: true, roles: ['ROLE_ADMIN']}},
+            {   path: 'registerShop',           component: RegisterShop,        name: '门店管理',meta: {defaultShow: true, roles: ['ROLE_ADMIN']}},
         ] },
 
     {	path: '/default',				component: Default, 			name: '默认首页'},

@@ -15,5 +15,14 @@ export default {
         return API.POST('store/insert', params)
     },
 
+    //门店查询
+    searchStore: params => {
+        return API.POST('store/listStoreAll', params)
+    },
+
+    //门店更新
+    updateStore: params => {
+        return API.POST('store/update', params)
+    },
 
 }

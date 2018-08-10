@@ -62,7 +62,7 @@
                                            @click="search(2)">月排行</el-button> -->
                             </div>
                             <div class="table-wrap">
-                                <el-table :data="ranking.list" style="width: 100%">
+                                <el-table :data="ranking.list.slice((ranking.pageNum-1)*ranking.pageSize, ranking.pageNum*ranking.pageSize)" style="width: 100%">
                                     <el-table-column  label="" width="40">
                                         <template scope="scope">
                                             <i class='iconfont icon-first' v-show='scope.row.rank*1==1'></i>
@@ -83,6 +83,7 @@
                                         :page-size="ranking.pageSize"
                                         :current-page.sync="ranking.pageNum"
                                         :total ="ranking.total"
+                                        @size-change="handleSizeChange"
                                         @current-change="handleCurrentChangeSearch">
                                 </el-pagination>
                             </div>
@@ -194,12 +195,16 @@ export default {
 
         var postData = {
             type: 1,
-            page: 1,
-            size: 10,
+            // page: 1,
+            // size: 10,
         };
         HomeApi.rank(postData).then(function (result) {
             if(typeof(result) != "object"){result = JSON.parse(result)}
-            that.ranking=result.data;
+            that.ranking.list=result.data;
+            that.ranking.pageNum=1;
+            that.ranking.pageSize=10;
+            that.ranking.total = result.data.length;
+
         // console.log(that.ranking)
         }).catch(error => {
             console.log('rank_error');
@@ -208,19 +213,25 @@ export default {
     methods: {
         handleCurrentChangeSearch(val){
             this.ranking.pageNum = val;
-            this.doSearch();
+            // this.doSearch();
+        },
+        handleSizeChange: function (size) {
+            this.ranking.pagesize = size
         },
         doSearch(){
             var that = this;
             var postData = {
                 type: this.dataStatus.status,
-                page: this.ranking.pageNum,
-                size: 10,
+                // page: this.ranking.pageNum,
+                // size: 10,
             };
             // console.log(postData)
             HomeApi.rank(postData).then(function (result) {
                 if(typeof(result) != "object"){result = JSON.parse(result)}
-                that.ranking=result.data;
+                that.ranking.list=result.data;
+                that.ranking.pageNum=1;
+                that.ranking.pageSize=10;
+                that.ranking.total = that.ranking.list.length;
             }).catch(error => {
                 console.log('rank_error');
             })
