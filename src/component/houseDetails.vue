@@ -279,7 +279,7 @@
                                 <div class="trace-template">
                                     <div class="trace-title">跟进</div>
                                     <div class="trace-textarea">
-                                        <el-input type="textarea" :rows="8" placeholder="请输入反馈"  v-model="traceForm.textMes"></el-input>
+                                        <el-input type="textarea" :rows="6" placeholder="请输入反馈"  v-model="traceForm.textMes"></el-input>
                                     </div>
                                 </div>
                                 <div class="trace-button">
