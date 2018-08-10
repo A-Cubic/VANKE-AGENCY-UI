@@ -126,4 +126,14 @@ export default {
         return API.POST('store/listStore', params)
     },
 
+    // 跟进置顶
+    updateIsTopOne: params => {
+        return API.POST('house/record/updateIsTopOne', params)
+    },
+
+    // 跟进取消置顶
+    updateIsTopZero: params => {
+        return API.POST('house/record/updateIsTopZero', params)
+    },
+
 }

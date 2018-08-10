@@ -65,4 +65,13 @@ export default {
         return API.POST('guest/updateIsshareUser', params)
     },
 
+    // 跟进置顶
+    updateIsTopOne: params => {
+        return API.POST('guest/record/updateIsTopOne', params)
+    },
+
+    // 跟进取消置顶
+    updateIsTopZero: params => {
+        return API.POST('guest/record/updateIsTopZero', params)
+    },
 }

@@ -139,7 +139,7 @@
                                         style="width: 100%;margin-top: 0px;padding: 20px;box-shadow: 0px 0px 10px #e3e3e3;">
                                     <el-table-column prop="createTime" label="看房时间"></el-table-column>
                                     <el-table-column prop="houseName" label="房源编号"></el-table-column>
-                                    <el-table-column prop="feedback" label="反馈结果"></el-table-column>
+                                    <el-table-column prop="feedback" label="反馈结果" show-overflow-tooltip></el-table-column>
                                 </el-table>
                                 <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
                                     <el-pagination
@@ -155,9 +155,35 @@
                                 <el-table :data="remarkForm.list"
                                         size="mini"
                                         max-height="320"
-                                        style="width: 100%;margin-top: 0px;padding: 20px;box-shadow: 0px 0px 10px #e3e3e3;">
-                                    <el-table-column prop="createTime" label="跟进时间"></el-table-column>
-                                    <el-table-column prop="content" label="跟进内容"></el-table-column>
+                                        style="width: 100%;margin-top: 0px;padding: 20px;box-shadow: 0px 0px 10px #e3e3e3;"
+                                        @cell-mouse-enter="mouseEnter"
+                                        @cell-mouse-leave="mouseLeave">
+                                    <el-table-column label="" width="60px" min-width="60px">
+                                        <template slot-scope="scope">
+                                            <el-tag
+                                                    v-show="scope.row.istop=='1'?true:false"
+                                                    type="danger"
+                                                    disable-transitions>置顶</el-tag>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="createTime" label="跟进时间" width="180px" min-width="150px"></el-table-column>
+                                    <el-table-column prop="content" label="跟进内容" show-overflow-tooltip></el-table-column>
+                                    <el-table-column label="置顶/取消" width="180px" min-width="150px">
+                                        <template scope="scope">
+                                            <el-button size="mini"
+                                                       icon="el-icon-upload2"
+                                                       type="danger"
+                                                       circle
+                                                       v-show="(scope.row.topicon==null || scope.row.topicon=='' || (scope.row.istop=='1' && scope.$index==0))?false:true"
+                                                       @click="setTop(scope.row)"></el-button>
+                                            <el-button size="mini"
+                                                       icon="el-icon-download"
+                                                       type="warning"
+                                                       circle
+                                                       v-show="(scope.row.topicon==null || scope.row.topicon=='' || scope.row.istop=='0')?false:true"
+                                                       @click="setNoTop(scope.row)"></el-button>
+                                        </template>
+                                    </el-table-column>
                                 </el-table>
                                 <div class="table-pagination" style=" margin-top: 20px;text-align: right;">
                                     <el-pagination
@@ -505,6 +531,72 @@
             this.doSearch();
         },
         methods: {
+            mouseEnter(row, column, cell, event){
+                row.topicon='1'
+            },
+            mouseLeave(row, column, cell, event){
+                row.topicon=''
+            },
+            setTop(row){
+                var that = this;
+                var gid = this.id;
+                var postData = {
+                    id: row.id,
+                };
+
+                GuestApi.updateIsTopOne(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+
+                    var postData1 = {
+                        id: gid,
+                        page: 1,
+                        size: 5
+                    };
+
+                    GuestApi.recordDetail(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.remarkForm=result.data;
+                        Message({
+                            type: 'success',
+                            message: '置顶成功!'
+                        });
+                    }).catch(error => {
+                        console.log('recordDetail_error');
+                    });
+                }).catch(error => {
+                    console.log('updateIsTopOne_error'+error);
+                });
+            },
+            setNoTop(row){
+                var that = this;
+                var gid = this.id;
+
+                var postData = {
+                    id: row.id,
+                };
+
+                GuestApi.updateIsTopZero(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    var postData1 = {
+                        id: gid,
+                        page: 1,
+                        size: 5
+                    };
+
+                    GuestApi.recordDetail(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.remarkForm=result.data;
+                        Message({
+                            type: 'success',
+                            message: '已取消置顶!'
+                        });
+                    }).catch(error => {
+                        console.log('recordDetail_error');
+                    });
+                }).catch(error => {
+                    console.log('updateIsTopZero_error'+error);
+                });
+            },
             updateIsShareGuest(){
                 this.$confirm('此操作将维护人更改为当前用户, 是否继续?', '提示', {
                     confirmButtonText: '确定',

@@ -213,10 +213,38 @@
                     <div class="tab-content">
                         <el-tabs v-model="editableTabsValue" type="border-card" >
                             <el-tab-pane label="跟进" name="1">
-                                <el-table :data="traceForm.list" :show-header="false" style="width: 100%">
-                                    <el-table-column prop="createTime" label="日期"></el-table-column>
-                                    <el-table-column prop="userRelName" label="维护人"></el-table-column>
-                                    <el-table-column prop="content" label="内容"></el-table-column>
+                                <el-table :data="traceForm.list"
+                                          :show-header="false"
+                                          style="width: 100%"
+                                          @cell-mouse-enter="mouseEnter"
+                                          @cell-mouse-leave="mouseLeave">
+                                    <el-table-column label="置顶" width="60px" min-width="60px">
+                                        <template slot-scope="scope">
+                                            <el-tag
+                                                    v-show="scope.row.istop=='1'?true:false"
+                                                    type="danger"
+                                                    disable-transitions>置顶</el-tag>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="createTime" label="日期" width="160px" min-width="100px"></el-table-column>
+                                    <el-table-column prop="userRelName" label="维护人" width="80px" min-width="80px"></el-table-column>
+                                    <el-table-column prop="content" label="内容" show-overflow-tooltip></el-table-column>
+                                    <el-table-column label="操作" width="100px" min-width="100px">
+                                        <template scope="scope">
+                                            <el-button size="mini"
+                                                       icon="el-icon-upload2"
+                                                       type="danger"
+                                                       circle
+                                                       v-show="(scope.row.topicon==null || scope.row.topicon=='' || (scope.row.istop=='1' && scope.$index==0))?false:true"
+                                                       @click="setTop(scope.row)"></el-button>
+                                            <el-button size="mini"
+                                                       icon="el-icon-download"
+                                                       type="warning"
+                                                       circle
+                                                       v-show="(scope.row.topicon==null || scope.row.topicon=='' || scope.row.istop=='0')?false:true"
+                                                       @click="setNoTop(scope.row)"></el-button>
+                                        </template>
+                                    </el-table-column>
                                 </el-table>
                                 <div class="pagination-template">
                                     <el-pagination
@@ -762,7 +790,7 @@
                         {
                             createTime: '',
                             userRelName: '',
-                            content:''
+                            content:'',
                         }
                     ],
                     textMes: ''
@@ -937,6 +965,72 @@
         filter:{
         },
         methods: {
+            mouseEnter(row, column, cell, event){
+                row.topicon='1'
+            },
+            mouseLeave(row, column, cell, event){
+                row.topicon=''
+            },
+            setTop(row){
+                var that = this;
+                var hid = this.id;
+                var postData = {
+                    id: row.id,
+                };
+
+                HouseApi.updateIsTopOne(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+
+                    var postData1 = {
+                        page: 1,
+                        size: 5,
+                        houseId: hid
+                    };
+
+                    HouseApi.recordlist(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.traceForm=result.data;
+                        Message({
+                            type: 'success',
+                            message: '置顶成功!'
+                        });
+                    }).catch(error => {
+                        console.log('recordlist_error');
+                    });
+                }).catch(error => {
+                    console.log('updateIsTopOne_error'+error);
+                });
+            },
+            setNoTop(row){
+                var that = this;
+                var hid = this.id;
+
+                var postData = {
+                    id: row.id,
+                };
+
+                HouseApi.updateIsTopZero(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    var postData1 = {
+                        page: 1,
+                        size: 5,
+                        houseId: hid
+                    };
+
+                    HouseApi.recordlist(postData1).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.traceForm=result.data;
+                        Message({
+                            type: 'success',
+                            message: '已取消置顶!'
+                        });
+                    }).catch(error => {
+                        console.log('recordlist_error');
+                    });
+                }).catch(error => {
+                    console.log('updateIsTopZero_error'+error);
+                });
+            },
             searchownerHistory(){
                 var that = this;
                 var postData = {
