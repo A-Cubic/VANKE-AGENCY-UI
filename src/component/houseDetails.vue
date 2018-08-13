@@ -232,7 +232,7 @@
                             <el-tab-pane label="跟进" name="2">
                                 <el-table :data="traceForm.list"
                                           :show-header="false"
-                                          style="width: 100%" :fit="true"
+                                          style="width: 100%"
                                           @cell-mouse-enter="mouseEnter"
                                           @cell-mouse-leave="mouseLeave">
                                     <el-table-column label="置顶" width="60px" min-width="60px">
@@ -245,24 +245,35 @@
                                     </el-table-column>
                                     <el-table-column prop="createTime" label="日期" width="160px" min-width="100px"></el-table-column>
                                     <el-table-column prop="userRelName" label="维护人" width="80px" min-width="80px"></el-table-column>
-                                    <el-table-column label="内容" show-overflow-tooltip>
-                                        <template slot-scope="scope">
-                                            <span v-html="scope.row.content"></span>
+                                    <el-table-column type="expand">
+                                        <template slot-scope="props">
+                                            <el-form label-position="top" inline class="demo-table-expand">
+                                                <el-form-item label="跟进内容：" >
+                                                    <span v-html="props.row.content">
+                                                        <!--{{ props.row.content }}-->
+                                                    </span>
+                                                </el-form-item>
+                                            </el-form>
                                         </template>
                                     </el-table-column>
+                                    <!--<el-table-column label="内容" prop="content">-->
+                                        <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<span v-html="scope.row.content"></span>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                                    <!--</el-table-column>-->
                                     <el-table-column label="操作" width="100px" min-width="100px">
                                         <template scope="scope">
                                             <el-button size="mini"
                                                        icon="el-icon-upload2"
                                                        type="danger"
                                                        circle
-                                                       v-show="(scope.row.topicon==null || scope.row.topicon=='' || (scope.row.istop=='1' && scope.$index==0))?false:true"
+                                                       v-show="(houseDataForm.user_type=='0'||scope.row.topicon==null || scope.row.topicon=='' || (scope.row.istop=='1' && scope.$index==0))?false:true"
                                                        @click="setTop(scope.row)"></el-button>
                                             <el-button size="mini"
                                                        icon="el-icon-download"
                                                        type="warning"
                                                        circle
-                                                       v-show="(scope.row.topicon==null || scope.row.topicon=='' || scope.row.istop=='0')?false:true"
+                                                       v-show="(houseDataForm.user_type=='0'|| scope.row.topicon==null || scope.row.topicon=='' || scope.row.istop=='0')?false:true"
                                                        @click="setNoTop(scope.row)"></el-button>
                                         </template>
                                     </el-table-column>
@@ -1805,20 +1816,16 @@
             uploadImg:function(param){
                 var that = this;
                 var hid = this.id;
-                var count = this.examineForm.shilimit
-                    +this.examineForm.tinglimit
-                    +this.examineForm.weilimit
-                    +this.examineForm.chulimit
-                    +this.examineForm.huxinglimit;
-//                    +this.examineForm.otherlimit;
-                var pcount = this.examineForm.bedroom.length
-                    +this.examineForm.sittingRoom.length
-                    +this.examineForm.toilet.length
-                    +this.examineForm.kitchen.length
-                    +this.examineForm.houseTypeImg.length
-                    +this.examineForm.other.length
-                if(pcount<count){
-                    Message.error("请上传完整数量的实勘图后，再提交审核。");
+                if(this.examineForm.bedroom.length<this.examineForm.shilimit){
+                    Message.error("室实勘图数量不正确！");
+                }else if(this.examineForm.sittingRoom.length<this.examineForm.tinglimit){
+                    Message.error("厅实勘图数量不正确！");
+                }else if(this.examineForm.kitchen.length<this.examineForm.chulimit){
+                    Message.error("厨实勘图数量不正确！");
+                }else if(this.examineForm.toilet.length<this.examineForm.weilimit){
+                    Message.error("卫实勘图数量不正确！");
+                }else if(this.examineForm.houseTypeImg.length<this.examineForm.huxinglimit){
+                    Message.error("户型实勘图数量不正确！");
                 }else{
                     this.$confirm('此操作将提交实勘审核, 是否继续?', '提示', {
                         confirmButtonText: '确定',
@@ -1841,7 +1848,9 @@
                             chuImgList.push(that.examineForm.kitchen[i].base64);
                         }
                         huxingImgList.push(that.examineForm.houseTypeImg[0].base64);
-                        otherImgList.push(that.examineForm.other[0].base64);
+                        if(that.examineForm.other.length>0){
+                            otherImgList.push(that.examineForm.other[0].base64);
+                        }
                         var postData = {
                             id:hid,
                             shiImgList: shiImgList,
@@ -1889,6 +1898,7 @@
 </script>
 <style lang="less">
     @import "../assets/css/element.less";
+
     .smallImg1 {
          text-align: center;
          width:100px;

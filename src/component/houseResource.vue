@@ -145,7 +145,23 @@
                             <img class="imageUrl" :src="scope.row.titleimg" alt="">
                         </template>
                     </el-table-column>
-                    <el-table-column prop="xiaoquName" label="楼盘名称" width="180"></el-table-column>
+                    <el-table-column fixed label="楼盘名称" width="180">
+                        <template scope="scope">
+                            <div>
+                                {{scope.row.xiaoquName}}
+                            </div>
+                            <div>
+                                <!--<i v-for="it in (scope.row.guestgrade=='A'?3:scope.row.guestgrade=='B'?2:1)" class="el-icon-star-on"></i>-->
+                                {{scope.row.number}}
+                            </div>
+                            <div>
+                                <span><el-tag size="mini" v-show="scope.row.isshare=='1'?true:false">共享</el-tag></span>
+                                <span><el-tag size="mini" v-show="scope.row.isspecial=='1'?true:false" type="warning" >特殊</el-tag></span>
+                                <span><el-tag size="mini" v-show="scope.row.isfine=='1'?true:false" type="success">优质</el-tag></span>
+                                <span><el-tag size="mini" v-show="scope.row.state=='1'?true:false" type="danger">无效</el-tag></span>
+                            </div>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="huxing" label="户型"></el-table-column>
                     <el-table-column prop="areas" label="面积"></el-table-column>
                     <el-table-column prop="priceText" label="价格"></el-table-column>
