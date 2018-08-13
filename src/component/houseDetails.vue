@@ -243,8 +243,6 @@
                                                     disable-transitions>置顶</el-tag>
                                         </template>
                                     </el-table-column>
-                                    <el-table-column prop="createTime" label="日期" width="160px" min-width="100px"></el-table-column>
-                                    <el-table-column prop="userRelName" label="维护人" width="80px" min-width="80px"></el-table-column>
                                     <el-table-column type="expand">
                                         <template slot-scope="props">
                                             <el-form label-position="top" inline class="demo-table-expand">
@@ -256,6 +254,9 @@
                                             </el-form>
                                         </template>
                                     </el-table-column>
+                                    <el-table-column prop="createTime" label="日期"></el-table-column>
+                                    <el-table-column prop="userRelName" label="维护人"></el-table-column>
+
                                     <!--<el-table-column label="内容" prop="content">-->
                                         <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
                                             <!--&lt;!&ndash;<span v-html="scope.row.content"></span>&ndash;&gt;-->
