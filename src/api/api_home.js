@@ -35,4 +35,16 @@ export default {
         return API.POST('message/list', params)
     },
 
+    //本店量化
+    myStoreRankings: params => {
+        return API.POST('home/score/myStoreRankings', params)
+    },
+
+    //本店量化
+    storeAllRankings: params => {
+        return API.POST('home/score/storeAllRankings', params)
+    },
+
+
+
 }

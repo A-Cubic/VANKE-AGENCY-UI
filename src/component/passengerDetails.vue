@@ -307,6 +307,10 @@
                     <div class="look-detail-wrap-header">
                         <el-input placeholder="请输入小区名称" v-model="addLookForm.xiaoquName" clearable></el-input>
                         <el-input placeholder="请输入房源编号" v-model="addLookForm.number" clearable></el-input>
+                        <el-select v-model="addLookForm.type" style="width: 200px;" placeholder="请选择类型">
+                            <el-option label="买卖" value="1"></el-option>
+                            <el-option label="租赁" value="2"></el-option>
+                        </el-select>
                         <el-button class="m-btn-addMenu" type="primary" icon="el-icon-search" @click="searchHouseList">查询</el-button>
                     </div>
                     <div class="look-detail-wrap-table">
@@ -320,7 +324,7 @@
                             <el-table-column prop="xiaoquName" label="小区"></el-table-column>
                             <el-table-column prop="areas" label="面积"></el-table-column>
                             <el-table-column prop="floor" label="楼层"></el-table-column>
-                            <el-table-column prop="price" label="价格"></el-table-column>
+                            <el-table-column prop="priceText" label="价格"></el-table-column>
                             <el-table-column label="操作">
                                 <template scope="scope">
                                     <el-button type="danger" icon="el-icon-check" circle @click="addLookDetail(scope.row)"></el-button>
@@ -512,6 +516,7 @@
                 addLookForm:{
                     xiaoquName: '',
                     number: '',
+                    type: '1',
                 },
 
 
@@ -1014,6 +1019,7 @@
                     var postData = {
                         xiaoquName: this.addLookForm.xiaoquName,
                         number: this.addLookForm.number,
+                        type: this.addLookForm.type,
                         page: this.lookTableData.pageNum,
                         size: 5
                     };

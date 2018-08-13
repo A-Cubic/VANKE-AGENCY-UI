@@ -107,16 +107,115 @@
                     </div>
                 </el-col>
             </el-row>
+            <el-row :gutter="20" v-show="role=='ROLE_MANAGER'?true:false">
+                <el-col :span="18">
+                    <div class="grid-content">
+                        <el-card class="box-card" shadow="always">
+                            <div slot="header" class="clearfix">
+                                <span style="font-size: 18px; text-align: center;">量化排行榜</span>
+                            </div>
+                            <div class="table-button">
+                                <el-button v-for="(item, index) in dataStatus1.dataStatusList"
+                                           size="small"
+                                           :key="index"
+                                           :type="dataStatus1.status == item.value ? 'primary' : ''"
+                                           @click="search1(item.value)">{{ item.label }}
+                                </el-button>
+                            </div>
+                            <div class="table-wrap">
+                                <el-table :data="ranking1.list.slice((ranking1.pageNum-1)*ranking1.pageSize, ranking1.pageNum*ranking1.pageSize)" style="width: 100%">
+                                    <el-table-column  label="" width="40">
+                                        <template scope="scope">
+                                            <i class='iconfont icon-first' v-show='scope.row.rank*1==1'></i>
+                                            <i class='iconfont icon-second' v-show='scope.row.rank*1==2'></i>
+                                            <i class='iconfont icon-third' v-show='scope.row.rank*1==3'></i>
+                                            <!-- <i class='el-icon-star-off' v-show='scope.row.rank*1==4'></i> -->
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="rank" label="排名"></el-table-column>
+                                    <el-table-column prop="real_name" label="姓名" ></el-table-column>
+                                    <el-table-column prop="houseScore" label="房源" ></el-table-column>
+                                    <el-table-column prop="guestScore" label="客源" ></el-table-column>
+                                    <el-table-column prop="lookrecordScore" label="带看" ></el-table-column>
+                                    <el-table-column prop="keyScore" label="钥匙" ></el-table-column>
+                                    <el-table-column prop="sumScore" label="得分"></el-table-column>
+                                </el-table>
+                            </div>
+                            <div class="table-pagination">
+                                <el-pagination
+                                        layout="prev, pager, next, jumper, total"
+                                        :page-size="ranking1.pageSize"
+                                        :current-page.sync="ranking1.pageNum"
+                                        :total ="ranking1.total"
+                                        @size-change="handleSizeChange1"
+                                        @current-change="handleCurrentChangeSearch1">
+                                </el-pagination>
+                            </div>
+                        </el-card>
+                    </div>
+                </el-col>
+
+            </el-row>
+            <el-row :gutter="20" v-show="role=='ROLE_LEADER' || role=='ROLE_ADMIN'?true:false">
+                <el-col :span="18">
+                    <div class="grid-content">
+                        <el-card class="box-card" shadow="always">
+                            <div slot="header" class="clearfix">
+                                <span style="font-size: 18px; text-align: center;">分店量化总排行榜</span>
+                            </div>
+                            <div class="table-button">
+                                <el-button v-for="(item, index) in dataStatus2.dataStatusList"
+                                           size="small"
+                                           :key="index"
+                                           :type="dataStatus2.status == item.value ? 'primary' : ''"
+                                           @click="search2(item.value)">{{ item.label }}
+                                </el-button>
+                            </div>
+                            <div class="table-wrap">
+                                <el-table :data="ranking2.list.slice((ranking2.pageNum-1)*ranking2.pageSize, ranking2.pageNum*ranking2.pageSize)" style="width: 100%">
+                                    <el-table-column  label="" width="40">
+                                        <template scope="scope">
+                                            <i class='iconfont icon-first' v-show='scope.row.rank*1==1'></i>
+                                            <i class='iconfont icon-second' v-show='scope.row.rank*1==2'></i>
+                                            <i class='iconfont icon-third' v-show='scope.row.rank*1==3'></i>
+                                            <!-- <i class='el-icon-star-off' v-show='scope.row.rank*1==4'></i> -->
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="rank" label="排名" ></el-table-column>
+                                    <el-table-column prop="store_name" label="门店" ></el-table-column>
+                                    <el-table-column prop="houseScore" label="房源" ></el-table-column>
+                                    <el-table-column prop="guestScore" label="客源" ></el-table-column>
+                                    <el-table-column prop="lookrecordScore" label="带看" ></el-table-column>
+                                    <el-table-column prop="keyScore" label="钥匙" ></el-table-column>
+                                    <el-table-column prop="sumScore" label="得分"></el-table-column>
+                                </el-table>
+                            </div>
+                            <div class="table-pagination">
+                                <el-pagination
+                                        layout="prev, pager, next, jumper, total"
+                                        :page-size="ranking2.pageSize"
+                                        :current-page.sync="ranking2.pageNum"
+                                        :total ="ranking2.total"
+                                        @size-change="handleSizeChange2"
+                                        @current-change="handleCurrentChangeSearch2">
+                                </el-pagination>
+                            </div>
+                        </el-card>
+                    </div>
+                </el-col>
+
+            </el-row>
         </div>
     </section>
 </template>
 <script>
 import HomeApi from '../api/api_home.js';
-import { setRole, setToken } from '../util/global'
+import { setRole, setToken ,getRole} from '../util/global'
     import _axios from '../axios/axios.js'
 export default {
     data() {
         return {
+            role:'',
             basic:{
                 avatar:'',
                 relname:'',
@@ -139,8 +238,62 @@ export default {
                     }
                 ],
             },
+            dataStatus1:{
+                status: 1,
+                dataStatusList: [
+                    {
+                        value: 1,
+                        label: '周排行'
+                    },
+                    {
+                        value: 2,
+                        label: '月排行'
+                    }
+                ],
+            },
+            dataStatus2:{
+                status: 1,
+                dataStatusList: [
+                    {
+                        value: 1,
+                        label: '周排行'
+                    },
+                    {
+                        value: 2,
+                        label: '月排行'
+                    }
+                ],
+            },
             
             ranking:{
+                dataStatus: 1,
+                list:[
+                    {
+                        rank: '',
+                        real_name: '',
+                        store_name: '',
+                        score:''
+                    }
+                ],
+                total: 0,
+                pageSize:10,
+                pageNum:1
+            },
+            ranking1:{
+                dataStatus: 1,
+                list:[
+                    {
+                        rank: '',
+                        real_name: '',
+                        store_name: '',
+                        score:''
+                    }
+                ],
+                total: 0,
+                pageSize:10,
+                pageNum:1
+            },
+            ranking2:{
                 dataStatus: 1,
                 list:[
                     {
@@ -171,6 +324,8 @@ export default {
         };
     },
     mounted:function(){
+        var roles = this.getRole();
+        this.role = roles;
         var that = this;
         HomeApi.userinfo().then(function (result) {
             if(typeof(result) != "object"){result = JSON.parse(result)}
@@ -209,14 +364,33 @@ export default {
         }).catch(error => {
             console.log('rank_error');
         })
+        if(roles=='ROLE_LEADER' || roles=='ROLE_ADMIN'){
+            this.doSearch2();
+        }else if(roles=='ROLE_MANAGER'){
+            this.doSearch1();
+        }
     },
     methods: {
+        getRole(){
+            return getRole();
+        },
         handleCurrentChangeSearch(val){
             this.ranking.pageNum = val;
-            // this.doSearch();
+        },
+        handleCurrentChangeSearch1(val){
+            this.ranking1.pageNum = val;
+        },
+        handleCurrentChangeSearch2(val){
+            this.ranking2.pageNum = val;
         },
         handleSizeChange: function (size) {
             this.ranking.pagesize = size
+        },
+        handleSizeChange1: function (size) {
+            this.ranking1.pagesize = size
+        },
+        handleSizeChange2: function (size) {
+            this.ranking2.pagesize = size
         },
         doSearch(){
             var that = this;
@@ -235,26 +409,54 @@ export default {
             }).catch(error => {
                 console.log('rank_error');
             })
-            // _axios.JH_mes('', postData)
-            //     .then(res => {
-            //         if(typeof(res) != "object") res = JSON.parse(res);
-            //         if(res.success){
-            //             console.log(res.data);
-            //             that.ranking.dataList = [];
-            //         }else{
-            //             console.log(res);
-            //         }
-            //     })
-            //     .catch(error => {
-            //         console.log(error);
-            //     });
-
+        },
+        doSearch1(){
+            var that = this;
+            var postData = {
+                type: this.dataStatus1.status,
+            };
+            // console.log(postData)
+            HomeApi.myStoreRankings(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.ranking1.list=result.data;
+                that.ranking1.pageNum=1;
+                that.ranking1.pageSize=10;
+                that.ranking1.total = that.ranking1.list.length;
+            }).catch(error => {
+                console.log('rank_error');
+            })
+        },
+        doSearch2(){
+            var that = this;
+            var postData = {
+                type: this.dataStatus2.status,
+            };
+            // console.log(postData)
+            HomeApi.storeAllRankings(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.ranking2.list=result.data;
+                that.ranking2.pageNum=1;
+                that.ranking2.pageSize=10;
+                that.ranking2.total = that.ranking2.list.length;
+            }).catch(error => {
+                console.log('rank_error');
+            })
         },
         search(status){
             this.ranking.pageNum = 1;
             // this.ranking.dataStatus = status;
             this.dataStatus.status = status;
             this.doSearch();
+        },
+        search1(status){
+            this.ranking1.pageNum = 1;
+            this.dataStatus1.status = status;
+            this.doSearch1();
+        },
+        search2(status){
+            this.ranking2.pageNum = 1;
+            this.dataStatus2.status = status;
+            this.doSearch2();
         }
     }
 };
