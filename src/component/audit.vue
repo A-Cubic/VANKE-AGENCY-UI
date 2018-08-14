@@ -88,7 +88,7 @@
                 </div>
             </el-col>
 
-            <el-dialog title="审核实勘图" :visible.sync="auditForm.auditVisible" width="80%">
+            <el-dialog title="审核实勘图" :visible.sync="auditForm.auditVisible" width="80%" @close="imgPopClosed">
                 <div class="audit-dialog-template" v-show="auditForm.aduitStatus == '4'">
                     <el-card class="box-card" style="width:90%">
                         <div style="color:#c51010;">房源编号：<span style="color: #909399;">{{auditForm.number}}</span></div>
@@ -354,6 +354,14 @@ export default {
         this.role = this.getRole();
     },
     methods: {
+        imgPopClosed(){
+            this.achshiImglist=[];
+            this.achtingImglist=[];
+            this.achweiImglist=[];
+            this.achchuImglist=[];
+            this.achhuxingImglist=[];
+            this.achotherImglist=[];
+        },
         getRole(){
             return getRole();
         },

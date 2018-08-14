@@ -38,62 +38,62 @@
                                     </el-form>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane label="我维护的房源">
+                            <!--<el-tab-pane label="我维护的房源">-->
 
-                                <div class="house_table">
-                                    <el-table :data="maintainData.list"  size="medium" style="width: 100%" @row-click="examineById">
-                                        <el-table-column fixed label="标题图" width="180">
-                                            <template scope="scope">
-                                                <img class="imageUrl" :src="scope.row.titleimg" alt="">
-                                            </template>
-                                        </el-table-column>
-                                        <el-table-column prop="xiaoquName" label="楼盘名称" width="180"></el-table-column>
-                                        <el-table-column prop="huxing" label="户型"></el-table-column>
-                                        <el-table-column prop="areas" label="面积"></el-table-column>
-                                        <el-table-column prop="priceText" label="价格"></el-table-column>
-                                        <el-table-column prop="floor" label="楼层"></el-table-column>
-                                        <el-table-column prop="chaoxiang" label="朝向"></el-table-column>
-                                        <el-table-column prop="recordrelName" label="维护人"></el-table-column>
-                                    </el-table>
-                                    <div class="table-pagination">
-                                        <el-pagination
-                                            layout="prev, pager, next, jumper, total"
-                                            :page-size="maintainData.pageSize"
-                                            :current-page.sync="maintainData.pageNum"
-                                            :total ="maintainData.total"
-                                            @current-change="handleCurrentChangeSearch1">
-                                        </el-pagination>
-                                    </div>
-                                </div>
+                                <!--<div class="house_table">-->
+                                    <!--<el-table :data="maintainData.list"  size="medium" style="width: 100%" @row-click="examineById">-->
+                                        <!--<el-table-column fixed label="标题图" width="180">-->
+                                            <!--<template scope="scope">-->
+                                                <!--<img class="imageUrl" :src="scope.row.titleimg" alt="">-->
+                                            <!--</template>-->
+                                        <!--</el-table-column>-->
+                                        <!--<el-table-column prop="xiaoquName" label="楼盘名称" width="180"></el-table-column>-->
+                                        <!--<el-table-column prop="huxing" label="户型"></el-table-column>-->
+                                        <!--<el-table-column prop="areas" label="面积"></el-table-column>-->
+                                        <!--<el-table-column prop="priceText" label="价格"></el-table-column>-->
+                                        <!--<el-table-column prop="floor" label="楼层"></el-table-column>-->
+                                        <!--<el-table-column prop="chaoxiang" label="朝向"></el-table-column>-->
+                                        <!--<el-table-column prop="recordrelName" label="维护人"></el-table-column>-->
+                                    <!--</el-table>-->
+                                    <!--<div class="table-pagination">-->
+                                        <!--<el-pagination-->
+                                            <!--layout="prev, pager, next, jumper, total"-->
+                                            <!--:page-size="maintainData.pageSize"-->
+                                            <!--:current-page.sync="maintainData.pageNum"-->
+                                            <!--:total ="maintainData.total"-->
+                                            <!--@current-change="handleCurrentChangeSearch1">-->
+                                        <!--</el-pagination>-->
+                                    <!--</div>-->
+                                <!--</div>-->
 
-                            </el-tab-pane>
-                            <el-tab-pane label="我关注的房源">
-                                <div class="house_table">
-                                    <el-table :data="attentionData.list"  size="medium" style="width: 100%" @row-click="examineById">
-                                        <el-table-column fixed label="标题图" width="180">
-                                            <template scope="scope">
-                                                <img class="imageUrl" :src="scope.row.titleimg" alt="">
-                                            </template>
-                                        </el-table-column>
-                                        <el-table-column prop="xiaoquName" label="楼盘名称" width="180"></el-table-column>
-                                        <el-table-column prop="huxing" label="户型"></el-table-column>
-                                        <el-table-column prop="areas" label="面积"></el-table-column>
-                                        <el-table-column prop="priceText" label="价格"></el-table-column>
-                                        <el-table-column prop="floor" label="楼层"></el-table-column>
-                                        <el-table-column prop="chaoxiang" label="朝向"></el-table-column>
-                                        <el-table-column prop="recordrelName" label="维护人"></el-table-column>
-                                    </el-table>
-                                    <div class="table-pagination">
-                                        <el-pagination
-                                        layout="prev, pager, next, jumper, total"
-                                        :page-size="attentionData.pageSize"
-                                        :current-page.sync="attentionData.pageNum"
-                                        :total ="attentionData.total"
-                                        @current-change="handleCurrentChangeSearch2">
-                                        </el-pagination>
-                                    </div>
-                                </div>
-                            </el-tab-pane>
+                            <!--</el-tab-pane>-->
+                            <!--<el-tab-pane label="我关注的房源">-->
+                                <!--<div class="house_table">-->
+                                    <!--<el-table :data="attentionData.list"  size="medium" style="width: 100%" @row-click="examineById">-->
+                                        <!--<el-table-column fixed label="标题图" width="180">-->
+                                            <!--<template scope="scope">-->
+                                                <!--<img class="imageUrl" :src="scope.row.titleimg" alt="">-->
+                                            <!--</template>-->
+                                        <!--</el-table-column>-->
+                                        <!--<el-table-column prop="xiaoquName" label="楼盘名称" width="180"></el-table-column>-->
+                                        <!--<el-table-column prop="huxing" label="户型"></el-table-column>-->
+                                        <!--<el-table-column prop="areas" label="面积"></el-table-column>-->
+                                        <!--<el-table-column prop="priceText" label="价格"></el-table-column>-->
+                                        <!--<el-table-column prop="floor" label="楼层"></el-table-column>-->
+                                        <!--<el-table-column prop="chaoxiang" label="朝向"></el-table-column>-->
+                                        <!--<el-table-column prop="recordrelName" label="维护人"></el-table-column>-->
+                                    <!--</el-table>-->
+                                    <!--<div class="table-pagination">-->
+                                        <!--<el-pagination-->
+                                        <!--layout="prev, pager, next, jumper, total"-->
+                                        <!--:page-size="attentionData.pageSize"-->
+                                        <!--:current-page.sync="attentionData.pageNum"-->
+                                        <!--:total ="attentionData.total"-->
+                                        <!--@current-change="handleCurrentChangeSearch2">-->
+                                        <!--</el-pagination>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</el-tab-pane>-->
                         </el-tabs>
                     </div>
                 </el-col>
@@ -247,23 +247,23 @@ export default {
             console.log('userinfo_error');
         });
 
-        var postData = {
-            page: 1,
-            size: 10,
-        };
-        PersonalApi.myRecordHouseList(postData).then(function (result) {
-            if(typeof(result) != "object"){result = JSON.parse(result)}
-            that.maintainData=result.data;
-        }).catch(error => {
-            console.log('maintainData_error');
-        });
-
-        PersonalApi.myLikeHouseList(postData).then(function (result) {
-            if(typeof(result) != "object"){result = JSON.parse(result)}
-            that.attentionData=result.data;
-        }).catch(error => {
-            console.log('attentionData_error');
-        });
+        // var postData = {
+        //     page: 1,
+        //     size: 10,
+        // };
+        // PersonalApi.myRecordHouseList(postData).then(function (result) {
+        //     if(typeof(result) != "object"){result = JSON.parse(result)}
+        //     that.maintainData=result.data;
+        // }).catch(error => {
+        //     console.log('maintainData_error');
+        // });
+        //
+        // PersonalApi.myLikeHouseList(postData).then(function (result) {
+        //     if(typeof(result) != "object"){result = JSON.parse(result)}
+        //     that.attentionData=result.data;
+        // }).catch(error => {
+        //     console.log('attentionData_error');
+        // });
     },
     methods: {
         examineById(row){

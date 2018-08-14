@@ -314,7 +314,7 @@
                         <el-button class="m-btn-addMenu" type="primary" icon="el-icon-search" @click="searchHouseList">查询</el-button>
                     </div>
                     <div class="look-detail-wrap-table">
-                        <el-table :data="lookTableData.list"  style="width: 100%">
+                        <el-table :data="lookTableData.list"  style="width: 100%" v-loading="loading">
                             <el-table-column label="标题图">
                                 <template scope="scope">
                                     <img style="height: 100px;width: 150px;" :src="scope.row.titleimg" alt="">
@@ -417,6 +417,7 @@
         props: ['id'],
         data() {
             return {
+                loading: false,
                 pageVisbaleEmpty: false,
                 pageVisbaleData: true,
                 transferVisible: false,
@@ -992,10 +993,11 @@
             handlelookTableDataChangeSearch(val){
                 this.lookTableData.pageNum = val;
                 var that = this;
-
+                that.loading = true;
                 var postData = {
                     xiaoquName: this.addLookForm.xiaoquName,
                     number: this.addLookForm.number,
+                    type: this.addLookForm.type,
                     page: this.lookTableData.pageNum,
                     size: 5
                 };
@@ -1003,6 +1005,14 @@
                 GuestApi.houseListGuest(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     that.lookTableData=result.data;
+                    that.LookedList.forEach((item1) => {
+                        that.lookTableData.list.forEach((item) => {
+                            if(item.id==item1.houseId){
+                                that.lookTableData.list.splice(that.lookTableData.list.indexOf(item), 1)
+                            }
+                        });
+                    })
+                    that.loading = false;
                 }).catch(error => {
                     console.log('houseListGuest_error');
                 });
@@ -1014,8 +1024,10 @@
                         Message.error("查询条件不允许都为空");
                         return;
                     }
+
                     var that = this;
                     that.lookTableData.pageNum=1;
+                    that.loading = true;
                     var postData = {
                         xiaoquName: this.addLookForm.xiaoquName,
                         number: this.addLookForm.number,
@@ -1034,8 +1046,7 @@
                                 }
                             });
                         })
-
-
+                        that.loading = false;
                 }).catch(error => {
                     console.log('houseListGuest_error'+error);
                 });

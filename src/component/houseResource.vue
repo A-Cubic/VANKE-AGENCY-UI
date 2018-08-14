@@ -95,9 +95,6 @@
                             <el-button type="text" @click="search">确定</el-button>
                         </el-form-item>
 
-
-
-
                         <el-form-item label="面积:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
                                        size="mini"
@@ -105,6 +102,9 @@
                                        @click="searchAreaType(index, formData.areaTypeList)">
                                 {{ item.name }}
                             </el-button>
+                            <el-input size="mini" v-model="formData.areasUp" placeholder="请输入"></el-input> 平 -
+                            <el-input size="mini" v-model="formData.areasDown" placeholder="请输入"></el-input> 平
+                            <el-button type="text" @click="search">确定</el-button>
                         </el-form-item>
                         <el-form-item label="房型:">
                             <el-button :type="item.choosed == false ? '' : 'primary'"
@@ -129,6 +129,8 @@
                                        @click="searchFloorType(index, formData.floorTypeList)">
                                 {{ item.name }}
                             </el-button>
+                            <el-input size="mini" v-model="formData.floor" placeholder="请输入楼层"></el-input>
+                            <el-button type="text" @click="search">确定</el-button>
                         </el-form-item>
 
                     </el-form>
@@ -139,7 +141,7 @@
             </div>
 
             <div class="house_table">
-                <el-table :data="tableData.list"  size="medium" style="width: 100%" @row-click="examineById" v-loading="loading">
+                <el-table :data="tableData.list"  size="medium" style="width: 100%" @row-click="examineById" v-loading="loading" @sort-change='sortChange'>
                     <el-table-column fixed label="标题图" width="180">
                         <template scope="scope">
                             <img class="imageUrl" :src="scope.row.titleimg" alt="">
@@ -163,9 +165,9 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="huxing" label="户型"></el-table-column>
-                    <el-table-column prop="areas" label="面积"></el-table-column>
-                    <el-table-column prop="priceText" label="价格"></el-table-column>
-                    <el-table-column prop="floor" label="楼层"></el-table-column>
+                    <el-table-column prop="areas" label="面积" sortable='custom'></el-table-column>
+                    <el-table-column prop="priceText" label="价格" sortable='custom'></el-table-column>
+                    <el-table-column prop="floor" label="楼层" sortable='custom'></el-table-column>
                     <el-table-column prop="chaoxiang" label="朝向"></el-table-column>
                     <el-table-column prop="recordrelName" label="维护人"></el-table-column>
                 </el-table>
@@ -503,6 +505,16 @@ export default {
                         name: '共享池',
                         id: 2,
                         choosed: false,
+                    },
+                    {
+                        name: '维护盘',
+                        id: 4,
+                        choosed: false,
+                    },
+                    {
+                        name: '关注房源',
+                        id: 5,
+                        choosed: false,
                     }
                 ],
                 rangeType:0,
@@ -590,6 +602,8 @@ export default {
                 priceType:0,
                 priceUp: '',
                 priceDown: '',
+                areasUp: '',
+                areasDown: '',
                 priceTypeSellList:[
                     {
                         name: '不限',
@@ -856,6 +870,7 @@ export default {
                     // }
                 ],
                 floorType: 0,
+                floor: '',
                 floorTypeList:[
                     {
                         name: '不限',
@@ -877,6 +892,9 @@ export default {
                         choosed: false,
                     }
                 ],
+                priceOrderby: '',
+                areasOrderby: '',
+                floorOrderby: '',
             },
             tableData: {
                 pageSize: 10,
@@ -1169,7 +1187,30 @@ export default {
     },
 
     methods: {
-
+        sortChange: function(column, prop, order) {
+            var p = column.prop;
+            var o = column.order;
+            var t='';
+            if(o=='ascending'){
+                t='2';
+            }else if(o=='descending'){
+                t='1';
+            }
+            if(p=='areas'){
+                this.formData.areasOrderby=t;
+                this.formData.priceOrderby='';
+                this.formData.floorOrderby='';
+            }else if(p=='priceText'){
+                this.formData.priceOrderby=t;
+                this.formData.areasOrderby='';
+                this.formData.floorOrderby='';
+            }else if(p=='floor'){
+                this.formData.floorOrderby=t;
+                this.formData.priceOrderby='';
+                this.formData.areasOrderby='';
+            }
+            this.search();
+        },
         handleSelectMenu(key, keyPath) {
             // this.resetForm('ruleForm');
             if (this.$refs['ruleForm']!==undefined) {
@@ -1326,6 +1367,8 @@ export default {
                 searchType:this.formData.searchType,
                 priceUp: this.formData.priceUp,
                 priceDown: this.formData.priceDown,
+                areasUp: this.formData.areasUp,
+                areasDown: this.formData.areasDown,
                 searchText: this.formData.searchText,
                 rangeType: this.formData.rangeType,
                 type: this.formData.type,
@@ -1335,6 +1378,10 @@ export default {
                 huxingType: this.formData.huxingType,
                 chaoxiangType: this.formData.chaoxiangType,
                 floorType: this.formData.floorType,
+                floor:this.formData.floor,
+                priceOrderby:this.formData.priceOrderby,
+                areasOrderby:this.formData.areasOrderby,
+                floorOrderby:this.formData.floorOrderby,
                 page: this.tableData.pageNum,
                 size: this.tableData.pageSize
             }
@@ -1418,9 +1465,33 @@ export default {
         },
         //面积
         searchAreaType(index, list){
-           var id = this.getId(index, list);
-           this.formData.areaType = id;
-           this.search();
+           // var id = this.getId(index, list);
+           // this.formData.areaType = id;
+           // this.search();
+            var id = this.getId(index, list);
+            this.formData.areaType = id;
+            if(index == 0){
+                this.formData.areasUp = '';
+                this.formData.areasDown = '';
+            }
+            else if(index == 1){
+                var strBefore;
+                strBefore = list[index].name.split('平米');
+                this.formData.areasUp = '';
+                this.formData.areasDown = strBefore[0];
+            }
+            else if(index == list.length-1){
+                var strLater
+                strLater = list[index].name.split("平米");
+                this.formData.areasUp = strLater[0];
+                this.formData.areasDown = '';
+            }
+            else{
+                var strs = list[index].name.split("-");
+                this.formData.areasUp = strs[0];
+                this.formData.areasDown = strs[1].substr(0, strs[1].length-2);
+            }
+            this.search();
         },
         //房型
         searchUnitType(index, list){
