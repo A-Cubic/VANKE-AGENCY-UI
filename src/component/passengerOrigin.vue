@@ -64,7 +64,7 @@
             </div>
 
             <div class="passenger_table">
-                <el-table :data="tableData.list" size="medium" style="width: 100%" @row-click="examineById">
+                <el-table :data="tableData.list" size="medium" style="width: 100%" @row-click="examineById" v-loading="loading">
                     <el-table-column fixed label="姓名" width="180">
                         <template scope="scope">
                             <div>
@@ -281,6 +281,7 @@
         },
         data() {
             return {
+                loading:false,
                 menuActive:'1',
                 formData :{
                     searchText: '',
@@ -423,6 +424,7 @@
             },
             doSearch(){
                 var that = this;
+                that.loading=true;
                 var postData = {
                     isShare: this.formData.isShare,
                     guestname: this.formData.searchText,
@@ -434,7 +436,7 @@
                 GuestApi.searchGuest(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     that.tableData=result.data;
-
+                    that.loading=false;
                 }).catch(error => {
                     console.log('searchGuest_error');
                 });

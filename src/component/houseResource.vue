@@ -139,7 +139,7 @@
             </div>
 
             <div class="house_table">
-                <el-table :data="tableData.list"  size="medium" style="width: 100%" @row-click="examineById">
+                <el-table :data="tableData.list"  size="medium" style="width: 100%" @row-click="examineById" v-loading="loading">
                     <el-table-column fixed label="标题图" width="180">
                         <template scope="scope">
                             <img class="imageUrl" :src="scope.row.titleimg" alt="">
@@ -483,6 +483,7 @@ export default {
     },
     data() {
         return {
+            loading: false,
             menuActive:'1',
             formData :{
                 searchType:'1',
@@ -1149,6 +1150,7 @@ export default {
     },
     mounted:function(){
         var that = this;
+        that.loading=true;
         var postData = {
             page: 1,
             size: 10,
@@ -1157,6 +1159,7 @@ export default {
         HouseApi.houselist(postData).then(function (result) {
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.tableData=result.data;
+            that.loading=false;
         }).catch(error => {
             console.log('houselist_error');
         });
@@ -1318,6 +1321,7 @@ export default {
 
         search(){
             var that = this;
+            that.loading=true;
             var postData = {
                 searchType:this.formData.searchType,
                 priceUp: this.formData.priceUp,
@@ -1337,6 +1341,7 @@ export default {
             HouseApi.houselist(postData).then(function (result) {
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.tableData=result.data;
+                that.loading=false;
             }).catch(error => {
                 console.log('houselist_error');
             });
