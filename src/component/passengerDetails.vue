@@ -28,6 +28,10 @@
                         <li>
                             <span class="user-title">客源编号： </span>
                             <span class="user-mes">{{formUser.number}}</span>
+                            <span class="user-title" v-show="role=='ROLE_MANAGER'&& formUser.user_type=='0'?true:false">维护人： </span>
+                            <span class="user-mes" v-show="role=='ROLE_MANAGER'&& formUser.user_type=='0'?true:false">{{formUser.recordRelName}}</span>
+                            <span class="user-title" v-show="role=='ROLE_MANAGER'&& formUser.user_type=='0'?true:false">客户电话： </span>
+                            <span class="user-mes" v-show="role=='ROLE_MANAGER'&& formUser.user_type=='0'?true:false">{{formUser.phone}}</span>
                         </li>
                         <li>
                             <span class="user-title">上次维护： </span>
@@ -409,6 +413,7 @@
     import GuestApi from '../api/api_guest.js';
     import Vue from 'vue';
     import { Message } from 'element-ui';
+    import { getRole } from '../util/global'
     export default {
         install(Vue) {
             Vue.prototype.$message = Message
@@ -417,6 +422,7 @@
         props: ['id'],
         data() {
             return {
+                role:'',
                 loading: false,
                 pageVisbaleEmpty: false,
                 pageVisbaleData: true,
@@ -436,6 +442,7 @@
                 },
                 formUser: {
                     guestname: '',
+                    recordRelName: '',
                     sex: '',
                     iskey:'',
                     number: '',
@@ -534,9 +541,13 @@
         filter:{
         },
         created(){
+            this.role = this.getRole();
             this.doSearch();
         },
         methods: {
+            getRole(){
+                return getRole();
+            },
             mouseEnter(row, column, cell, event){
                 row.topicon='1'
             },
@@ -641,7 +652,7 @@
                 };
 
                 GuestApi.guestDetail(postData).then(function (result) {
-                    // console.log(result);
+//                     console.log(result);
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     if(result.data==0){
                         that.pageVisbaleEmpty=true;

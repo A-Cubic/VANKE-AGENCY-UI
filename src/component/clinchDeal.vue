@@ -748,12 +748,12 @@ export default {
                 uploadImgData:{
                     dialogImageUrl: '',
                     dialogVisible: false,
-                    contractImgLimit: 5,  //合同图片Limit
-                    houseProveImgLimit: 3, //产权证图片Limit
-                    loanContractImgLimit: 5, //贷款合同图片Limit
-                    identityProveImgLimit: 2, //身份证图片Limit
-                    receiptImgLimit: 2, //收据图片Limit
-                    agreementImgLimit: 3, //补充协议图片Limit
+                    contractImgLimit: 50,  //合同图片Limit
+                    houseProveImgLimit: 20, //产权证图片Limit
+                    loanContractImgLimit: 50, //贷款合同图片Limit
+                    identityProveImgLimit: 4, //身份证图片Limit
+                    receiptImgLimit: 50, //收据图片Limit
+                    agreementImgLimit: 50, //补充协议图片Limit
                     contractImgList: [],  //合同图片List
                     houseProveImgList: [], //产权证图片List
                     loanContractImgList: [], //贷款合同图片List
@@ -1348,20 +1348,20 @@ export default {
         //新增成交 图片上传
         uploadImg: function (param) {
             this.addForm.loading=true;
-            var count = this.addForm.uploadImgData.contractImgLimit.length
-                + this.addForm.uploadImgData.houseProveImgLimit.length
-                + this.addForm.uploadImgData.loanContractImgLimit.length
-                + this.addForm.uploadImgData.identityProveImgLimit.length
-                + this.addForm.uploadImgData.receiptImgLimit.length;
-            var pcount = this.addForm.uploadImgData.contractImgList.length
-                + this.addForm.uploadImgData.houseProveImgList.length
-                + this.addForm.uploadImgData.loanContractImgList.length
-                + this.addForm.uploadImgData.identityProveImgList.length
-                + this.addForm.uploadImgData.receiptImgList.length
-                + this.addForm.uploadImgData.agreementImgList.length;
-            if (pcount < 6) {
-                Message.error("请上传完整数量的图片！");
-            } else {
+//            var count = this.addForm.uploadImgData.contractImgLimit.length
+//                + this.addForm.uploadImgData.houseProveImgLimit.length
+//                + this.addForm.uploadImgData.loanContractImgLimit.length
+//                + this.addForm.uploadImgData.identityProveImgLimit.length
+//                + this.addForm.uploadImgData.receiptImgLimit.length;
+//            var pcount = this.addForm.uploadImgData.contractImgList.length
+//                + this.addForm.uploadImgData.houseProveImgList.length
+//                + this.addForm.uploadImgData.loanContractImgList.length
+//                + this.addForm.uploadImgData.identityProveImgList.length
+//                + this.addForm.uploadImgData.receiptImgList.length
+//                + this.addForm.uploadImgData.agreementImgList.length;
+//            if (pcount < 6) {
+//                Message.error("请上传完整数量的图片！");
+//            } else {
                 for(let i=0;i<this.addForm.uploadImgData.contractImgList.length;i++){
                     this.addForm.addFormData.contractImgList.push(this.addForm.uploadImgData.contractImgList[i].base64);
                 };
@@ -1397,7 +1397,7 @@ export default {
                     console.log('insertTrans_error'+error);
                 });
 
-            }
+//            }
         },
 
         handleExceed(file, fileList) {
