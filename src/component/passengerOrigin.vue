@@ -17,8 +17,12 @@
             <div class="passenger_search" style="margin-top: 20px">
                 <div class="passenger_search_header">
                     <el-input
-                            placeholder="请输入客户姓名搜索客源"
+                            :placeholder="formData.search_type=='1'?'请输入客户姓名搜索客源':'请输入经纪人全名或后6位编号'"
                             v-model="formData.searchText" style="width: 400px;"  size="large" @keyup.enter.native="search">
+                        <el-select v-model="formData.search_type" slot="prepend" v-show="role=='ROLE_MANAGER'?true:false" >
+                            <el-option label="客户" value="1"></el-option>
+                            <el-option label="经纪人" value="2"></el-option>
+                        </el-select>
                         <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
                     </el-input>
                     <!--<el-input size="medium" v-model="formData.searchText" placeholder="请输入内容"></el-input>-->
@@ -275,6 +279,7 @@
     import GuestApi from '../api/api_guest.js';
     import Vue from 'vue';
     import { Message } from 'element-ui';
+    import { getRole } from '../util/global'
     export default {
         install(Vue) {
             Vue.prototype.$message = Message
@@ -282,9 +287,11 @@
         data() {
             return {
                 loading:false,
+                role:'',
                 menuActive:'1',
                 formData :{
                     searchText: '',
+                    search_type:'1',
                     isShare:0,
                     isShareList:[
                         {
@@ -405,10 +412,14 @@
             };
         },
         created(){
+            this.role = this.getRole();
             this.doSearch();
         },
 
         methods: {
+            getRole(){
+                return getRole();
+            },
             handleSelectMenu(key, keyPath) {
                 if (this.$refs['ruleForm']!==undefined) {
                     this.$refs['ruleForm'].resetFields();
@@ -430,6 +441,7 @@
                     guestname: this.formData.searchText,
                     guestgrade: this.formData.guestgrade,
                     type: this.formData.type,
+                    search_type: this.formData.search_type,
                     page: this.tableData.pageNum,
                     size: 10
                 };
@@ -536,7 +548,7 @@
                     position: relative;
 
                     .el-input{
-                        width: 220px;
+                        width: 100px;
                     }
                     .add_button{
                         position: absolute;

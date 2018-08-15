@@ -2,10 +2,64 @@
     <section class="register">
         <el-row class="register-template" :gutter="0">
             <el-col class="register-content" :span="24">
-                <el-card class="box-card">
-                    <div slot="header" class="clearfix">
-                        <span>账号注册</span>
-                    </div>
+                <div class="search-header">
+                    <span>门店: </span>
+                    <el-select v-model="searchForm.storeId" placeholder="请选择门店">
+                        <el-option
+                                v-for="item in storeList"
+                                :key="item.id"
+                                :label="item.storeName"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                    <!--<span>账号: </span>-->
+                    <el-input placeholder="请输入用户全名或后6位编号" v-model="searchForm.searchText" style="width: 400px;"  size="large" >
+                    </el-input>
+                    <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+                    <el-button type="primary" icon="el-icon-plus" @click="addUserPop">新用户注册</el-button>
+                </div>
+                <div class="table-template">
+                    <el-table :data="resultData.list" >
+                        <el-table-column fixed label="用户照片" width="150">
+                            <template scope="scope">
+                                <img class="imageUrl" :src="scope.row.avatar" alt="">
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="username" label="注册账号"></el-table-column>
+                        <el-table-column prop="relname" label="用户名称"></el-table-column>
+                        <el-table-column prop="user_no" label="用户编号"></el-table-column>
+                        <el-table-column prop="store_name" label="所在门店"></el-table-column>
+                        <el-table-column prop="register_time" label="注册日期"></el-table-column>
+                        <el-table-column prop="sign"
+                                         label="账号状态">
+                            <template slot-scope="scope">
+                                <el-tag
+                                        :type="scope.row.sign == '0' ? 'primary' : 'success'"
+                                        disable-transitions>{{scope.row.sign== '0'?'冻结':'正常'}}</el-tag>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column label="操作">
+                            <template scope="scope">
+                                <el-button size="mini" type="success" v-show="scope.row.sign == '0'?true:false" @click="setFrozenOrNormal(scope.row,'1')">解冻</el-button>
+                                <el-button size="mini" type="danger" v-show="scope.row.sign == '1'?true:false" @click="setFrozenOrNormal(scope.row,'0')">冻结</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <div class="table-pagination">
+                    <el-pagination
+                            layout="prev, pager, next, jumper, total"
+                            :page-size="resultData.pageSize"
+                            :current-page.sync="resultData.pageNum"
+                            :total ="resultData.total"
+                            @current-change="handleCurrentChangeSearch">
+                    </el-pagination>
+                </div>
+            </el-col>
+
+                <el-dialog title="账号注册" :visible.sync="addUserVisible" width="50%">
+
                     <el-form label-position="left"
                              label-width="100px"
                              :model="addRegister.registerForm"
@@ -45,13 +99,17 @@
                             </el-select>
                         </el-form-item>
                     </el-form>
-                    <div class="register-button">
-                        <el-button style="margin-right: 10px" @click="resetForm('registerForm')">重置</el-button>
-                        <el-button type="primary" @click="submitForm('registerForm')">确定</el-button>
-                    </div>
-                </el-card>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button style="margin-right: 10px" @click="resetForm('registerForm');addUserVisible=false">取 消</el-button>
+                        <el-button type="primary" @click="submitForm('registerForm')">确 定</el-button>
+                    </span>
 
-            </el-col>
+                </el-dialog>
+
+
+
+
+
         </el-row>
     </section>
 
@@ -68,6 +126,17 @@
         name: "register",
         data(){
             return{
+                addUserVisible:false,
+                searchForm:{
+                    searchText:'',
+                    storeId:'',
+                },
+                storeList: [
+                    {
+                        id: '',
+                        storeName: '',
+                    }
+                ],
                 addRegister:{
                     registerForm:{
                         relname: '',
@@ -106,14 +175,69 @@
                             { min: 6, max: 15, message: '密码长度6-15位', trigger: 'blur' }
                         ],
                     }
-                }
+                },
+                resultData:{
+                    list: [
+
+                    ],
+                    pageSize: 10,
+                    total: 0,
+                    pageNum: 1,
+                },
             }
         },
         created(){
             this.doSearch();
         },
         methods:{
-
+            setFrozenOrNormal(row,sign){
+                var that = this;
+                var postData = {
+                    id:row.id,
+                    sign:sign,
+                };
+                RegisterApi.setFrozenOrNormal(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    if(result.data=='1'){
+                        if(sign=='1'){
+                            Message({message: '解冻成功!', type: 'success'});
+                        }else{
+                            Message({message: '冻结成功!', type: 'success'});
+                        }
+                    }else{
+                        Message.error("操作失败");
+                    }
+                    that.doSearchUser();
+                }).catch(error => {
+                    console.log('setFrozenOrNormal_error');
+                });
+            },
+            handleCurrentChangeSearch(val){
+                this.resultData.pageNum = val;
+                this.doSearchUser();
+            },
+            search(){
+                this.resultData.pageNum=1;
+                this.doSearchUser();
+            },
+            doSearchUser(){
+                var that = this;
+                var postData = {
+                    searchText:this.searchForm.searchText,
+                    storeId:this.searchForm.storeId,
+                    page: this.resultData.pageNum,
+                    size: this.resultData.pageSize
+                };
+                RegisterApi.userList(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.resultData=result.data;
+                }).catch(error => {
+                    console.log('userList_error');
+                });
+            },
+            addUserPop(){
+                this.addUserVisible=true;
+            },
             doSearch(){
                 var that = this;
                 var postData = {
@@ -122,6 +246,9 @@
                 RegisterApi.storeList(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     that.addRegister.storesList=result.data;
+                    that.storeList=result.data;
+                    that.searchForm.storeId=that.storeList[0].id;
+                    that.doSearchUser();
                 }).catch(error => {
                     console.log('storeList_error');
                 });
@@ -150,6 +277,8 @@
                             }else if(result.data=='1'){
                                 that.resetForm(formName);
                                 Message({message: '注册用户成功!', type: 'success'});
+                                that.search();
+                                that.addUserVisible=false;
                             }else {
                                 Message.error('注册失败！');
                             }
@@ -174,6 +303,32 @@
 
 <style lang="less">
     @import "../assets/css/element.less";
+    .imageUrl{
+        height: 100px;
+        width: 100px;
+    }
+    .search-header{
+        border-bottom: 1px solid #f2f2f2;
+        padding: 20px;
+        span{
+            margin-left: 10px;
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+        .el-button{
+            margin-left: 10px;
+        }
+    }
+    .table-template{
+        margin: 20px;
+        /*box-shadow: 0px 0px 10px #e3e3e3;*/
+        min-height: 100px;
+    }
+    .table-pagination{
+        padding: 0 20px 20px;
+        text-align: right;
+    }
     .register {
         .register-template{
             width: 100%;

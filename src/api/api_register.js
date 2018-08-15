@@ -20,5 +20,14 @@ export default {
         return API.POST('user/register', params)
     },
 
+    //用户查询
+    userList: params => {
+        return API.POST('user/list', params)
+    },
+
+    //冻结/解冻
+    setFrozenOrNormal: params => {
+        return API.POST('user/updateSign', params)
+    },
 
 }
