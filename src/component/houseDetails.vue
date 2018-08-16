@@ -207,6 +207,72 @@
                             </div>
 
                         </li>
+
+                        <li v-show="role=='ROLE_MANAGER'?true:false">
+                            <el-card class="box-card">
+                                <div slot="header" class="clearfix">
+                                    <span style="font-size: 18px;">角色分配</span>
+                                    <!--<el-popover-->
+                                            <!--placement="bottom"-->
+                                            <!--title="分配说明"-->
+                                            <!--width="200"-->
+                                            <!--trigger="click"-->
+                                            <!--content="1.店长专属分配角色功能">-->
+                                        <!--<el-button slot="reference" style="float: right; padding: 3px 0" type="text">阅读说明</el-button>-->
+                                    <!--</el-popover>-->
+
+                                </div>
+                                <div class="radius-wrap">
+                                    <div class="radius-block">
+                                        <div><i class="iconfont icon-luru"></i></div>
+                                        <div>录入</div>
+                                        <div class="radius-data">{{ radiusForm.createrelName==''|| radiusForm.createrelName==null?"暂无":radiusForm.createrelName }}</div>
+                                        <el-button type="text"
+                                                   size="small"
+                                                   icon="el-icon-plus"
+                                                   @click="AlloLuru">
+                                        </el-button>
+                                    </div>
+                                    <div class="radius-block">
+                                        <div><i class="iconfont icon-maintain"></i></div>
+                                        <div>维护</div>
+                                        <div class="radius-data">{{ radiusForm.recordrelName==''|| radiusForm.recordrelName==null?"暂无": radiusForm.recordrelName}}</div>
+                                        <el-button type="text"
+                                                   size="small"
+                                                   icon="el-icon-plus"
+                                                   @click="AlloWeihu">
+                                        </el-button>
+                                    </div>
+
+                                    <div class="radius-block">
+                                        <div><i class="iconfont icon-xiangji"></i></div>
+                                        <div>实勘</div>
+                                        <div class="radius-data">{{ radiusForm.explorationrelName=='' || radiusForm.explorationrelName==null?"暂无": radiusForm.explorationrelName}}</div>
+                                        <el-button type="text"
+                                                   size="small"
+                                                   icon="el-icon-plus"
+                                                   @click="AlloShikan">
+                                        </el-button>
+                                    </div>
+                                    <div class="radius-block">
+                                        <div><i class="iconfont icon-method-draw-image"></i></div>
+                                        <div>钥匙</div>
+                                        <div class="radius-data">{{ radiusForm.keyrelName==''|| radiusForm.keyrelName==null?"暂无": radiusForm.keyrelName}}</div>
+                                        <el-button type="text"
+                                                   size="small"
+                                                   icon="el-icon-plus"
+                                                   @click="AlloYaoshi">
+                                        </el-button>
+                                    </div>
+                                    <div class="radius-block">
+                                        <div><i class="iconfont icon-v"></i></div>
+                                        <div>独家</div>
+                                        <div class="radius-data">{{ radiusForm.exclusiverelName==''|| radiusForm.exclusiverelName==null?"暂无":radiusForm.exclusiverelName }}</div>
+                                    </div>
+                                </div>
+                            </el-card>
+
+                        </li>
                     </ul>
                 </el-col>
                 <el-col :span="9">
@@ -673,12 +739,52 @@
                         <el-button type="primary" @click="updateKeyNo">确 定</el-button>
                     </span>
                 </el-dialog>
+
+                <el-dialog title="角色分配" :visible.sync="alloVisible" width="80%" @close="alloClosed">
+                    <div class="transfer-wrap">
+                        <div class="transfer-wrap-header">
+                            <el-input placeholder="请输入编号后六位或全名" v-model="alloForm.usertext" clearable></el-input>
+                            <el-button class="m-btn-addMenu" type="primary" icon="el-icon-search" @click="searchAllo">查询</el-button>
+                        </div>
+                        <div class="transfer-wrap-table">
+                            <el-table :data="alloForm.personData.list" style="width: 100%">
+                                <el-table-column prop="user_no" label="编号"></el-table-column>
+                                <el-table-column prop="relname" label="姓名"></el-table-column>
+                                <el-table-column prop="store_name" label="门店"></el-table-column>
+                                <el-table-column label="操作">
+                                    <!--<template scope="scope">-->
+                                    <!--<el-checkbox v-model="scope.row.checked"-->
+                                    <!--:disabled="scope.row.disabled"-->
+                                    <!--@change="checkTransfer(scope.row)">选择-->
+                                    <!--</el-checkbox>-->
+                                    <!--</template>-->
+                                    <template scope="scope">
+                                        <el-button size="mini" type="text" @click="submitAllo(scope.row)">分配</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                        <div class="table-pagination">
+                            <el-pagination
+                                    layout="prev, pager, next, jumper, total"
+                                    :page-size="alloForm.personData.pageSize"
+                                    :current-page.sync="alloForm.personData.pageNum"
+                                    :total ="alloForm.personData.total"
+                                    @current-change="handleCurrentChangePerson">
+                            </el-pagination>
+                        </div>
+                    </div>
+                    <!--<span slot="footer" class="dialog-footer">-->
+                    <!--<el-button @click="transferVisible = false">退 出</el-button>-->
+                    <!--<el-button type="primary" @click="finishTransfer">确 定</el-button>-->
+                    <!--</span>-->
+                </el-dialog>
             </el-row>
         </div>
     </section>
 </template>
 <script>
-    import { getToken } from '../util/global';
+    import { getToken,getRole } from '../util/global';
     import HouseApi from '../api/api_house.js';
     import Vue from 'vue';
     import { Message } from 'element-ui';
@@ -690,6 +796,9 @@
         props: ['id'],
         data() {
             return {
+                role:'',
+                alloVisible:false,
+                alloSign:0,
                 keyInfoData:{
                     keyInfoVisible:false,
                     keyStoreId:'',
@@ -742,6 +851,10 @@
                     keyNumber:'',
                     layout:'',
                     keyUserType:'0',
+                    createUserName:'',
+                    recordUserName:'',
+                    explorationUserName:'',
+                    keyUserName:'',
                 },  //左侧头部数据
 
                 ownerVisible: false, //房主信息dialog
@@ -930,10 +1043,26 @@
                     chooseCode: '',
                     chooseAcc: '',
                 },
+                alloForm: {
+                    usertext:'',
+                    personData: {
+                        list:[
+
+                        ],
+                        total: 0,
+                        pageSize:5,
+                        pageNum:1
+                    },
+                    chooseName: '',
+                    chooseCode: '',
+                    chooseAcc: '',
+                },
                 checkTransferList: [],
             };
         },
         mounted:function(){
+            var roles = this.getRole();
+            this.role = roles;
             var that = this;
             var postData = {
                 id: this.id
@@ -984,6 +1113,195 @@
         filter:{
         },
         methods: {
+            getRole(){
+                return getRole();
+            },
+            searchAgain(){
+                var that = this;
+                var hid = that.id;
+                var postData1 = {
+                    id: hid
+                };
+                HouseApi.housedetail(postData1).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.houseDataForm=result.data;
+                    that.otherForm=result.data;
+                    that.radiusForm=result.data;
+                    that.editForm = result.data;
+                    that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                    that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                    that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                    that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
+                }).catch(error => {
+                    console.log('housedetail_error');
+                });
+            },
+            submitAllo(row){
+                var hid = this.id;
+                var that = this;
+                if(this.alloSign==0){
+                    Message.error("错误的操作！");
+                    return;
+                }
+                if(this.alloSign==1){
+                    var postData = {
+                        id: hid,
+                        createUserName:row.username,
+                    };
+                    HouseApi.updateCreateUserName(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        if(result.data=='1'){
+                            Message({
+                                message: "分配成功",
+                                type: 'success'
+                            });
+                        }else{
+                            Message.error("分配失败！");
+                            that.alloSign=0;
+                            return;
+                        }
+
+                        that.alloClosed();
+                    }).catch(error => {
+                        console.log('updateCreateUserName_error');
+                    });
+                }else if(this.alloSign==2){
+                    var postData = {
+                        id: hid,
+                        recordUserName:row.username,
+                    };
+                    HouseApi.updateRecordUserName(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        if(result.data=='1'){
+                            Message({
+                                message: "分配成功",
+                                type: 'success'
+                            });
+                        }else{
+                            Message.error("分配失败！");
+                        }
+                        that.alloClosed();
+                    }).catch(error => {
+                        console.log('updateRecordUserName_error');
+                    });
+                }else if(this.alloSign==3){
+                    var postData = {
+                        id: hid,
+                        explorationUserName:row.username,
+                    };
+                    HouseApi.updateExplorationUserName(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        if(result.data=='1'){
+                            Message({
+                                message: "分配成功",
+                                type: 'success'
+                            });
+                        }else{
+                            Message.error("分配失败！");
+                        }
+                        that.alloClosed();
+                    }).catch(error => {
+                        console.log('updateRecordUserName_error');
+                    });
+
+                }else if(this.alloSign==4){
+                    var postData = {
+                        id: hid,
+                        keyUserName:row.username,
+                    };
+                    HouseApi.updateKeyUserName(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        if(result.data=='1'){
+                            Message({
+                                message: "分配成功",
+                                type: 'success'
+                            });
+                        }else{
+                            Message.error("分配失败！");
+                        }
+                        that.alloClosed();
+                    }).catch(error => {
+                        console.log('updateKeyUserName_error');
+                    });
+                }
+
+            },
+            isMyStore(username,val){
+                var that = this;
+                var postData = {
+                    isUserName: username,
+                };
+                HouseApi.isMyStore(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    if(result.data=='0'){
+                        Message.error("只能分配此人在本店已有角色！")
+                        return;
+                    }else{
+                        that.alloSign=val;
+                        that.alloVisible=true;
+                    }
+                }).catch(error => {
+                    console.log('isMyStore_error');
+                });
+            },
+            AlloLuru(){
+                if(this.houseDataForm.createUserName==null||this.houseDataForm.createUserName==''){
+                    Message.error("不能分配空角色！");
+                    return;
+                }
+                this.isMyStore(this.houseDataForm.createUserName,1);
+            },
+            AlloWeihu(){
+                if(this.houseDataForm.recordUserName==null||this.houseDataForm.recordUserName==''){
+                    Message.error("不能分配空角色！");
+                    return;
+                }
+                this.isMyStore(this.houseDataForm.recordUserName,2);
+            },
+            AlloShikan(){
+                if(this.houseDataForm.explorationUserName==null||this.houseDataForm.explorationUserName==''){
+                    Message.error("不能分配空角色！");
+                    return;
+                }
+                this.isMyStore(this.houseDataForm.explorationUserName,3);
+            },
+            AlloYaoshi(){
+                if(this.houseDataForm.keyUserName==null||this.houseDataForm.keyUserName==''){
+                    Message.error("不能分配空角色！");
+                    return;
+                }
+                this.isMyStore(this.houseDataForm.keyUserName,4);
+            },
+            alloClosed(){
+                this.alloVisible=false;
+                this.alloForm.personData.pageNum=1;
+                this.alloForm.personData.pageSize=5;
+                this.alloForm.usertext='';
+                this.alloForm.personData.list=[];
+                this.alloSign=0;
+                this.searchAgain();
+            },
+            searchAllo(){
+                this.searchAllobase();
+            },
+            handleCurrentChangePerson(val){
+                this.alloForm.personData.pageNum = val;
+                this.searchAllobase();
+            },
+            searchAllobase(){
+                var that = this;
+                var postData = {
+                    usertext: this.alloForm.usertext,
+                    page:this.alloForm.personData.pageNum,
+                    size:this.alloForm.personData.pageSize,
+                };
+                HouseApi.alloSearchUser(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.alloForm.personData=result.data;
+                }).catch(error => {
+                    console.log('alloSearchUser_error');
+                });
+            },
             mouseEnter(row, column, cell, event){
                 row.topicon='1'
             },
@@ -1017,7 +1335,7 @@
                         console.log('recordlist_error');
                     });
                 }).catch(error => {
-                    console.log('updateIsTopOne_error'+error);
+                    console.log('updateIsTopOne_error');
                 });
             },
             setNoTop(row){

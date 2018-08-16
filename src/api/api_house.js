@@ -136,4 +136,36 @@ export default {
         return API.POST('house/record/updateIsTopZero', params)
     },
 
+    // 分配-判断
+    isMyStore: params => {
+        return API.POST('house/isMyStore', params)
+    },
+
+    // 分配-选择用户
+    alloSearchUser: params => {
+        return API.POST('house/findByUserInfo', params)
+    },
+
+    // 分配-录入人
+    updateCreateUserName: params => {
+        return API.POST('house/updateCreateUserName', params)
+    },
+
+    // 分配-维护人
+    updateRecordUserName: params => {
+        return API.POST('house/updateRecordUserName', params)
+    },
+
+    // 分配-实勘人
+    updateExplorationUserName: params => {
+        return API.POST('house/updateExplorationUserName', params)
+    },
+
+    // 分配-钥匙人
+    updateKeyUserName: params => {
+        return API.POST('house/updateKeyUserName', params)
+    },
+
+
+
 }
