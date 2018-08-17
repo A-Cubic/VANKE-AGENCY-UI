@@ -515,6 +515,20 @@
             searchType(index, list){
                 var id = this.getId(index, list);
                 this.formData.type = id;
+                this.formData.isShare=0;
+                this.formData.guestgrade=0;
+                this.formData.isShareList.forEach((item) => {
+                    item.choosed = false;
+                    if(this.formData.isShareList.indexOf(item) == 0){
+                        item.choosed = true;
+                    };
+                });
+                this.formData.guestgradeList.forEach((item) => {
+                    item.choosed = false;
+                    if(this.formData.guestgradeList.indexOf(item) == 0){
+                        item.choosed = true;
+                    };
+                });
                 this.search();
             },
             //星级

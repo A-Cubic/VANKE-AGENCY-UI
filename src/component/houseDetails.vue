@@ -366,32 +366,32 @@
                             </el-tab-pane>
 
                             <el-tab-pane :disabled = "houseDataForm.user_type=='0'?true:false" label="修改" name="3" >
-                                <el-form :model="editForm" ref="editForm" label-width="45px" class="demo-ruleForm">
-                                    <el-form-item label="价格:">
+                                <el-form :model="editForm" ref="editForm" label-width="80px" class="demo-ruleForm">
+                                    <el-form-item label="房屋价格:">
                                         <el-input placeholder="请输入价格" v-model="editForm.price"></el-input>
                                     </el-form-item>
                                     <el-row :gutter="1">
                                         <el-col :span="1">
-                                            <el-form-item label="户型:">
+                                            <el-form-item label="房屋户型:">
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="5">
-                                            <el-form-item label="" label-width="30px">
+                                            <el-form-item label="" label-width="53px">
                                                 <el-input placeholder="请输入室" v-model="editForm.huxingshi"></el-input>
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="5">
-                                            <el-form-item label="室" label-width="30px">
+                                            <el-form-item label="室" label-width="40px">
                                                 <el-input placeholder="请输入厅" v-model="editForm.huxingting"></el-input>
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="5">
-                                            <el-form-item label="厅" label-width="30px">
+                                            <el-form-item label="厅" label-width="40px">
                                                 <el-input placeholder="请输入厨" v-model="editForm.huxingchu"></el-input>
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="5">
-                                            <el-form-item label="厨" label-width="30px">
+                                            <el-form-item label="厨" label-width="40px">
                                                 <el-input placeholder="请输入卫" v-model="editForm.huxingwei"></el-input>
                                             </el-form-item>
                                         </el-col>
@@ -414,10 +414,13 @@
                                             <el-input placeholder="请输入厨" v-model="editForm.huxingchu"></el-input>
                                         </el-col>
                                     </el-form-item> -->
-                                    <el-form-item label="面积:">
+                                    <el-form-item label="小区名称:">
+                                        <el-input placeholder="请输入小区名" v-model="editForm.xiaoquName"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="房屋面积:">
                                         <el-input placeholder="请输入面积" v-model="editForm.areas"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="朝向:">
+                                    <el-form-item label="房屋朝向:">
                                         <!-- <el-input placeholder="请输入" v-model="editForm.chaoxiang"></el-input> -->
                                         <el-select v-model="editForm.chaoxiang" placeholder="请选择朝向" style="width:100%">
                                             <el-option
@@ -428,11 +431,11 @@
                                             </el-option>
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item label="楼层:">
+                                    <el-form-item label="当前楼层:">
                                         <el-input placeholder="请输入楼层" v-model="editForm.floor"></el-input>
                                     </el-form-item>
 
-                                    <el-form-item label="装修:">
+                                    <el-form-item label="装修情况:">
                                         <el-select v-model="editForm.layout" placeholder="请选择装修情况" style="width:100%">
                                             <el-option
                                                     v-for="item in layoutList"
@@ -444,12 +447,20 @@
 
                                     </el-form-item>
 
-                                    <el-form-item label="房主:">
+                                    <el-form-item label="当前房主:">
                                         <el-input placeholder="请输入房主姓名" v-model="editForm.owner"></el-input>
                                     </el-form-item>
 
-                                    <el-form-item label="电话:">
+                                    <el-form-item label="当前电话:">
                                         <el-input placeholder="请输入房主电话" v-model="editForm.phone"></el-input>
+                                    </el-form-item>
+
+                                    <el-form-item label="备用房主:">
+                                        <el-input placeholder="请输入备用房主姓名" v-model="editForm.owner1" ></el-input>
+                                    </el-form-item>
+
+                                    <el-form-item label="备用电话:">
+                                        <el-input placeholder="请输入备用房主电话" v-model="editForm.phone1" ></el-input>
                                     </el-form-item>
                                     <div style="text-align: right">
                                         <el-button type="primary" size="mini" @click="editSubmit">提交</el-button>
@@ -950,6 +961,10 @@
                     layout:'',
                     owner:'',
                     phone:'',
+
+                    xiaoquName:'',
+                    owner1:'',
+                    phone1:'',
                 },
                 layoutList:[
                     {
@@ -1282,6 +1297,7 @@
                 this.searchAgain();
             },
             searchAllo(){
+                this.alloForm.personData.pageNum=1;
                 this.searchAllobase();
             },
             handleCurrentChangePerson(val){
@@ -1720,7 +1736,10 @@
                     floor: this.editForm.floor,
                     owner: this.editForm.owner,
                     phone: this.editForm.phone,
-                    layout: this.editForm.layout
+                    layout: this.editForm.layout,
+                    owner1: this.editForm.owner1,
+                    phone1: this.editForm.phone1,
+                    xiaoquName: this.editForm.xiaoquName,
                 };
                 HouseApi.updateHouse(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}

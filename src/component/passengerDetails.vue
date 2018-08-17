@@ -53,6 +53,7 @@
                         </li>
                     </ul>
                 </el-col>
+
             </el-row>
             <el-row :gutter="25">
                 <el-col :span="18">
@@ -203,7 +204,6 @@
                     </div>
                 </el-col>
 
-
                 <el-col :span="6" >
                     <ul class="maintain-content" v-show="formUser.isshare=='1' || formUser.user_type=='0'?false:true">
                         <li>
@@ -242,6 +242,37 @@
                         </el-button>
                     </div>
                 </el-col>
+            </el-row>
+            <el-row :gutter="25" v-show="role=='ROLE_MANAGER'?true:false">
+                <el-col :span="18">
+                <el-card class="box-card">
+                    <div slot="header" class="clearfix">
+                        <span style="font-size: 18px;">角色分配</span>
+                    </div>
+                    <div class="radius-wrap">
+                        <div class="radius-block">
+                            <div><i class="iconfont icon-luru"></i></div>
+                            <div>录入</div>
+                            <div class="radius-data">{{ formUser.createRelName==''|| formUser.createRelName==null?"暂无":formUser.createRelName }}</div>
+                            <el-button type="text"
+                                       size="small"
+                                       icon="el-icon-plus"
+                                       @click="AlloLuru">
+                            </el-button>
+                        </div>
+                        <div class="radius-block" style="margin-left:20px;">
+                            <div><i class="iconfont icon-maintain"></i></div>
+                            <div>维护</div>
+                            <div class="radius-data">{{ formUser.recordRelName==''|| formUser.recordRelName==null?"暂无": formUser.recordRelName}}</div>
+                            <el-button type="text"
+                                       size="small"
+                                       icon="el-icon-plus"
+                                       @click="AlloWeihu">
+                            </el-button>
+                        </div>
+                    </div>
+                </el-card>
+            </el-col>
             </el-row>
 
             <el-dialog title="写跟进" :visible.sync="remarkVisible" width="40%">
@@ -404,6 +435,40 @@
                 <!--<el-button type="primary" @click="finishTransfer">确 定</el-button>-->
                 <!--</span>-->
             </el-dialog>
+
+            <el-dialog title="角色分配" :visible.sync="alloVisible" width="80%" @close="alloClosed">
+                <div class="transfer-wrap">
+                    <div class="transfer-wrap-header">
+                        <el-input placeholder="请输入编号后六位或全名" v-model="alloForm.usertext" clearable></el-input>
+                        <el-button class="m-btn-addMenu" type="primary" icon="el-icon-search" @click="searchAllo">查询</el-button>
+                    </div>
+                    <div class="transfer-wrap-table">
+                        <el-table :data="alloForm.personData.list" style="width: 100%">
+                            <el-table-column prop="user_no" label="编号"></el-table-column>
+                            <el-table-column prop="relname" label="姓名"></el-table-column>
+                            <el-table-column prop="store_name" label="门店"></el-table-column>
+                            <el-table-column label="操作">
+                                <template scope="scope">
+                                    <el-button size="mini" type="text" @click="submitAllo(scope.row)">分配</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                    <div class="table-pagination">
+                        <el-pagination
+                                layout="prev, pager, next, jumper, total"
+                                :page-size="alloForm.personData.pageSize"
+                                :current-page.sync="alloForm.personData.pageNum"
+                                :total ="alloForm.personData.total"
+                                @current-change="handleCurrentChangePerson">
+                        </el-pagination>
+                    </div>
+                </div>
+                <!--<span slot="footer" class="dialog-footer">-->
+                <!--<el-button @click="transferVisible = false">退 出</el-button>-->
+                <!--<el-button type="primary" @click="finishTransfer">确 定</el-button>-->
+                <!--</span>-->
+            </el-dialog>
         </div>
     </section>
 
@@ -424,6 +489,8 @@
             return {
                 role:'',
                 loading: false,
+                alloVisible: false,
+                alloSign:0,
                 pageVisbaleEmpty: false,
                 pageVisbaleData: true,
                 transferVisible: false,
@@ -442,7 +509,6 @@
                 },
                 formUser: {
                     guestname: '',
-                    recordRelName: '',
                     sex: '',
                     iskey:'',
                     number: '',
@@ -453,7 +519,11 @@
                     phone: '',  //联系电话
                     phonetow: '',//备用电话
                     isshare:'',
-                    user_type:''
+                    user_type:'',
+                    createUserName:'',
+                    createRelName:'',
+                    recordUserName:'',
+                    recordRelName: '',
                 },
                 needForm:{
                     type: '',  //客源类型(0:买,1:租)
@@ -472,32 +542,29 @@
                     pageNum: 1,
                     total: 0,
                     list: [
-                        {
-                            createTime:'',
-                            content:'',
-                        }
+//                        {
+//                            createTime:'',
+//                            content:'',
+//                        }
                     ]
                 },
-
                 takeLookForm:{
                     pageSize: 10,
                     pageNum: 1,
                     total: 0,
                     list: [
-                        {
-                            createTime:'',
-                            houseName:'',
-                            feedback:'',
-                        }
+//                        {
+//                            createTime:'',
+//                            houseName:'',
+//                            feedback:'',
+//                        }
                     ]
                 },
-
                 phoneVisible: false,
                 remarkVisible: false,
                 remarkMes: '',
                 lookVisible: false,
                 lookDetailVisible: false,
-
                 lookTableData:{
                     pageSize: 10,
                     pageNum: 1,
@@ -519,20 +586,29 @@
                 },
                 lookTableCheckedList: [],
                 LookedList: [],
-
-
                 addLookForm:{
                     xiaoquName: '',
                     number: '',
                     type: '1',
                 },
-
-
-
                 dialogVisible: false,
                 searchMes: '',
                 searchList: [],
                 takeLookList: [],
+                alloForm: {
+                    usertext:'',
+                    personData: {
+                        list:[
+
+                        ],
+                        total: 0,
+                        pageSize:5,
+                        pageNum:1
+                    },
+                    chooseName: '',
+                    chooseCode: '',
+                    chooseAcc: '',
+                },
             };
         },
 
@@ -614,6 +690,128 @@
                     console.log('updateIsTopZero_error'+error);
                 });
             },
+
+            searchAgain(){
+                var that = this;
+                var gid = this.id;
+                var postData1 = {
+                    id: gid
+                };
+                GuestApi.guestDetail(postData1).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.formUser=result.data;
+                    that.needForm=result.data;
+                }).catch(error => {
+                    console.log('guestDetail_error');
+                });
+            },
+            alloClosed(){
+                this.alloVisible=false;
+                this.alloForm.personData.pageNum=1;
+                this.alloForm.personData.pageSize=5;
+                this.alloForm.usertext='';
+                this.alloForm.personData.list=[];
+                this.alloSign=0;
+                this.searchAgain();
+            },
+            searchAllo(){
+                this.alloForm.personData.pageNum=1;
+                this.searchAllobase();
+            },
+            handleCurrentChangePerson(val){
+                this.alloForm.personData.pageNum = val;
+                this.searchAllobase();
+            },
+            searchAllobase(){
+                var that = this;
+                var postData = {
+                    usertext: this.alloForm.usertext,
+                    page:this.alloForm.personData.pageNum,
+                    size:this.alloForm.personData.pageSize,
+                };
+                GuestApi.alloSearchUser(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.alloForm.personData=result.data;
+                }).catch(error => {
+                    console.log('alloSearchUser_error');
+                });
+            },
+            submitAllo(row){
+                var gid = this.id;
+                var postData = {
+
+                };
+                var that = this;
+                if(this.alloSign==0){
+                    Message.error("错误的操作！");
+                    return;
+                }
+                if(this.alloSign==1){
+                    postData = {
+                        id: gid,
+                        createUserName:row.username,
+                    };
+                }else if(this.alloSign==2){
+                    postData = {
+                        id: gid,
+                        recordUserName:row.username,
+                    };
+
+                }
+                GuestApi.updateAllocation(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    if(result.data=='1'){
+                        Message({
+                            message: "分配成功",
+                            type: 'success'
+                        });
+                    }else{
+                        Message.error("分配失败！");
+                        that.alloSign=0;
+                        return;
+                    }
+
+                    that.alloClosed();
+                }).catch(error => {
+                    console.log('updateAllocation_error');
+                });
+
+            },
+            isMyStore(username,val){
+                var that = this;
+                var postData = {
+                    isUserName: username,
+                };
+                GuestApi.isMyStore(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    if(result.data=='0'){
+                        Message.error("只能分配此人在本店已有角色！")
+                        return;
+                    }else{
+                        that.alloSign=val;
+                        that.alloVisible=true;
+                    }
+                }).catch(error => {
+                    console.log('isMyStore_error');
+                });
+            },
+            AlloLuru(){
+                if(this.formUser.createUserName==null||this.formUser.createUserName==''){
+                    Message.error("不能分配空角色！");
+                    return;
+                }
+                this.isMyStore(this.formUser.createUserName,1);
+            },
+            AlloWeihu(){
+                if(this.formUser.recordUserName==null||this.formUser.recordUserName==''){
+                    Message.error("不能分配空角色！");
+                    return;
+                }
+                this.isMyStore(this.formUser.recordUserName,2);
+            },
+
+
+
             updateIsShareGuest(){
                 this.$confirm('此操作将维护人更改为当前用户, 是否继续?', '提示', {
                     confirmButtonText: '确定',
@@ -652,7 +850,6 @@
                 };
 
                 GuestApi.guestDetail(postData).then(function (result) {
-//                     console.log(result);
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     if(result.data==0){
                         that.pageVisbaleEmpty=true;
@@ -1069,6 +1266,43 @@
 
 <style lang="less">
     @import "../assets/css/element.less";
+    .radius-wrap{
+        padding: 20px;
+        /*overflow: hidden;*/
+        text-align: center;
+        .radius-block{
+            .radius-data{
+                color:#666;
+            }
+            width: 8vw;
+            height: 8vw;
+            min-width: 80px;
+            min-height: 80px;
+            margin: 1vw;
+            display: inline-block;
+            box-shadow: 0px 0px 10px #e3e3e3;
+            border-radius: 100px;
+            position: relative;
+
+            .el-button{
+                position: absolute;
+                bottom: 0;
+                left: 3.1vw;
+                i{
+                    font-size:1.6vw
+                }
+            }
+            div{
+                margin-top: 2px;
+                &:first-child {
+                    font-size: 16px;
+                }
+            }
+        }
+        .radius-data-btn{
+            box-shadow: 0px 0px 10px #c51010;
+        }
+    }
     .bottom {
         margin-top: 13px;
         line-height: 12px;

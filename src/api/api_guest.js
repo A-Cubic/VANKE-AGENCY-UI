@@ -74,4 +74,19 @@ export default {
     updateIsTopZero: params => {
         return API.POST('guest/record/updateIsTopZero', params)
     },
+
+    // 分配-判断
+    isMyStore: params => {
+        return API.POST('house/isMyStore', params)
+    },
+
+    // 分配-选择用户
+    alloSearchUser: params => {
+        return API.POST('house/findByUserInfo', params)
+    },
+
+    // 分配-确认
+    updateAllocation: params => {
+        return API.POST('guest/updateAllocation', params)
+    },
 }

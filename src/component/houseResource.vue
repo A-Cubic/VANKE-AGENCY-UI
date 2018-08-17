@@ -1405,21 +1405,71 @@ export default {
             var that = this;
             that.formData.priceUp = '';
             that.formData.priceDown = '';
+            that.formData.areasUp = '';
+            that.formData.areasDown = '';
+            that.formData.floor = '';
+            that.formData.priceOrderby = '';
+            that.formData.areasOrderby = '';
+            that.formData.floorOrderby = '';
+            that.formData.positionType=0;
+            that.formData.priceType=0;
+            that.formData.areaType=0;
+            that.formData.huxingType=0;
+            that.formData.chaoxiangType=0;
+            that.formData.floorType=0;
+            that.formData.rangeType=0;
+
             var id = this.getId(index, list);
             this.formData.type = id;
-            this.formData.priceType = 0;
+            this.formData.positionTypeList.forEach((item) => {
+                item.choosed = false;
+                if(that.formData.positionTypeList.indexOf(item) == 0){
+                    item.choosed = true;
+                };
+            });
+            this.formData.areaTypeList.forEach((item) => {
+                item.choosed = false;
+                if(that.formData.areaTypeList.indexOf(item) == 0){
+                    item.choosed = true;
+                };
+            });
+            this.formData.huxingTypeList.forEach((item) => {
+                item.choosed = false;
+                if(that.formData.huxingTypeList.indexOf(item) == 0){
+                    item.choosed = true;
+                };
+            });
+            this.formData.chaoxiangTypeList.forEach((item) => {
+                item.choosed = false;
+                if(that.formData.chaoxiangTypeList.indexOf(item) == 0){
+                    item.choosed = true;
+                };
+            });
+            this.formData.floorTypeList.forEach((item) => {
+                item.choosed = false;
+                if(that.formData.floorTypeList.indexOf(item) == 0){
+                    item.choosed = true;
+                };
+            });
+            this.formData.rangeTypeList.forEach((item) => {
+                item.choosed = false;
+                if(that.formData.rangeTypeList.indexOf(item) == 0){
+                    item.choosed = true;
+                };
+            });
             this.formData.priceTypeSellList.forEach((item) => {
                 item.choosed = false;
                 if(that.formData.priceTypeSellList.indexOf(item) == 0){
                     item.choosed = true;
                 };
-            })
+            });
             this.formData.priceTypeRentList.forEach((item) => {
                 item.choosed = false;
                 if(that.formData.priceTypeRentList.indexOf(item) == 0){
                     item.choosed = true;
                 };
-            })
+            });
+
             this.search();
         },
         //位置
