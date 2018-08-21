@@ -88,7 +88,7 @@
                 </div>
             </el-col>
 
-            <el-dialog title="审核实勘图" :visible.sync="auditForm.auditVisible" width="80%" @close="imgPopClosed">
+            <el-dialog title="审核详情" :visible.sync="auditForm.auditVisible" width="80%" @close="imgPopClosed">
                 <div class="audit-dialog-template" v-show="auditForm.aduitStatus == '4'">
                     <el-card class="box-card" style="width:90%">
                         <div style="color:#c51010;">房源编号：<span style="color: #909399;">{{auditForm.number}}</span></div>
@@ -155,6 +155,7 @@
                 </div>
                 <div class="audit-dialog-template" v-show="auditForm.aduitStatus != '4' && auditForm.aduitStatus != '10'">
                     <label class="auditContent">{{auditForm.achAllText}}，<router-link tag="a" target="_blank" :to="auditForm.achAllUrl">点击查看详情</router-link></label>
+                    <div v-show="auditForm.aduitStatus == '3' || auditForm.aduitStatus == '5'?true:false" style="margin-top: 10px;">申请原因：<span>{{auditForm.reasontext}}</span></div>
                 </div>
                 <div class="btn-footer" style="margin-top: 20px">
                     <el-input
@@ -231,14 +232,14 @@ export default {
                         value: '7',
                         label: '取消优质房源'
                     },
-                    {
-                        value: '8',
-                        label: '取消无效房源'
-                    },
-                    {
-                        value: '9',
-                        label: '取消无效客源'
-                    },
+                    // {
+                    //     value: '8',
+                    //     label: '取消无效房源'
+                    // },
+                    // {
+                    //     value: '9',
+                    //     label: '取消无效客源'
+                    // },
                     {
                         value: '10',
                         label: '成交业绩审核'
@@ -346,6 +347,7 @@ export default {
                 huxingting: '',
                 huxingchu: '',
                 huxingwei: '',
+                reasontext: '',
             },
         };
     },
@@ -433,6 +435,7 @@ export default {
             this.auditForm.huxingting = item.huxingting;
             this.auditForm.huxingchu = item.huxingchu;
             this.auditForm.huxingwei = item.huxingwei;
+            this.auditForm.reasontext = item.reasontext;
 
             var txt = this.typeFormatterFuc(stt);
             if(stt=='1' || stt=='2' ||stt=='3' ||stt=='6' ||stt=='7' ||stt=='8' ){

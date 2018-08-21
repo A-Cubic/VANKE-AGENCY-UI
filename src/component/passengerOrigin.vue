@@ -303,6 +303,11 @@
                             id: 1,
                             choosed: false,
                         },
+                        {
+                            name: '无效池',
+                            id: 2,
+                            choosed: false,
+                        },
                     ],
                     type:0,
                     typeList:[

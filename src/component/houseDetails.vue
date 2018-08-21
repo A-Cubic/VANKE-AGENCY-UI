@@ -96,7 +96,7 @@
                                         </div>
                                     </div>
                                     <div class="other-mes">
-                                        <div>维护人: <span>{{ houseDataForm.recordrelName==''?"暂无": radiusForm.recordrelName+('('+ (radiusForm.recordUesrPhone==''?'无电话': radiusForm.recordUesrPhone) +')') }}</span></div>
+                                        <div>维护人: <span>{{ houseDataForm.recordrelName==''|| houseDataForm.recordrelName==null?"暂无": radiusForm.recordrelName+('('+ (radiusForm.recordUesrPhone==''?'无电话': radiusForm.recordUesrPhone) +')') }}</span></div>
                                         <div>房屋等级: <span>{{ houseDataForm.grade }}</span></div>
                                         <div>地址:
                                             <span class="span" @click="placeHandle">查看</span>
@@ -148,7 +148,10 @@
                                                 </el-popover>
                                             </div>
                                     </div>
-                                    <div class="other-mes" style="margin-top:10px">
+                                    <div class="other-mes" v-show="otherForm.state=='1'?true:false">
+                                        <el-button size="mini" type="primary" icon="el-icon-upload2" @click="upLink">上网（成为创建人）</el-button>
+                                    </div>
+                                    <div  style="margin-top:10px;width: 50%;">
                                         <span><el-tag v-show="houseDataForm.isshare=='1'?true:false">共享池</el-tag></span>
                                         <span><el-tag v-show="otherForm.isspecial=='1'?true:false" type="warning" >特殊房源</el-tag></span>
                                         <span><el-tag v-show="otherForm.isfine=='1'?true:false" type="success">优质房源</el-tag></span>
@@ -790,6 +793,16 @@
                     <!--<el-button type="primary" @click="finishTransfer">确 定</el-button>-->
                     <!--</span>-->
                 </el-dialog>
+
+                <el-dialog title="申请无效房源" :visible.sync="reasonVisible" width="40%" @close="reasonClosed">
+                    <div class="row">
+                        <el-input type="textarea" :rows="6" placeholder="请输入申请原因（必填）"  v-model="reasontext"></el-input>
+                    </div>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="reasonVisible = false;">取 消</el-button>
+                        <el-button type="primary" @click="stateHandelComit">确 定</el-button>
+                    </span>
+                </el-dialog>
             </el-row>
         </div>
     </section>
@@ -810,6 +823,8 @@
                 role:'',
                 alloVisible:false,
                 alloSign:0,
+                reasonVisible:false,
+                reasontext:'',
                 keyInfoData:{
                     keyInfoVisible:false,
                     keyStoreId:'',
@@ -1130,6 +1145,50 @@
         methods: {
             getRole(){
                 return getRole();
+            },
+            upLink(){
+                this.$confirm('此操作将创建人更改为当前用户,并上网，是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var that = this;
+                    var hid = this.id;
+                    var postData = {
+                        id: hid
+                    };
+                    HouseApi.houseStateUp(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        var postData1 = {
+                            id: hid
+                        };
+                        HouseApi.housedetail(postData1).then(function (result) {
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            that.houseDataForm=result.data;
+                            that.otherForm=result.data;
+                            that.radiusForm=result.data;
+                            that.editForm = result.data;
+                            that.examineForm.shilimit = parseInt(that.houseDataForm.huxingshi);
+                            that.examineForm.tinglimit = parseInt(that.houseDataForm.huxingting);
+                            that.examineForm.weilimit = parseInt(that.houseDataForm.huxingwei);
+                            that.examineForm.chulimit = parseInt(that.houseDataForm.huxingchu);
+                        }).catch(error => {
+                            console.log('housedetail_error');
+                        });
+                        Message({
+                            type: 'success',
+                            message: '上网成功！'
+                        });
+                    }).catch(error => {
+                        console.log('houseStateUp_error'+error);
+                    });
+
+                }).catch(() => {
+                });
+            },
+            reasonClosed(){
+                this.reasonVisible=false;
+                this.reasontext='';
             },
             searchAgain(){
                 var that = this;
@@ -1507,6 +1566,8 @@
                 var that = this;
                 if(this.houseDataForm.isshare=='1'){
                     Message.error("房源为共享池房源，无法查看房主信息！");
+                }else if(this.houseDataForm.state=='1'){
+                    Message.error("此房源是无效房源，无法查看房主信息！");
                 }else{
                     var postData = {
                         houseId: this.id
@@ -1531,6 +1592,8 @@
 
                 if(this.houseDataForm.isshare=='1'){
                     Message.error("房源为共享池房源，无法查看地址信息！");
+                }else if(this.houseDataForm.state=='1'){
+                    Message.error("此房源是无效房源，无法查看地址信息！");
                 }else{
                     var postData = {
                         houseId: this.id
@@ -1563,6 +1626,10 @@
             },  //实勘填图
 
             weihuHandel(){
+                if(this.houseDataForm.state=='1'){
+                    Message.error("此房源是无效房源，不能更改维护人！");
+                    return;
+                };
                 this.$confirm('此操作将维护人更改为当前用户, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -1819,6 +1886,18 @@
                 });
             },
             stateHandel(){
+                if(this.houseDataForm.isshare=='1'){
+                    Message.error("此房源是共享房源，不能申请！");
+                    return;
+                }else{
+                    this.reasonVisible=true;
+                }
+            },
+            stateHandelComit(){
+                if(this.reasontext.trim()==''){
+                    Message.error("申请原因不能为空！");
+                    return;
+                }
                 var that = this;
                 var isData = this.otherForm.state;
                 var isData1 ;
@@ -1826,8 +1905,10 @@
                 if(isData=='0'){
                     isData1='1';
                 }else if(isData=='1'){
-                    isData1='0';
-                    text = '申请审核取消无效房源, 是否继续?';
+                    // isData1='0';
+                    // text = '申请审核取消无效房源, 是否继续?';
+                    Message.error("已经是无效房源");
+                    return;
                 }
                 this.$confirm(text, '提示', {
                     confirmButtonText: '确定',
@@ -1836,24 +1917,24 @@
                 }).then(() => {
                     var postData = {
                         id: this.id,
+                        reasontext: this.reasontext,
                         state:isData1
                     };
                     HouseApi.updateState(postData).then(function (result) {
                         if(typeof(result) != "object"){result = JSON.parse(result)}
                         that.otherForm.state = result.data;
+                        that.reasonClosed();
                         Message({
                             type: 'success',
                             message: '申请成功，请等待审核!'
                         });
+
                     }).catch(error => {
                         console.log('updateState_error'+error);
                     });
 
                 }).catch(() => {
-                    // Message({
-                    //     type: 'info',
-                    //     message: '已取消更改!'
-                    // });
+
                 });
             },
             isfineHandel(){
@@ -1986,13 +2067,21 @@
 
             //提交跟进
             submitTrace(){
+                if(this.houseDataForm.isshare=='1'){
+                    Message.error("此房源是共享房源，不能提交跟进！");
+                    return;
+                }
+                if(this.houseDataForm.state=='1'){
+                    Message.error("此房源是无效房源，不能提交跟进！");
+                    return;
+                }
                 var that = this;
                 var hid = this.id;
                 var postData = {
                     houseId: hid,
                     content:this.traceForm.textMes
                 };
-                console.log(this.traceForm.textMes)
+                // console.log(this.traceForm.textMes)
                 HouseApi.insertRecord(postData).then(function (result) {
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     that.traceForm.textMes='';

@@ -50,6 +50,7 @@
                             <el-tag v-show="formUser.isshare=='1'?true:false">
                                 共享池
                             </el-tag>
+                            <el-button v-show="formUser.iskey=='1'?true:false" size="mini" type="primary" icon="el-icon-upload2" @click="upLink">上网（成为创建人）</el-button>
                         </li>
                     </ul>
                 </el-col>
@@ -469,6 +470,16 @@
                 <!--<el-button type="primary" @click="finishTransfer">确 定</el-button>-->
                 <!--</span>-->
             </el-dialog>
+
+            <el-dialog title="申请无效客源" :visible.sync="reasonVisible" width="40%" @close="reasonClosed">
+                <div class="row">
+                    <el-input type="textarea" :rows="6" placeholder="请输入申请原因（必填）"  v-model="reasontext"></el-input>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="reasonVisible = false;">取 消</el-button>
+                        <el-button type="primary" @click="stateHandelComit">确 定</el-button>
+                    </span>
+            </el-dialog>
         </div>
     </section>
 
@@ -488,6 +499,8 @@
         data() {
             return {
                 role:'',
+                reasonVisible:false,
+                reasontext:'',
                 loading: false,
                 alloVisible: false,
                 alloSign:0,
@@ -624,6 +637,37 @@
             getRole(){
                 return getRole();
             },
+
+            upLink(){
+                this.$confirm('此操作将创建人更改为当前用户,并上网，是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var that = this;
+                    var gid = this.id;
+                    var postData = {
+                        id: gid
+                    };
+                    GuestApi.updateGuestIsKeyUp(postData).then(function (result) {
+                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                        that.doSearch();
+                        Message({
+                            type: 'success',
+                            message: '上网成功！'
+                        });
+                    }).catch(error => {
+                        console.log('updateGuestIsKeyUp_error'+error);
+                    });
+
+                }).catch(() => {
+                });
+            },
+            reasonClosed(){
+                this.reasonVisible=false;
+                this.reasontext='';
+            },
+
             mouseEnter(row, column, cell, event){
                 row.topicon='1'
             },
@@ -1003,6 +1047,17 @@
             stateHandel(){
                 if(this.formUser.isshare=='1'){
                     Message.error("此客源是共享客源，不能修改状态!")
+                }else if(this.formUser.iskey=='1'){
+                    Message.error("已经是无效客源");
+                }else if(this.formUser.iskey=='2' || this.formUser.iskey=='3'){
+                    Message.error("正在审核中...");
+                }else{
+                    this.reasonVisible=true;
+                }
+            },
+            stateHandelComit(){
+                if(this.reasontext.trim()==''){
+                    Message.error("申请原因不能为空！");
                     return;
                 }
                 var that = this;
@@ -1028,8 +1083,10 @@
                 if(isData=='0'){
                     isData1='1';
                 }else if(isData=='1'){
-                    isData1='0';
-                    text = '申请审核取消无效客源, 是否继续?';
+                    // isData1='0';
+                    // text = '申请审核取消无效客源, 是否继续?';
+                    Message.error("已经是无效客源");
+                    return;
                 }
                 this.$confirm(text, '提示', {
                     confirmButtonText: '确定',
@@ -1038,11 +1095,13 @@
                 }).then(() => {
                     var postData = {
                         id: gid,
+                        reasontext: this.reasontext,
                         iskey:isData1
                     };
                     GuestApi.updateState(postData).then(function (result) {
                         if(typeof(result) != "object"){result = JSON.parse(result)}
                         that.formUser.iskey = result.data;
+                        that.reasonClosed();
                         Message({
                             type: 'success',
                             message: '申请成功，请等待审核!'

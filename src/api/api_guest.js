@@ -89,4 +89,9 @@ export default {
     updateAllocation: params => {
         return API.POST('guest/updateAllocation', params)
     },
+
+    // 上网
+    updateGuestIsKeyUp: params => {
+        return API.POST('guest/updateGuestIsKeyUp', params)
+    },
 }

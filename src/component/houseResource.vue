@@ -502,13 +502,18 @@ export default {
                         choosed: false,
                     },
                     {
-                        name: '共享池',
-                        id: 2,
+                        name: '维护盘',
+                        id: 4,
                         choosed: false,
                     },
                     {
-                        name: '维护盘',
-                        id: 4,
+                        name: '无效盘',
+                        id: 3,
+                        choosed: false,
+                    },
+                    {
+                        name: '共享池',
+                        id: 2,
                         choosed: false,
                     },
                     {
@@ -1075,7 +1080,6 @@ export default {
                     ],
                 },
             }
-
         };
     },
 
@@ -1314,35 +1318,40 @@ export default {
                                 if(result.data=='0'){
                                     Message.error("此房源已存在！");
                                     return;
-                                }
-                                Message({
-                                    message: "新增房源成功",
-                                    type: 'success'
-                                });
-                                that.alertAdd.visible=false;
-                                that.resetForm(ruleForm);
+                                }else if(result.data=='1'){
+                                    Message({
+                                        message: "新增房源成功",
+                                        type: 'success'
+                                    });
+                                    that.alertAdd.visible=false;
+                                    that.resetForm(ruleForm);
 
-                                var postData = {
-                                    priceUp: that.formData.priceUp,
-                                    priceDown: that.formData.priceDown,
-                                    searchText: that.formData.searchText,
-                                    rangeType: that.formData.rangeType,
-                                    type: that.formData.type,
-                                    positionType: that.formData.positionType,
-                                    priceType: that.formData.priceType,
-                                    areaType: that.formData.areaType,
-                                    huxingType: that.formData.huxingType,
-                                    chaoxiangType: that.formData.chaoxiangType,
-                                    floorType: that.formData.floorType,
-                                    page: that.tableData.pageNum,
-                                    size: 10
+                                    var postData = {
+                                        priceUp: that.formData.priceUp,
+                                        priceDown: that.formData.priceDown,
+                                        searchText: that.formData.searchText,
+                                        rangeType: that.formData.rangeType,
+                                        type: that.formData.type,
+                                        positionType: that.formData.positionType,
+                                        priceType: that.formData.priceType,
+                                        areaType: that.formData.areaType,
+                                        huxingType: that.formData.huxingType,
+                                        chaoxiangType: that.formData.chaoxiangType,
+                                        floorType: that.formData.floorType,
+                                        page: that.tableData.pageNum,
+                                        size: 10
+                                    }
+                                    HouseApi.houselist(postData).then(function (result) {
+                                        if(typeof(result) != "object"){result = JSON.parse(result)}
+                                        that.tableData=result.data;
+                                    }).catch(error => {
+                                        console.log('houselist_error');
+                                    });
+                                }else{
+                                    console.log(result.data);
+                                    that.openHave(result.data.id,result.data.number);
                                 }
-                                HouseApi.houselist(postData).then(function (result) {
-                                    if(typeof(result) != "object"){result = JSON.parse(result)}
-                                    that.tableData=result.data;
-                                }).catch(error => {
-                                    console.log('houselist_error');
-                                });
+
                             }).catch(error => {
                                 console.log('addhouse_error'+error);
                             });
@@ -1359,7 +1368,18 @@ export default {
               });
         	}
         },
-
+        openHave(id,no) {
+            var url = "/admin/houseDetails/"+id;
+            var nots = no;
+            console.log(id)
+            console.log(no)
+            this.$notify({
+                title: '提示',
+                dangerouslyUseHTMLString: true,
+                message: '<a target="_blank" href="'+url+'">'+no+'</a> ',
+                duration: 0
+            });
+        },
         search(){
             var that = this;
             that.loading=true;

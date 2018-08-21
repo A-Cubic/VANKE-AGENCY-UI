@@ -166,6 +166,11 @@ export default {
         return API.POST('house/updateKeyUserName', params)
     },
 
+    // 上网
+    houseStateUp: params => {
+        return API.POST('house/houseStateUp', params)
+    },
+
 
 
 }
