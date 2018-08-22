@@ -44,6 +44,19 @@
                                 </div>
                                 <div class="house-price">
                                     <span class="span1"> {{ houseDataForm.priceText }}</span>
+                                    <span>
+                                        <!--<a style="margin-left: -10px;margin-top: -7px;position: absolute;font-weight: bold;color:#F56C6C ">↑</a>-->
+                                        <!--<el-button size="mini" type="danger" v-show="houseDataForm.pricetype=='1'?true:false" style="width: 50px;height: 20px;" plain>-->
+                                            <!--<span style="margin-left: -10px;margin-top: -7px;position: absolute;">↑上涨</span>-->
+                                        <!--</el-button>-->
+                                        <!--<el-button size="mini" type="success" v-show="houseDataForm.pricetype=='2'? true:false"   plain>-->
+                                            <!--<span style="margin-left: -10px;margin-top: -7px;position: absolute;">↓下降</span>-->
+                                        <!--</el-button>-->
+                                        <!--<a><el-tag type="success">标签二</el-tag></a>-->
+                                        <!--<a><el-tag type="success">标签二</el-tag></a>-->
+                                        <el-tag size="mini" type="danger" v-show="houseDataForm.pricetype=='1'?true:false" style="cursor:pointer;" @click.native="upClick">↑上涨</el-tag>
+                                    </span>
+
                                     <span class="span2">{{ houseDataForm.priceOneText }}</span>
                                 </div>
                                 <!-- <div class="house-price"></div> -->
@@ -858,6 +871,7 @@
                     xiaoquName:'',
                     price: '',
                     priceText:'',
+                    pricetype:'0',
                     priceOneText:'',
                     huxing: '',
                     areas: '',
@@ -1145,6 +1159,9 @@
         methods: {
             getRole(){
                 return getRole();
+            },
+            upClick(){
+              console.log(123)
             },
             upLink(){
                 this.$confirm('此操作将创建人更改为当前用户,并上网，是否继续?', '提示', {

@@ -133,6 +133,33 @@
                             <el-button type="text" @click="search">确定</el-button>
                         </el-form-item>
 
+                        <el-form-item label="其他:">
+                            <div style="">
+                                <span>我的角色：</span>
+                                    <el-checkbox label="录入" size="mini" border v-model="formData.createType" @change="selectedChange"></el-checkbox>
+                                    <el-checkbox label="实勘" size="mini" border v-model="formData.explorationType" @change="selectedChange"></el-checkbox>
+                                    <el-checkbox label="钥匙" size="mini" border v-model="formData.keyType" @change="selectedChange"></el-checkbox>
+                                <span style="margin-left: 10px;">房源属性：</span>
+                                    <el-checkbox label="特殊房源" size="mini" border v-model="formData.isspecialType" @change="selectedChange"></el-checkbox>
+                                    <el-checkbox label="优质房源" size="mini" border v-model="formData.isfineType" @change="selectedChange"></el-checkbox>
+                                <span style="margin-left: 10px;">装修情况：</span>
+                                    <el-select v-model="formData.layout" style="width: 100px;" placeholder="装修情况" size="mini" @change="layoutChange">
+                                            <el-option label="不限" value=""></el-option>
+                                            <el-option label="毛坯房" value="毛坯房"></el-option>
+                                            <el-option label="简装修" value="简装修"></el-option>
+                                            <el-option label="精装修" value="精装修"></el-option>
+                                            <el-option label="豪华装修" value="豪华装修"></el-option>
+                                    </el-select>
+                                <span style="margin-left: 10px;">房屋等级：</span>
+                                    <el-select v-model="formData.grade" style="width: 100px;" placeholder="房屋等级" size="mini" @change="gradeChange">
+                                        <el-option label="不限" value=""></el-option>
+                                        <el-option label="A" value="A"></el-option>
+                                        <el-option label="B" value="B"></el-option>
+                                        <el-option label="C" value="C"></el-option>
+                                    </el-select>
+                            </div>
+                        </el-form-item>
+
                     </el-form>
                 </div>
             </div>
@@ -166,7 +193,14 @@
                     </el-table-column>
                     <el-table-column prop="huxing" label="户型"></el-table-column>
                     <el-table-column prop="areas" label="面积" sortable='custom'></el-table-column>
-                    <el-table-column prop="priceText" label="价格" sortable='custom'></el-table-column>
+                    <el-table-column prop="priceText" label="价格" sortable='custom'>
+                        <template scope="scope">
+                            <span>{{scope.row.priceText}}
+                                <el-tag size="mini" type="danger" v-show="scope.row.pricetype=='1'?true:false" >↑上涨</el-tag>
+                                <el-tag size="mini" type="success" v-show="scope.row.pricetype=='2'? true:false" >↓下降</el-tag>
+                            </span>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="floor" label="楼层" sortable='custom'></el-table-column>
                     <el-table-column prop="chaoxiang" label="朝向"></el-table-column>
                     <el-table-column prop="recordrelName" label="维护人"></el-table-column>
@@ -181,8 +215,6 @@
                     </el-pagination>
                 </div>
             </div>
-
-
 
         </div>
 
@@ -472,6 +504,17 @@
             <el-button type="primary" @click="submitAdd('ruleForm')">确 定 </el-button>
           </span>
         </el-dialog>
+
+        <el-dialog
+                title="房源存在提醒"
+                :visible.sync="addVisible"
+                width="30%"
+                @close="tixingClosed">
+            <span>
+             此房源已在无效房源中，房源编号：<router-link tag="a" target="_blank" :to="addUrl" style="color: #F56C6C">{{addNo}}（点击前往）</router-link>
+            </span>
+        </el-dialog>
+
     </section>
 
 </template>
@@ -900,24 +943,32 @@ export default {
                 priceOrderby: '',
                 areasOrderby: '',
                 floorOrderby: '',
+                createType:false,
+                explorationType:false,
+                keyType:false,
+                isspecialType:false,
+                isfineType:false,
+                layout:'',
+                grade:'',
             },
             tableData: {
                 pageSize: 10,
                 pageNum: 1,
                 total: 0,
                 list: [
-                {
-                    id: 0,
-                    titleimg: '',
-                    xiaoquName: '',
-                    huxing: '',
-                    areas: '',
-                    price: '',
-                    floor: '',
-                    chaoxiang: '',
-                    recordrelName: '',
-                    priceText:'',
-                }
+                // {
+                //     id: 0,
+                //     titleimg: '',
+                //     xiaoquName: '',
+                //     huxing: '',
+                //     areas: '',
+                //     price: '',
+                //     floor: '',
+                //     chaoxiang: '',
+                //     recordrelName: '',
+                //     priceText:'',
+                //     pricetype:'',
+                // }
                 ],
             },
             alertAdd:{
@@ -1079,7 +1130,10 @@ export default {
                         },
                     ],
                 },
-            }
+            },
+            addUrl:'',
+            addNo:'',
+            addVisible:false,
         };
     },
 
@@ -1179,6 +1233,7 @@ export default {
             type: '1'
         };
         HouseApi.houselist(postData).then(function (result) {
+            // console.log(result)
             if(typeof(result) != "object"){result = JSON.parse(result)}
             that.tableData=result.data;
             that.loading=false;
@@ -1191,6 +1246,15 @@ export default {
     },
 
     methods: {
+        layoutChange(val){
+            this.search();
+        },
+        gradeChange(val){
+            this.search();
+        },
+        selectedChange(val){
+            this.search();
+        },
         sortChange: function(column, prop, order) {
             var p = column.prop;
             var o = column.order;
@@ -1292,7 +1356,11 @@ export default {
 	    resetForm(formName) {
 	        this.$refs[formName].resetFields();
         },
-
+        tixingClosed(){
+            this.addUrl="";
+            this.addNo="";
+            this.addVisible=false;
+        },
         submitAdd(ruleForm){
         	if(this.alertAdd.active == 0){
         		  this.$refs[ruleForm].validate((valid) => {
@@ -1348,8 +1416,9 @@ export default {
                                         console.log('houselist_error');
                                     });
                                 }else{
-                                    console.log(result.data);
-                                    that.openHave(result.data.id,result.data.number);
+                                    that.addUrl="/admin/houseDetails/"+result.data.id;
+                                    that.addNo=result.data.number;
+                                    that.addVisible=true;
                                 }
 
                             }).catch(error => {
@@ -1367,18 +1436,6 @@ export default {
                   }
               });
         	}
-        },
-        openHave(id,no) {
-            var url = "/admin/houseDetails/"+id;
-            var nots = no;
-            console.log(id)
-            console.log(no)
-            this.$notify({
-                title: '提示',
-                dangerouslyUseHTMLString: true,
-                message: '<a target="_blank" href="'+url+'">'+no+'</a> ',
-                duration: 0
-            });
         },
         search(){
             var that = this;
@@ -1402,6 +1459,13 @@ export default {
                 priceOrderby:this.formData.priceOrderby,
                 areasOrderby:this.formData.areasOrderby,
                 floorOrderby:this.formData.floorOrderby,
+                layout:this.formData.layout,
+                grade:this.formData.grade,
+                createType:this.formData.createType,
+                explorationType:this.formData.explorationType,
+                keyType:this.formData.keyType,
+                isspecialType:this.formData.isspecialType,
+                isfineType:this.formData.isfineType,
                 page: this.tableData.pageNum,
                 size: this.tableData.pageSize
             }
@@ -1438,6 +1502,13 @@ export default {
             that.formData.chaoxiangType=0;
             that.formData.floorType=0;
             that.formData.rangeType=0;
+            that.formData.createType=false;
+            that.formData.explorationType=false;
+            that.formData.keyType=false;
+            that.formData.isspecialType=false;
+            that.formData.isfineType=false;
+            that.formData.layout='';
+            that.formData.grade='';
 
             var id = this.getId(index, list);
             this.formData.type = id;
