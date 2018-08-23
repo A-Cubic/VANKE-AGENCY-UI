@@ -171,6 +171,9 @@ export default {
         return API.POST('house/houseStateUp', params)
     },
 
-
+    // 价格调整记录
+    pricelogList: params => {
+        return API.POST('house/pricelog/list', params)
+    },
 
 }

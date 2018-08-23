@@ -45,16 +45,48 @@
                                 <div class="house-price">
                                     <span class="span1"> {{ houseDataForm.priceText }}</span>
                                     <span>
-                                        <!--<a style="margin-left: -10px;margin-top: -7px;position: absolute;font-weight: bold;color:#F56C6C ">↑</a>-->
-                                        <!--<el-button size="mini" type="danger" v-show="houseDataForm.pricetype=='1'?true:false" style="width: 50px;height: 20px;" plain>-->
-                                            <!--<span style="margin-left: -10px;margin-top: -7px;position: absolute;">↑上涨</span>-->
-                                        <!--</el-button>-->
-                                        <!--<el-button size="mini" type="success" v-show="houseDataForm.pricetype=='2'? true:false"   plain>-->
-                                            <!--<span style="margin-left: -10px;margin-top: -7px;position: absolute;">↓下降</span>-->
-                                        <!--</el-button>-->
-                                        <!--<a><el-tag type="success">标签二</el-tag></a>-->
-                                        <!--<a><el-tag type="success">标签二</el-tag></a>-->
-                                        <el-tag size="mini" type="danger" v-show="houseDataForm.pricetype=='1'?true:false" style="cursor:pointer;" @click.native="upClick">↑上涨</el-tag>
+                                        <el-popover
+                                                placement="right"
+                                                width="700"
+                                                transition="el-zoom-in-center"
+                                                trigger="click">
+                                                <div style="margin: 10px;min-height: 100px;">
+                                                    <el-table :data="priceHistoryData.list">
+                                                        <el-table-column prop="createTime"  label="调价时间" width="100px"></el-table-column>
+                                                        <el-table-column prop="priceold" :formatter="priceFormat" label="调价前"></el-table-column>
+                                                        <el-table-column prop="pricenew" :formatter="priceFormat" label="调价后"></el-table-column>
+                                                        <el-table-column label="结果">
+                                                             <template scope="scope">
+                                                                <span>
+                                                                    <el-tag size="mini" type="danger" v-show="scope.row.type=='1'?true:false" >↑上涨</el-tag>
+                                                                    <el-tag size="mini" type="success" v-show="scope.row.type=='2'? true:false" >↓下降</el-tag>
+                                                                </span>
+                                                            </template>
+                                                        </el-table-column>
+                                                        <el-table-column prop="pricelock" :formatter="priceFormat" label="差价"></el-table-column>
+                                                    </el-table>
+                                                </div>
+
+                                                <div  style="margin-top: 20px;text-align: right;">
+                                                    <el-pagination
+                                                            layout="prev, pager, next, jumper, total"
+                                                            :page-size="priceHistoryData.pageSize"
+                                                            :current-page.sync="priceHistoryData.pageNum"
+                                                            :total ="priceHistoryData.total"
+                                                            @current-change="priceHistoryChangeSearch">
+                                                    </el-pagination>
+                                                </div>
+                                                <el-tag size="mini"
+                                                        slot="reference"
+                                                        :type="houseDataForm.pricetype=='1'?'danger':'success'"
+                                                        v-show="houseDataForm.pricetype=='1' || houseDataForm.pricetype=='2'?true:false"
+                                                        style="cursor:pointer;"
+                                                        @click.native="upClick">
+                                                    {{houseDataForm.pricetype=='1'?'↑上涨':'↓下降'}}
+
+                                                </el-tag>
+                                            </el-popover>
+
                                     </span>
 
                                     <span class="span2">{{ houseDataForm.priceOneText }}</span>
@@ -83,7 +115,7 @@
                                         <div>挂牌时间: <span>{{ houseDataForm.createTime }}</span></div>
                                          <div>装修情况: <span>{{ houseDataForm.layout=='无'|| houseDataForm.layout==null?"无":houseDataForm.layout }}</span></div>
                                         <div>房主信息:
-                                            <span class="span" @click="ownerHandle">查看</span>
+                                            <span class="span" style="cursor:pointer;" @click="ownerHandle">查看</span>
                                             <el-popover
                                                     placement="right"
                                                     width="600"
@@ -104,7 +136,7 @@
                                                             @current-change="ownerHistoryChangeSearch">
                                                     </el-pagination>
                                                 </div>
-                                                <span class="span" @click="ownerHistoryHandle" slot="reference">历史记录</span>
+                                                <span class="span" style="cursor:pointer;" @click="ownerHistoryHandle" slot="reference">历史记录</span>
                                             </el-popover>
                                         </div>
                                     </div>
@@ -112,7 +144,7 @@
                                         <div>维护人: <span>{{ houseDataForm.recordrelName==''|| houseDataForm.recordrelName==null?"暂无": radiusForm.recordrelName+('('+ (radiusForm.recordUesrPhone==''?'无电话': radiusForm.recordUesrPhone) +')') }}</span></div>
                                         <div>房屋等级: <span>{{ houseDataForm.grade }}</span></div>
                                         <div>地址:
-                                            <span class="span" @click="placeHandle">查看</span>
+                                            <span class="span" style="cursor:pointer;" @click="placeHandle">查看</span>
                                             <el-popover
                                                     placement="right"
                                                     width="600"
@@ -133,7 +165,7 @@
                                                             @current-change="placeHistoryChangeSearch">
                                                     </el-pagination>
                                                 </div>
-                                                <span class="span" @click="placeHistoryHandle" slot="reference">历史记录</span>
+                                                <span class="span" style="cursor:pointer;" @click="placeHistoryHandle" slot="reference">历史记录</span>
                                             </el-popover>
                                         </div>
                                     </div>
@@ -157,7 +189,7 @@
                                                         <!--<span>电话：</span>-->
                                                         <!--<span>{{ ownerForm.phone }}</span>-->
                                                     <!--</div>-->
-                                                    <span class="span"  slot="reference" v-show="houseDataForm.iskey=='1'?true:false">查看</span>
+                                                    <span class="span" style="cursor:pointer;"  slot="reference" v-show="houseDataForm.iskey=='1'?true:false">查看</span>
                                                 </el-popover>
                                             </div>
                                     </div>
@@ -384,7 +416,7 @@
                             <el-tab-pane :disabled = "houseDataForm.user_type=='0'?true:false" label="修改" name="3" >
                                 <el-form :model="editForm" ref="editForm" label-width="80px" class="demo-ruleForm">
                                     <el-form-item label="房屋价格:">
-                                        <el-input placeholder="请输入价格" v-model="editForm.price"></el-input>
+                                        <el-input placeholder="请输入价格" v-model="editForm.price" @change="handleInput"></el-input>
                                     </el-form-item>
                                     <el-row :gutter="1">
                                         <el-col :span="1">
@@ -434,7 +466,7 @@
                                         <el-input placeholder="请输入小区名" v-model="editForm.xiaoquName"></el-input>
                                     </el-form-item>
                                     <el-form-item label="房屋面积:">
-                                        <el-input placeholder="请输入面积" v-model="editForm.areas"></el-input>
+                                        <el-input placeholder="请输入面积" v-model="editForm.areas" @change="handleAreInput"></el-input>
                                     </el-form-item>
                                     <el-form-item label="房屋朝向:">
                                         <!-- <el-input placeholder="请输入" v-model="editForm.chaoxiang"></el-input> -->
@@ -895,6 +927,7 @@
                     recordUserName:'',
                     explorationUserName:'',
                     keyUserName:'',
+                    type:'',
                 },  //左侧头部数据
 
                 ownerVisible: false, //房主信息dialog
@@ -1102,6 +1135,14 @@
                     chooseAcc: '',
                 },
                 checkTransferList: [],
+                priceHistoryData:{
+                    pageNum: 1,
+                    pageSize: 5,
+                    total: 0,
+                    list: [
+
+                    ],
+                },
             };
         },
         mounted:function(){
@@ -1112,6 +1153,7 @@
                 id: this.id
             };
             HouseApi.housedetail(postData).then(function (result) {
+//                console.log(result)
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.houseDataForm=result.data;
                 that.otherForm=result.data;
@@ -1160,8 +1202,69 @@
             getRole(){
                 return getRole();
             },
+            handleInput(vl){
+                var newVl = vl;
+                var reValue='';
+                reValue = newVl.replace(/[^\d.]/g,""); //先把非数字的都替换掉，除了数字和.
+                reValue = reValue.replace(/^\./g,""); //必须保证第一个为数字而不是.
+                reValue = reValue.replace(/\.{2,}/g,"."); //保证只有出现一个.而没有多个.
+                reValue = reValue.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+
+                if (reValue.endsWith('.')) {
+                    reValue = reValue.slice(0,reValue.length-1);
+                }
+                this.editForm.price = reValue;
+
+            },
+            handleAreInput(vl){
+                var newVl = vl;
+                var reValue='';
+                reValue = newVl.replace(/[^\d.]/g,""); //先把非数字的都替换掉，除了数字和.
+                reValue = reValue.replace(/^\./g,""); //必须保证第一个为数字而不是.
+                reValue = reValue.replace(/\.{2,}/g,"."); //保证只有出现一个.而没有多个.
+                reValue = reValue.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+
+                if (reValue.endsWith('.')) {
+                    reValue = reValue.slice(0,reValue.length-1);
+                }
+                this.editForm.areas = reValue;
+
+            },
+            priceHistoryChangeSearch(val){
+                this.priceHistoryData.pageNum=val;
+                this.searchpriceHistory();
+            },
+            priceFormat(row, column){
+                var price = row[column.property];
+                if (price == undefined) {
+                    return "";
+                }
+                if(this.houseDataForm.type=='1'){
+                    price=(Math.round(parseFloat(price)/10000*100)/100)+'万元';
+                }
+                if(this.houseDataForm.type=='2'){
+                    price=price+'元/月';
+                }
+                return price;
+            },
+            searchpriceHistory(){
+                var that = this;
+                var hid = this.id;
+                var postData = {
+                    houseId: hid,
+                    page: this.priceHistoryData.pageNum,
+                    size: this.priceHistoryData.pageSize,
+                };
+                HouseApi.pricelogList(postData).then(function (result) {
+                    if(typeof(result) != "object"){result = JSON.parse(result)}
+                    that.priceHistoryData = result.data;
+                }).catch(error => {
+                    console.log('pricelogList_error');
+                });
+            },
             upClick(){
-              console.log(123)
+                this.priceHistoryData.pageNum=1;
+                this.searchpriceHistory();
             },
             upLink(){
                 this.$confirm('此操作将创建人更改为当前用户,并上网，是否继续?', '提示', {

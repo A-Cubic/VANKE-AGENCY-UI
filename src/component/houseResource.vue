@@ -319,7 +319,7 @@
                     </el-col>
                     <el-col :span="6">
                         <el-form-item label="面积" prop="areas">
-                            <el-input v-model="alertAdd.ruleForm.areas" placeholder="房屋面积（必填）"></el-input>
+                            <el-input v-model="alertAdd.ruleForm.areas" placeholder="房屋面积（必填）" @change="handleAreInput"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="1" style="text-align: center; line-height: 40px">
@@ -1308,6 +1308,20 @@ export default {
                 reValue = reValue.slice(0,reValue.length-1);
             }
             this.alertAdd.ruleForm.price = reValue;
+
+        },
+        handleAreInput(vl){
+            var newVl = vl;
+            var reValue='';
+            reValue = newVl.replace(/[^\d.]/g,""); //先把非数字的都替换掉，除了数字和.
+            reValue = reValue.replace(/^\./g,""); //必须保证第一个为数字而不是.
+            reValue = reValue.replace(/\.{2,}/g,"."); //保证只有出现一个.而没有多个.
+            reValue = reValue.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+
+            if (reValue.endsWith('.')) {
+                reValue = reValue.slice(0,reValue.length-1);
+            }
+            this.alertAdd.ruleForm.areas = reValue;
 
         },
         addHouseHandle(){
