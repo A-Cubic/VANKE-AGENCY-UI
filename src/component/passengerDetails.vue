@@ -223,6 +223,7 @@
                             <div class="maintain-content-header">维护</div>
                             <div class="maintain-content-mes" @click="remarkVisible = true">录跟进</div>
                             <div class="maintain-content-mes" @click="lookVisible = true" @close="addLookClose">录带看</div>
+                            <div class="maintain-content-mes" @click="editGuest.visible = true">修改基本信息</div>
                             <div class="maintain-content-mes" @click="stateHandel">{{formUser.iskey=='0'?'无效客源申请':formUser.iskey=='1'?'取消无效客源申请':formUser.iskey=='2'?'无效客源审核中':'取消无效客源审核中'}}</div>
                             <div class="maintain-content-mes" @click="transferHandel">客源转让</div>
                             <!-- <div class="maintain-content-mes">发起合作</div> -->
@@ -480,6 +481,164 @@
                         <el-button type="primary" @click="stateHandelComit">确 定</el-button>
                     </span>
             </el-dialog>
+
+            <el-dialog
+                    title="客源修改"
+                    :visible.sync="editGuest.visible"
+                    width="80%">
+
+                <el-form :model="editGuest.ruleForm"
+                         :rules="editGuest.rules"
+                         label-position="left"
+                         ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <span style="font-size: 18px;">基本信息</span>
+                        </div>
+                        <div class="text item">
+                            <el-row type="flex" class="row-bg" :gutter="20">
+                                <el-col :span="1"></el-col>
+                                <el-col :span="10">
+                                    <el-form-item label="姓名" prop="guestname">
+                                        <el-input v-model="editGuest.ruleForm.guestname" placeholder="客户姓名（必填）"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="10">
+                                    <el-form-item label="性别" prop="sex">
+                                        <el-select v-model="editGuest.ruleForm.sex" style="width: 100%;" placeholder="请选择性别（必填）">
+                                            <el-option label="男" value="男"></el-option>
+                                            <el-option label="女" value="女"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="3"></el-col>
+                            </el-row>
+                            <el-row type="flex" class="row-bg" :gutter="20">
+                                <el-col :span="1"></el-col>
+                                <el-col :span="10">
+                                    <el-form-item label="联系电话" prop="phone">
+                                        <el-input v-model="editGuest.ruleForm.phone" placeholder="联系电话（必填）"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="10">
+                                    <el-form-item label="备用电话" prop="phonetow">
+                                        <el-input v-model="editGuest.ruleForm.phonetow" placeholder="备用电话"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="3"></el-col>
+                            </el-row>
+                            <el-row type="flex" class="row-bg" :gutter="20">
+                                <el-col :span="1"></el-col>
+                                <el-col :span="10">
+                                    <el-form-item label="星级" prop="guestgrade">
+                                        <el-select v-model="editGuest.ruleForm.guestgrade" style="width: 100%;" placeholder="请选择星级（必填）">
+                                            <el-option label="A" value="A"></el-option>
+                                            <el-option label="B" value="B"></el-option>
+                                            <el-option label="C" value="C"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="10">
+                                    <el-form-item label="用户标签" prop="label">
+                                        <el-input v-model="editGuest.ruleForm.label" placeholder="自定义用户标签"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="3"></el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+                    <el-card class="box-card" style="margin-top: 30px">
+                        <div slot="header" class="clearfix" >
+                            <span style="font-size: 18px;">需求意向</span>
+                        </div>
+                        <div  class="text item">
+                            <el-row type="flex" class="row-bg" :gutter="20">
+                                <el-col :span="1"></el-col>
+                                <el-col :span="6">
+                                    <el-form-item label="心里价位" prop="heartprice" >
+                                        <el-input v-model="editGuest.ruleForm.heartprice" placeholder="心里价位"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="目的用途" prop="purpose">
+                                        <el-input v-model="editGuest.ruleForm.purpose" placeholder="自己住或门头店面等"></el-input>
+                                    </el-form-item>
+                                </el-col>
+
+                                <el-col :span="6">
+                                    <el-form-item label="期望面积" prop="areas">
+                                        <el-input v-model="editGuest.ruleForm.areas" placeholder="面积"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="1" style="text-align: center; line-height: 40px">
+                                    m2
+                                </el-col>
+                                <el-col :span="3"></el-col>
+                            </el-row>
+
+                            <el-row type="flex" class="row-bg" :gutter="20">
+                                <el-col :span="1" >
+                                </el-col>
+                                <el-col :span="6">
+                                    <el-form-item label="户型" prop="huxingshi">
+                                        <el-input v-model="editGuest.ruleForm.huxingshi"  placeholder="几室"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-form-item label="室" label-width="40px" prop="huxingting">
+                                        <el-input v-model="editGuest.ruleForm.huxingting" placeholder="几厅"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-form-item label="厅" label-width="40px" prop="huxingchu">
+                                        <el-input v-model="editGuest.ruleForm.huxingchu"  placeholder="几厨"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-form-item label="厨" label-width="40px" prop="huxingwei">
+                                        <el-input v-model="editGuest.ruleForm.huxingwei" placeholder="几卫"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="1" style="text-align: center; line-height: 40px">
+                                    卫
+                                </el-col>
+                                <el-col :span="3" >
+                                </el-col>
+                            </el-row>
+
+                            <el-row type="flex" class="row-bg" :gutter="20">
+                                <el-col :span="1"></el-col>
+                                <el-col :span="20">
+                                    <el-form-item label="位置" prop="position">
+                                        <el-input v-model="editGuest.ruleForm.position"  placeholder="房屋大致的区域位置"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="3"></el-col>
+                            </el-row>
+
+                            <el-row type="flex" class="row-bg" :gutter="20">
+                                <el-col :span="1"></el-col>
+                                <el-col :span="20">
+                                    <el-form-item label="备注" prop="remarks">
+                                        <el-input
+                                                type="textarea"
+                                                :rows="8"
+                                                :autosize="{ minRows: 6, maxRows: 8}"
+                                                placeholder="备注信息"
+                                                v-model.trim="editGuest.ruleForm.remarks">
+                                        </el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="3"></el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+            <el-button @click="editGuest.visible = false">取 消</el-button>
+            <el-button type="primary" @click="submitAdd('ruleForm')">确 定 </el-button>
+          </span>
+            </el-dialog>
         </div>
     </section>
 
@@ -622,6 +781,45 @@
                     chooseCode: '',
                     chooseAcc: '',
                 },
+                editGuest:{
+                    visible:false,
+                    ruleForm: {
+                        id:"",
+                        guestname: "",  //客源姓名
+                        sex: "",  //客源性别
+                        guestgrade: "",  //客源星级(A,B,C)
+                        type: "0",  //客源类型(0:买,1:租)
+                        heartprice: "",  //心里价位
+                        phone: "",  //联系电话
+                        phonetow: "",//备用电话
+                        remarks: "",  //备注简介
+                        areas: "",  //需求面积
+                        position: "",//位置
+                        huxingshi: "",  //需求几室
+                        huxingting: "",  //需求几厅
+                        huxingwei: "",  //需求几卫
+                        huxingchu: "",  //需求几厨
+                        purpose: "",  //目的用途
+                        label: "",  //自定义标签
+                    },
+                    rules: {
+                        guestname: [
+                            { required: true, message: '请输入客源姓名', trigger: 'blur' },
+                        ],
+                        sex: [
+                            { required: true, message: '请输入客源性别', trigger: 'blur' },
+                        ],
+                        guestgrade: [
+                            { required: true, message: '请选择客源星级', trigger: 'change' },
+                        ],
+                        type: [
+                            { required: true, message: '请选择客源类型', trigger: 'change' },
+                        ],
+                        phone: [
+                            { required: true, message: '请输入客源电话', trigger: 'blur' },
+                        ],
+                    },
+                }
             };
         },
 
@@ -637,7 +835,26 @@
             getRole(){
                 return getRole();
             },
-
+            submitAdd(ruleForm){
+                var that = this;
+                this.$refs[ruleForm].validate((valid) => {
+                    if (valid) {
+                        GuestApi.editGuest(this.editGuest.ruleForm).then(function (result) {
+                            if(typeof(result) != "object"){result = JSON.parse(result)}
+                            Message({
+                                message: "修改客源成功",
+                                type: 'success'
+                            });
+                            that.editGuest.visible=false;
+                            that.searchAgain();
+                        }).catch(error => {
+                            console.log('editGuest_error'+error);
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+            },
             upLink(){
                 this.$confirm('此操作将创建人更改为当前用户,并上网，是否继续?', '提示', {
                     confirmButtonText: '确定',
@@ -745,6 +962,7 @@
                     if(typeof(result) != "object"){result = JSON.parse(result)}
                     that.formUser=result.data;
                     that.needForm=result.data;
+                    that.editGuest.ruleForm=result.data;
                 }).catch(error => {
                     console.log('guestDetail_error');
                 });
@@ -902,7 +1120,7 @@
                     }
                     that.formUser=result.data;
                     that.needForm=result.data;
-                    // console.log(result.data);
+                    that.editGuest.ruleForm=result.data;
                 }).catch(error => {
                     console.log('guestDetail_error');
                 });
@@ -1035,6 +1253,7 @@
                         }
                         that.formUser=result.data;
                         that.needForm=result.data;
+                        that.editGuest.ruleForm=result.data;
                     }).catch(error => {
                         console.log('guestDetail_error');
                     });

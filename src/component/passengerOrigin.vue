@@ -480,7 +480,7 @@
                           type: 'warning'
                         }).then(() => {
                             GuestApi.insertGuest(this.alertAdd.ruleForm).then(function (result) {
-                                console.log(result);
+                                // console.log(result);
                                 if(typeof(result) != "object"){result = JSON.parse(result)}
                                 Message({
                                     message: "新增客源成功",

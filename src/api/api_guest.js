@@ -94,4 +94,9 @@ export default {
     updateGuestIsKeyUp: params => {
         return API.POST('guest/updateGuestIsKeyUp', params)
     },
+
+    // 客源修改
+    editGuest: params => {
+        return API.POST('guest/update', params)
+    },
 }

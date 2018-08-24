@@ -29,11 +29,12 @@
                 <div class="house_search_header">
 
                     <el-input
-                            :placeholder="formData.searchType=='1'?'请输入区域、街道或小区名搜索房源':'请输入经纪人全名或后6位编号'"
+                            :placeholder="formData.searchType=='1'?'请输入区域、街道或小区名搜索房源':formData.searchType=='2'?'请输入经纪人全名或后6位编号':'请输入房源编号搜索房源'"
                             v-model="formData.searchText" style="width: 500px;"  size="large" @keyup.enter.native="search">
                         <el-select v-model="formData.searchType" slot="prepend" >
                             <el-option label="位置" value="1"></el-option>
                             <el-option label="经纪人" value="2"></el-option>
+                            <el-option label="编号" value="3"></el-option>
                         </el-select>
                         <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
                     </el-input>
