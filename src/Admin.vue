@@ -42,6 +42,21 @@
                         placement="bottom-start"
                         width="300"
                         transition="el-zoom-in-center"
+                        title="账号切换"
+                        trigger="click">
+                    <div class="table-template">
+                        <el-table :data="accountList" @row-click="accountListClick" :show-header="false" empty-text="没有可切换的账号">
+                            <el-table-column prop="store_name" label="门店"></el-table-column>
+                        </el-table>
+                    </div>
+                    <i class="el-icon-sort" slot="reference" ></i>
+                </el-popover>
+            </span>
+            <span class="f22">
+                <el-popover
+                        placement="bottom-start"
+                        width="300"
+                        transition="el-zoom-in-center"
                         title="通讯录"
                         trigger="click">
                      <el-tree
@@ -105,11 +120,14 @@
 import HomeApi from './api/api_home.js';
 import LoginApi from './api/api_user';
 import { setRole, setToken } from './util/global';
-    // import Default from './component/default'
-    import { getToken, getRole, WsCall, addWsCall, clearWsCall }               from './util/global';
-    import router from './router/router';
+import { getToken, getRole, WsCall, addWsCall, clearWsCall } from './util/global';
+import router from './router/router';
 import Vue from 'vue';
+import { Message } from 'element-ui';
 export default {
+    install(Vue) {
+        Vue.prototype.$message = Message
+    },
     name: 'app',
     ws: null,
     // components:{Default},
@@ -141,7 +159,6 @@ export default {
 
                 ],
             },
-
             message: {
                 pageSize: 5,
                 pageNum: 1,
@@ -150,14 +167,15 @@ export default {
 
                 ]
             },
-
             Noticebadge: undefined,
             vankeWebsocket: null,
+            accountList:[],
         };
     },
     created() {
         this.initWebsocket();
         this.getUserIdentity();
+        this.getAccountList();
         addWsCall('Notice', this.wsNotice);
     },
     destroyed() {
@@ -167,6 +185,36 @@ export default {
     methods: {
         getRole(){
           return getRole();
+        },
+        accountListClick(row, event, column){
+            var that = this;
+            var postData = {
+                username:row.username,
+            };
+            HomeApi.accountSelected(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                setRole(result.data.authorities);
+                setToken(result.data.token);
+                // Message({
+                //     type: 'success',
+                //     message: '已切换账号！'
+                // });
+                that.$router.go(0)
+                // that.$router.push({path: '/admin/home'});
+            }).catch(error => {
+                console.log('accountSelected_error'+error);
+            });
+        },
+        getAccountList(){
+            var that = this;
+            var postData = {};
+            HomeApi.getAccountList(postData).then(function (result) {
+                if(typeof(result) != "object"){result = JSON.parse(result)}
+                that.accountList=result.data;
+
+            }).catch(error => {
+                console.log('getAccountList_error');
+            });
         },
         messageListClick(row, event, column){
             let routeData = this.$router.resolve({ path: row.url});

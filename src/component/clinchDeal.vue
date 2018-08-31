@@ -125,6 +125,10 @@
                                     <div class="look-detail-wrap-header">
                                         <el-input placeholder="请输入小区名称" v-model="addForm.addHouseForm.searchHouseForm.xiaoquName" clearable></el-input>
                                         <el-input placeholder="请输入房源编号" v-model="addForm.addHouseForm.searchHouseForm.number" clearable></el-input>
+                                        <el-select v-model="addForm.addHouseForm.searchHouseForm.type"  placeholder="类型"  >
+                                            <el-option label="买卖" value="1"></el-option>
+                                            <el-option label="租赁" value="2"></el-option>
+                                        </el-select>
                                         <el-button  type="primary" icon="el-icon-search" @click="searchHouseList">查询</el-button>
                                     </div>
                                     <div class="look-detail-wrap-table">
@@ -138,7 +142,7 @@
                                             <el-table-column prop="xiaoquName" label="小区"></el-table-column>
                                             <el-table-column prop="areas" label="面积"></el-table-column>
                                             <el-table-column prop="floor" label="楼层"></el-table-column>
-                                            <el-table-column prop="price" label="价格"></el-table-column>
+                                            <el-table-column prop="price" label="价格" :formatter="priceFormat"></el-table-column>
                                             <el-table-column label="操作">
                                                 <template scope="scope">
                                                     <el-button size="mini" type="danger" @click="selectedHouse(scope.row)" icon="el-icon-plus" circle></el-button>
@@ -785,6 +789,7 @@ export default {
                     searchHouseForm:{
                         xiaoquName: '',
                         number: '',
+                        type:'1',
                     },
                     selectedHouse :{
                         price:'',
@@ -864,6 +869,19 @@ export default {
         this.doSearch();
     },
     methods: {
+        priceFormat(row, column){
+            var price = row[column.property];
+            if (price == undefined) {
+                return "";
+            }
+            if(row.type=='1'){
+                price=(Math.round(parseFloat(price)/10000*100)/100)+'万元';
+            }
+            if(row.type=='2'){
+                price=price+'元/月';
+            }
+            return price;
+        },
         //补缴
         overpayHandle(row){
             this.overpayForm.overpayFormVisible = true;
@@ -943,8 +961,7 @@ export default {
             this.allotForm.addUserForm.addUserList=[];
         },
         proportionChange(row,j){
-
-            var cuPrice,cuPercent,index;
+            var cuPrice,cuPercent,cuBili,index;
             for(let i=0;i<this.allotForm.allotList.length;i++){
                 if(this.allotForm.allotList[i].rolenum==6){
                     cuPrice=this.allotForm.allotList[i].price;
@@ -959,7 +976,8 @@ export default {
             }
 
             var newPrcent_hezuo = parseInt(row.proportion);
-            var newPrice_hezuo = Math.round(parseInt(cuPrice)*(newPrcent_hezuo/100));
+            cuBili = newPrcent_hezuo/cuPercent;
+            var newPrice_hezuo = Math.round(parseInt(cuPrice)*cuBili);
             var newPrice_cucheng = Math.round(parseInt(cuPrice)-newPrice_hezuo);
             var newPrcent_cucheng = Math.round(parseInt(cuPercent)-newPrcent_hezuo);
 
@@ -1074,6 +1092,7 @@ export default {
             var postData = {
                 xiaoquName: this.addForm.addHouseForm.searchHouseForm.xiaoquName,
                 number: this.addForm.addHouseForm.searchHouseForm.number,
+                type:this.addForm.addHouseForm.searchHouseForm.type,
                 page: this.addForm.addHouseForm.houseTableData.pageNum,
                 size: 3
             };
@@ -1092,6 +1111,7 @@ export default {
             var postData = {
                 xiaoquName: this.addForm.addHouseForm.searchHouseForm.xiaoquName,
                 number: this.addForm.addHouseForm.searchHouseForm.number,
+                type:this.addForm.addHouseForm.searchHouseForm.type,
                 page: this.addForm.addHouseForm.houseTableData.pageNum,
                 size: 3
             };

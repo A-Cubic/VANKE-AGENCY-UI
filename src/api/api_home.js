@@ -45,6 +45,15 @@ export default {
         return API.POST('home/score/storeAllRankings', params)
     },
 
+    //账号切换列表
+    getAccountList: params => {
+        return API.POST('user/UserCut', params)
+    },
+
+    //账号切换选中
+    accountSelected: params => {
+        return API.POST('user/changeAccount', params)
+    },
 
 
 }
