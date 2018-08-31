@@ -59,7 +59,7 @@
                         transition="el-zoom-in-center"
                         trigger="click">
                     <div class="table-template">
-                        <el-table :data="message.list">
+                        <el-table :data="message.list" @row-click="messageListClick" v-loading="messageLoading">
                             <el-table-column prop="create_time" label="消息时间"></el-table-column>
                             <el-table-column prop="content" label="消息内容" show-overflow-tooltip></el-table-column>
                         </el-table>
@@ -115,6 +115,7 @@ export default {
     // components:{Default},
     data() {
         return {
+            messageLoading: false,
             activeIndex: '1',
             activeIndex2: '1',
             // 获取用户信息名称 角色
@@ -167,6 +168,10 @@ export default {
         getRole(){
           return getRole();
         },
+        messageListClick(row, event, column){
+            let routeData = this.$router.resolve({ path: row.url});
+            window.open(routeData.href, '_blank');
+        },
         handleCurrentChangeSearch(val){
             this.message.pageNum = val;
             this.doSearchNotice();
@@ -180,11 +185,13 @@ export default {
             HomeApi.messageList(postData).then(function (result) {
                 if(typeof(result) != "object"){result = JSON.parse(result)}
                 that.message=result.data;
+                that.messageLoading=false;
             }).catch(error => {
                 console.log('messageList_error');
             });
         },
         getNotice(){
+            this.messageLoading=true;
             this.message.pageNum = 1;
             this.doSearchNotice();
         },
@@ -226,8 +233,8 @@ export default {
             });
         },
         initWebsocket() {
-//             this.vankeWebsocket = new WebSocket('ws://vanke.a-cubic.com/vanke/com/ws/?token=' + getToken());
             this.vankeWebsocket = new WebSocket('ws://home.vanke.com/vanke/com/ws/?token=' + getToken());
+//             this.vankeWebsocket = new WebSocket('ws://172.16.10.103:9999/vanke/com/ws/?token=' + getToken());
             this.vankeWebsocket.onopen = this.wsOnOpen;
             this.vankeWebsocket.onmessage = this.wsOnMessage;
             this.vankeWebsocket.onclose = this.wsOnClose;
