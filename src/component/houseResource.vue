@@ -1502,6 +1502,8 @@ export default {
         //类型
         searchType(index, list){
             var that = this;
+            that.formData.searchText = '';
+            that.formData.searchType='1';
             that.formData.priceUp = '';
             that.formData.priceDown = '';
             that.formData.areasUp = '';

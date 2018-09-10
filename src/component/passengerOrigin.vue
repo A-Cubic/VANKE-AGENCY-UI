@@ -522,6 +522,8 @@
                 this.formData.type = id;
                 this.formData.isShare=0;
                 this.formData.guestgrade=0;
+                this.formData.searchText = '';
+                this.formData.search_type='1';
                 this.formData.isShareList.forEach((item) => {
                     item.choosed = false;
                     if(this.formData.isShareList.indexOf(item) == 0){
