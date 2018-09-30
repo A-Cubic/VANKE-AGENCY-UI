@@ -1035,7 +1035,7 @@ export default {
             this.allotForm.allotList.splice(j,1);
         },
         formatter(row, column) {
-            return row.buytype=='0'?'买卖':'租赁';
+            return row.buytype=='1'?'买卖':'租赁';
         },
         // 重置新增成交
         resetForm() {
@@ -1249,6 +1249,7 @@ export default {
                 if (typeof(result) != "object") {
                     result = JSON.parse(result)
                 }
+                console.log(result)
                 that.tableForm = result.data;
             }).catch(error => {
                 console.log('searchclinchDeal_error');
